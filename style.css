@@ -1,0 +1,109 @@
+body {
+  font-family: sans-serif;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+h1 {
+  text-align: center;
+  font-size: 1.6em;
+  margin-bottom: 20px;
+}
+textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  resize: none;
+  overflow: hidden;
+}
+.counter {
+  margin-top: 15px;
+  font-size: 1.1em;
+  line-height: 1.6;
+  text-align: right;
+}
+.counter span {
+  font-weight: bold;
+  color: #333;
+}
+.warning {
+  color: red;
+  font-weight: bold;
+}
+.settings {
+  margin-bottom: 15px;
+  text-align: right;
+}
+input[type="number"] {
+  width: 100px;
+  padding: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+button {
+  margin-top: 5px;
+  margin-right: 5px;
+  padding: 8px 15px;
+  font-size: 0.9em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+button.primary {
+  background: #2196F3;
+  color: white;
+}
+button.danger {
+  background: #f44336;
+  color: white;
+}
+button:hover {
+  filter: brightness(0.9);
+}
+#recentButtons {
+  margin-top: 10px;
+  text-align: right;
+}
+footer {
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid #ccc;
+  font-size: 0.85em;
+  color: #555;
+  text-align: center;
+}
+footer a {
+  color: #0077cc;
+  text-decoration: none;
+  margin: 0 5px;
+}
+footer a:hover {
+  text-decoration: underline;
+}
+.credit-section {
+  margin-top: 20px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.9em;
+  color: #333;
+}
+.credit-section h2 {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.note {
+  font-size:0.85em;
+  color:#555;
+}

@@ -6,23 +6,84 @@
 <title>文字数カウント & 保存ツール</title>
 
 <style>
+:root{
+  --bg:#ffffff;
+  --card:#f9fafb;
+  --accent:#22c55e;
+  --accent-soft:#dcfce7;
+  --text:#1f2937;
+  --border:#e5e7eb;
+}
+
 body{
   font-family:"Noto Sans JP",system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
   max-width:720px;
   margin:30px auto;
   padding:20px;
 }
+
+h1{margin-top:0}
+
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:16px;
+  border:1px solid var(--border);
+}
+
+.notice{
+  background:var(--accent-soft);
+  border-left:6px solid var(--accent);
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:16px;
+  font-size:.95em;
+}
+
+.notice-item{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px dashed #86efac;
+}
+.notice-date{
+  font-size:.8em;
+  color:#166534;
+}
+.notice-title{
+  font-weight:bold;
+}
+
 textarea{
   width:100%;
   min-height:160px;
   padding:12px;
   font-size:1em;
+  border-radius:10px;
+  border:1px solid var(--border);
 }
+
 .controls button, select, input[type=number]{
-  margin:4px 2px;
   padding:6px 10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
 }
+
+.controls button:hover{
+  background:var(--accent-soft);
+}
+
 .info p{margin:4px 0}
+
+.save-btn{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+}
 
 .settings-btn{
   position:fixed;
@@ -31,7 +92,7 @@ textarea{
   padding:10px 14px;
   border:none;
   border-radius:50px;
-  background:#2563eb;
+  background:var(--accent);
   color:#fff;
 }
 
@@ -43,7 +104,7 @@ html[data-view="sp"] .ad-pc{display:none}
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,.5);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -63,6 +124,7 @@ html[data-view="sp"] .ad-pc{display:none}
 <body>
 
 <script>
+/* 初回同意チェック */
 if(localStorage.getItem('agreed')!=='true'){
   location.href='index.html';
 }
@@ -70,13 +132,21 @@ if(localStorage.getItem('agreed')!=='true'){
 
 <h1>文字数カウント & 保存ツール</h1>
 
-<!-- 上限設定 -->
+<!-- お知らせ -->
+<div class="notice">
+  <strong>お知らせ</strong>
+  <div id="noticeList">読み込み中...</div>
+</div>
+
+<div class="card">
+
 <div class="controls">
   上限文字数：
   <button onclick="setLimit(280)">280</button>
   <button onclick="setLimit(500)">500</button>
   <button onclick="setLimit(1000)">1000</button>
-  カスタム <input type="number" id="customLimit" min="1" style="width:80px">
+  カスタム
+  <input type="number" id="customLimit" min="1" style="width:80px">
   <button onclick="setCustom()">設定</button>
 </div>
 
@@ -88,7 +158,6 @@ if(localStorage.getItem('agreed')!=='true'){
   <p>残り文字数: <span id="remain">280</span></p>
 </div>
 
-<!-- 保存 -->
 <div class="controls">
   保存形式：
   <select id="format">
@@ -96,7 +165,9 @@ if(localStorage.getItem('agreed')!=='true'){
     <option value="md">Markdown</option>
     <option value="csv">CSV</option>
   </select>
-  <button onclick="download()">保存</button>
+  <button class="save-btn" onclick="download()">保存</button>
+</div>
+
 </div>
 
 <!-- 広告 -->
@@ -108,7 +179,7 @@ if(localStorage.getItem('agreed')!=='true'){
 <script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script>
 </div>
 
-<button class="settings-btn" onclick="openSettings()">⚙ 設定</button>
+<button class="settings-btn" onclick="openSettings()">⚙</button>
 
 <!-- 設定モーダル -->
 <div id="settings" class="modal hidden">
@@ -126,8 +197,6 @@ if(localStorage.getItem('agreed')!=='true'){
       </label>
     </p>
 
-    <p>同意状況：同意済み</p>
-
     <ul>
       <li><a href="terms.html" target="_blank">利用規約</a></li>
       <li><a href="terms.html#privacy" target="_blank">プライバシーポリシー</a></li>
@@ -138,85 +207,98 @@ if(localStorage.getItem('agreed')!=='true'){
 </div>
 
 <script>
-let LIMIT = 280;
+/* ===== お知らせ取得（GAS） ===== */
+fetch("https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec")
+  .then(r=>r.json())
+  .then(list=>{
+    const box=document.getElementById('noticeList');
+    if(!list.length){
+      box.textContent='現在お知らせはありません';
+      return;
+    }
+    box.innerHTML='';
+    list.forEach(n=>{
+      const d=document.createElement('div');
+      d.className='notice-item';
+      d.innerHTML=`
+        <div class="notice-date">${n.date}</div>
+        <div class="notice-title">${n.title}</div>
+        <div>${n.body.replace(/\n/g,'<br>')}</div>
+      `;
+      box.appendChild(d);
+    });
+  })
+  .catch(()=>{
+    document.getElementById('noticeList').textContent='お知らせを取得できませんでした';
+  });
 
-const text = document.getElementById('text');
-const char = document.getElementById('char');
-const line = document.getElementById('line');
-const remain = document.getElementById('remain');
+/* ===== カウント ===== */
+let LIMIT=280;
+const text=document.getElementById('text');
+const char=document.getElementById('char');
+const line=document.getElementById('line');
+const remain=document.getElementById('remain');
 
 function update(){
-  let v = text.value;
-  if(v.length > LIMIT){
-    v = v.slice(0, LIMIT);
-    text.value = v;
+  let v=text.value;
+  if(v.length>LIMIT){
+    v=v.slice(0,LIMIT);
+    text.value=v;
   }
-  char.textContent = v.length;
-  line.textContent = v.split('\n').length;
-  remain.textContent = LIMIT - v.length;
+  char.textContent=v.length;
+  line.textContent=v.split('\n').length;
+  remain.textContent=LIMIT-v.length;
 }
+text.addEventListener('input',update);
 
-text.addEventListener('input', update);
-
-// 上限切替
-function setLimit(n){
-  LIMIT = n;
-  update();
-}
+function setLimit(n){LIMIT=n;update();}
 function setCustom(){
-  const n = Number(document.getElementById('customLimit').value);
-  if(n > 0){
-    LIMIT = n;
-    update();
-  }
+  const n=Number(customLimit.value);
+  if(n>0){LIMIT=n;update();}
 }
 
-// 表示モード
-const view = localStorage.getItem('viewMode');
+/* ===== 表示モード ===== */
+const view=localStorage.getItem('viewMode');
 if(view){
-  document.documentElement.setAttribute('data-view', view);
+  document.documentElement.setAttribute('data-view',view);
 }
 
-// 設定
-const modal = document.getElementById('settings');
-const adsToggle = document.getElementById('adsToggle');
+/* ===== 設定 ===== */
+const modal=document.getElementById('settings');
+const adsToggle=document.getElementById('adsToggle');
 
 function openSettings(){
   modal.classList.remove('hidden');
   document.querySelectorAll('input[name=view]').forEach(r=>{
-    r.checked = r.value === localStorage.getItem('viewMode');
+    r.checked=r.value===localStorage.getItem('viewMode');
   });
-  adsToggle.checked = localStorage.getItem('showAds') !== 'false';
+  adsToggle.checked=localStorage.getItem('showAds')!=='false';
 }
-function closeSettings(){ modal.classList.add('hidden'); }
+function closeSettings(){modal.classList.add('hidden');}
 
 document.querySelectorAll('input[name=view]').forEach(r=>{
-  r.onchange = ()=>{
-    localStorage.setItem('viewMode', r.value);
-    document.documentElement.setAttribute('data-view', r.value);
+  r.onchange=()=>{
+    localStorage.setItem('viewMode',r.value);
+    document.documentElement.setAttribute('data-view',r.value);
   };
 });
 
-adsToggle.onchange = ()=>{
-  localStorage.setItem('showAds', adsToggle.checked ? 'true' : 'false');
+adsToggle.onchange=()=>{
+  localStorage.setItem('showAds',adsToggle.checked?'true':'false');
   location.reload();
 };
 
-// 保存
+/* ===== 保存 ===== */
 function download(){
-  const format = document.getElementById('format').value;
-  const now = new Date();
-  const name = `text_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.${format}`;
-
-  let content = text.value;
-  if(format === 'csv'){
-    content = `"${content.replace(/"/g,'""')}"`;
-  }
-
-  const blob = new Blob([content], {type:'text/plain;charset=utf-8;'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = name;
+  const f=format.value;
+  const d=new Date();
+  const name=`text_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}_${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}.${f}`;
+  let c=text.value;
+  if(f==='csv'){c=`"${c.replace(/"/g,'""')}"`;}
+  const b=new Blob([c],{type:'text/plain;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);
+  a.download=name;
   a.click();
   URL.revokeObjectURL(a.href);
 }

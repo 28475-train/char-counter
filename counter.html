@@ -2,249 +2,85 @@
 <html lang="ja" data-view="">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>文字数カウント & 保存ツール</title>
-
+<title>文字数カウント</title>
 <style>
-:root {
-  --bg:#f9f9f9;
-  --card:#ffffff;
-  --text:#1f2933;
-  --muted:#555;
-  --accent:#2563eb;
-}
-
-html[lang="ja"] body {
-  font-family:
-    "Hiragino Kaku Gothic ProN",
-    "Noto Sans JP",
-    "Yu Gothic",
-    system-ui,
-    sans-serif;
-}
-
-html[lang="en"] body {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Arial,
-    sans-serif;
-}
-
-body {
-  background:var(--bg);
-  color:var(--text);
-  max-width:720px;
-  margin:30px auto;
-  padding:20px;
-}
-
-.card {
-  background:var(--card);
-  border-radius:12px;
-  padding:20px;
-}
-
-textarea {
-  width:100%;
-  min-height:180px;
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  resize:none;
-  font-size:1em;
-}
-
-.counter {
-  text-align:right;
-  margin-top:15px;
-}
-
-.controls {
-  margin-top:15px;
-  font-size:0.9em;
-}
-
-.controls label {
-  display:block;
-  margin-bottom:6px;
-}
-
-button {
-  margin-top:10px;
-  padding:10px 14px;
-  border:none;
-  border-radius:8px;
-  background:var(--accent);
-  color:#fff;
-  cursor:pointer;
-}
-
-/* ===== 広告 ===== */
-.ad-sp { display:none; }
-.ad-pc { display:block; }
-
-html[data-view="sp"] .ad-sp { display:block; }
-html[data-view="sp"] .ad-pc { display:none; }
-
-@media (max-width:768px) {
-  html[data-view="auto"] .ad-sp { display:block; }
-  html[data-view="auto"] .ad-pc { display:none; }
-}
-
-.ad-hidden { display:none !important; }
-
-footer {
-  margin-top:30px;
-  font-size:0.85em;
-  text-align:center;
-  color:var(--muted);
-}
-footer a {
-  color:var(--accent);
-  text-decoration:none;
-}
+body{font-family:"Noto Sans JP",system-ui,sans-serif;max-width:720px;margin:30px auto;padding:20px}
+textarea{width:100%;min-height:160px;padding:12px}
+.ad-sp{display:none}.ad-pc{display:block}
+html[data-view="sp"] .ad-sp{display:block}
+html[data-view="sp"] .ad-pc{display:none}
+.settings-btn{position:fixed;bottom:20px;right:20px;
+padding:10px 14px;border:none;border-radius:50px;background:#2563eb;color:#fff}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);
+display:flex;align-items:center;justify-content:center}
+.modal.hidden{display:none}
+.box{background:#fff;border-radius:14px;padding:20px;max-width:420px;width:100%}
 </style>
 </head>
-
 <body>
 
-<h1>文字数カウント & 保存ツール</h1>
+<h1>文字数カウント</h1>
+<textarea id="t"></textarea>
+<p>文字数: <span id="c">0</span></p>
 
-<div class="card">
+<div class="ad-sp"><script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script></div>
+<div class="ad-pc"><script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script></div>
 
-<textarea id="textInput" placeholder="ここにテキストを入力してください..."></textarea>
+<button class="settings-btn" onclick="openSet()">⚙ 設定</button>
 
-<div class="counter">
-  <div>文字数: <span id="charCount">0</span></div>
-  <div>バイト数: <span id="byteCount">0</span></div>
-  <div>行数: <span id="lineCount">1</span></div>
+<div id="modal" class="modal hidden">
+<div class="box">
+<h2>ユーザー設定</h2>
+
+<p>表示モード</p>
+<label><input type="radio" name="view" value="sp"> スマホ</label><br>
+<label><input type="radio" name="view" value="pc"> PC</label>
+
+<p>広告表示 <input type="checkbox" id="ads"></p>
+
+<p id="agreeInfo"></p>
+
+<ul>
+<li><a href="terms.html" target="_blank">利用規約</a></li>
+<li><a href="terms.html#privacy" target="_blank">プライバシーポリシー</a></li>
+</ul>
+
+<button onclick="closeSet()">閉じる</button>
 </div>
-
-<div class="controls">
-  <label>
-    保存形式：
-    <select id="format">
-      <option value="txt">TXT</option>
-      <option value="md">Markdown</option>
-      <option value="csv">CSV</option>
-    </select>
-  </label>
-
-  <label>
-    文字コード：
-    <select id="encoding">
-      <option value="utf8bom">UTF-8（BOMあり）</option>
-      <option value="utf8">UTF-8（BOMなし）</option>
-      <option value="sjis">Shift_JIS</option>
-    </select>
-  </label>
 </div>
-
-<button id="downloadBtn">ダウンロード</button>
-
-<!-- 広告 -->
-<div class="ad-sp">
-<script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script>
-</div>
-<div class="ad-pc">
-<script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script>
-</div>
-
-</div>
-
-<footer>
-  <p>© 2025 Shinorail Lab / 篠ノ井乗務区</p>
-  <p><a href="terms.html">利用規約 / Privacy Policy</a></p>
-</footer>
 
 <script>
-'use strict';
+if(localStorage.getItem('agreed')!=='true'){location.href='index.html';}
 
-/* ===== 同意チェック ===== */
-if (localStorage.getItem('agreed') !== 'true') {
-  location.href = 'index.html';
+document.documentElement.setAttribute('data-view',
+ localStorage.getItem('viewMode')||'auto');
+
+const t=document.getElementById('t');
+const c=document.getElementById('c');
+t.oninput=()=>c.textContent=t.value.length;
+
+const modal=document.getElementById('modal');
+function openSet(){
+ modal.classList.remove('hidden');
+ document.querySelectorAll('input[name=view]').forEach(r=>{
+  r.checked=r.value===localStorage.getItem('viewMode');
+ });
+ ads.checked=localStorage.getItem('showAds')!=='false';
+ agreeInfo.textContent='同意済み';
 }
+function closeSet(){modal.classList.add('hidden');}
 
-/* ===== 表示モード ===== */
-document.documentElement.setAttribute(
-  'data-view',
-  localStorage.getItem('viewMode') || 'auto'
-);
-
-/* ===== 広告ON/OFF ===== */
-if (localStorage.getItem('showAds') === 'false') {
-  document.querySelectorAll('.ad-sp,.ad-pc')
-    .forEach(e => e.classList.add('ad-hidden'));
-}
-
-/* ===== 要素 ===== */
-const t = document.getElementById('textInput');
-const cc = document.getElementById('charCount');
-const bc = document.getElementById('byteCount');
-const lc = document.getElementById('lineCount');
-
-/* ===== 言語判定 ===== */
-function detectLang(s) {
-  return /[ぁ-んァ-ン一-龯]/.test(s) ? 'ja' : 'en';
-}
-
-/* ===== カウント ===== */
-function bytes(s) {
-  return new TextEncoder('utf-8').encode(s).length;
-}
-
-function update() {
-  const v = t.value;
-  cc.textContent = v.length;
-  bc.textContent = bytes(v);
-  lc.textContent = v.split('\n').length;
-  document.documentElement.lang = detectLang(v);
-}
-t.addEventListener('input', update);
-
-/* ===== 日時付きファイル名 ===== */
-function fileName(ext) {
-  const d = new Date();
-  const p = n => String(n).padStart(2,'0');
-  return `text_${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.${ext}`;
-}
-
-/* ===== Shift_JIS 変換 ===== */
-function toSJIS(str) {
-  return new TextEncoder('shift-jis').encode(str);
-}
-
-/* ===== ダウンロード ===== */
-document.getElementById('downloadBtn').onclick = () => {
-  let text = t.value;
-  const fmt = format.value;
-  const enc = encoding.value;
-
-  if (fmt === 'csv') {
-    text = `"${text.replace(/"/g,'""')}"`;
-  }
-
-  let blob;
-  if (enc === 'sjis') {
-    blob = new Blob([toSJIS(text)], { type:'text/plain' });
-  } else if (enc === 'utf8bom') {
-    blob = new Blob(['\uFEFF'+text], { type:'text/plain;charset=utf-8;' });
-  } else {
-    blob = new Blob([text], { type:'text/plain;charset=utf-8;' });
-  }
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = fileName(fmt);
-  a.click();
-  URL.revokeObjectURL(url);
+document.querySelectorAll('input[name=view]').forEach(r=>{
+ r.onchange=()=>{
+  localStorage.setItem('viewMode',r.value);
+  document.documentElement.setAttribute('data-view',r.value);
+ };
+});
+ads.onchange=()=>{
+ localStorage.setItem('showAds',ads.checked?'true':'false');
+ location.reload();
 };
 </script>
-
 </body>
 </html>

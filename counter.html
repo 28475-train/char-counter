@@ -3,84 +3,224 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>文字数カウント</title>
+<title>文字数カウント & 保存ツール</title>
+
 <style>
-body{font-family:"Noto Sans JP",system-ui,sans-serif;max-width:720px;margin:30px auto;padding:20px}
-textarea{width:100%;min-height:160px;padding:12px}
-.ad-sp{display:none}.ad-pc{display:block}
+body{
+  font-family:"Noto Sans JP",system-ui,sans-serif;
+  max-width:720px;
+  margin:30px auto;
+  padding:20px;
+}
+textarea{
+  width:100%;
+  min-height:160px;
+  padding:12px;
+  font-size:1em;
+}
+.controls button, select, input[type=number]{
+  margin:4px 2px;
+  padding:6px 10px;
+}
+.info p{margin:4px 0}
+
+.settings-btn{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  padding:10px 14px;
+  border:none;
+  border-radius:50px;
+  background:#2563eb;
+  color:#fff;
+}
+
+.ad-sp{display:none}
+.ad-pc{display:block}
 html[data-view="sp"] .ad-sp{display:block}
 html[data-view="sp"] .ad-pc{display:none}
-.settings-btn{position:fixed;bottom:20px;right:20px;
-padding:10px 14px;border:none;border-radius:50px;background:#2563eb;color:#fff}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);
-display:flex;align-items:center;justify-content:center}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 .modal.hidden{display:none}
-.box{background:#fff;border-radius:14px;padding:20px;max-width:420px;width:100%}
+
+.modal-box{
+  background:#fff;
+  border-radius:14px;
+  padding:20px;
+  max-width:420px;
+  width:100%;
+}
 </style>
 </head>
+
 <body>
 
-<h1>文字数カウント</h1>
-<textarea id="t"></textarea>
-<p>文字数: <span id="c">0</span></p>
+<script>
+if(localStorage.getItem('agreed')!=='true'){
+  location.href='index.html';
+}
+</script>
 
-<div class="ad-sp"><script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script></div>
-<div class="ad-pc"><script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script></div>
+<h1>文字数カウント & 保存ツール</h1>
 
-<button class="settings-btn" onclick="openSet()">⚙ 設定</button>
-
-<div id="modal" class="modal hidden">
-<div class="box">
-<h2>ユーザー設定</h2>
-
-<p>表示モード</p>
-<label><input type="radio" name="view" value="sp"> スマホ</label><br>
-<label><input type="radio" name="view" value="pc"> PC</label>
-
-<p>広告表示 <input type="checkbox" id="ads"></p>
-
-<p id="agreeInfo"></p>
-
-<ul>
-<li><a href="terms.html" target="_blank">利用規約</a></li>
-<li><a href="terms.html#privacy" target="_blank">プライバシーポリシー</a></li>
-</ul>
-
-<button onclick="closeSet()">閉じる</button>
+<!-- 上限設定 -->
+<div class="controls">
+  上限文字数：
+  <button onclick="setLimit(280)">280</button>
+  <button onclick="setLimit(500)">500</button>
+  <button onclick="setLimit(1000)">1000</button>
+  カスタム <input type="number" id="customLimit" min="1" style="width:80px">
+  <button onclick="setCustom()">設定</button>
 </div>
+
+<textarea id="text" placeholder="ここにテキストを入力してください..."></textarea>
+
+<div class="info">
+  <p>文字数: <span id="char">0</span></p>
+  <p>行数: <span id="line">1</span></p>
+  <p>残り文字数: <span id="remain">280</span></p>
+</div>
+
+<!-- 保存 -->
+<div class="controls">
+  保存形式：
+  <select id="format">
+    <option value="txt">TXT</option>
+    <option value="md">Markdown</option>
+    <option value="csv">CSV</option>
+  </select>
+  <button onclick="download()">保存</button>
+</div>
+
+<!-- 広告 -->
+<div class="ad-sp">
+<script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script>
+</div>
+
+<div class="ad-pc">
+<script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script>
+</div>
+
+<button class="settings-btn" onclick="openSettings()">⚙ 設定</button>
+
+<!-- 設定モーダル -->
+<div id="settings" class="modal hidden">
+  <div class="modal-box">
+    <h2>ユーザー設定</h2>
+
+    <p>表示モード</p>
+    <label><input type="radio" name="view" value="sp"> スマホ</label><br>
+    <label><input type="radio" name="view" value="pc"> PC</label>
+
+    <p>
+      <label>
+        <input type="checkbox" id="adsToggle">
+        広告を表示する
+      </label>
+    </p>
+
+    <p>同意状況：同意済み</p>
+
+    <ul>
+      <li><a href="terms.html" target="_blank">利用規約</a></li>
+      <li><a href="terms.html#privacy" target="_blank">プライバシーポリシー</a></li>
+    </ul>
+
+    <button onclick="closeSettings()">閉じる</button>
+  </div>
 </div>
 
 <script>
-if(localStorage.getItem('agreed')!=='true'){location.href='index.html';}
+let LIMIT = 280;
 
-document.documentElement.setAttribute('data-view',
- localStorage.getItem('viewMode')||'auto');
+const text = document.getElementById('text');
+const char = document.getElementById('char');
+const line = document.getElementById('line');
+const remain = document.getElementById('remain');
 
-const t=document.getElementById('t');
-const c=document.getElementById('c');
-t.oninput=()=>c.textContent=t.value.length;
-
-const modal=document.getElementById('modal');
-function openSet(){
- modal.classList.remove('hidden');
- document.querySelectorAll('input[name=view]').forEach(r=>{
-  r.checked=r.value===localStorage.getItem('viewMode');
- });
- ads.checked=localStorage.getItem('showAds')!=='false';
- agreeInfo.textContent='同意済み';
+function update(){
+  let v = text.value;
+  if(v.length > LIMIT){
+    v = v.slice(0, LIMIT);
+    text.value = v;
+  }
+  char.textContent = v.length;
+  line.textContent = v.split('\n').length;
+  remain.textContent = LIMIT - v.length;
 }
-function closeSet(){modal.classList.add('hidden');}
+
+text.addEventListener('input', update);
+
+// 上限切替
+function setLimit(n){
+  LIMIT = n;
+  update();
+}
+function setCustom(){
+  const n = Number(document.getElementById('customLimit').value);
+  if(n > 0){
+    LIMIT = n;
+    update();
+  }
+}
+
+// 表示モード
+const view = localStorage.getItem('viewMode');
+if(view){
+  document.documentElement.setAttribute('data-view', view);
+}
+
+// 設定
+const modal = document.getElementById('settings');
+const adsToggle = document.getElementById('adsToggle');
+
+function openSettings(){
+  modal.classList.remove('hidden');
+  document.querySelectorAll('input[name=view]').forEach(r=>{
+    r.checked = r.value === localStorage.getItem('viewMode');
+  });
+  adsToggle.checked = localStorage.getItem('showAds') !== 'false';
+}
+function closeSettings(){ modal.classList.add('hidden'); }
 
 document.querySelectorAll('input[name=view]').forEach(r=>{
- r.onchange=()=>{
-  localStorage.setItem('viewMode',r.value);
-  document.documentElement.setAttribute('data-view',r.value);
- };
+  r.onchange = ()=>{
+    localStorage.setItem('viewMode', r.value);
+    document.documentElement.setAttribute('data-view', r.value);
+  };
 });
-ads.onchange=()=>{
- localStorage.setItem('showAds',ads.checked?'true':'false');
- location.reload();
+
+adsToggle.onchange = ()=>{
+  localStorage.setItem('showAds', adsToggle.checked ? 'true' : 'false');
+  location.reload();
 };
+
+// 保存
+function download(){
+  const format = document.getElementById('format').value;
+  const now = new Date();
+  const name = `text_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.${format}`;
+
+  let content = text.value;
+  if(format === 'csv'){
+    content = `"${content.replace(/"/g,'""')}"`;
+  }
+
+  const blob = new Blob([content], {type:'text/plain;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 </script>
+
 </body>
 </html>

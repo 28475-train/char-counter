@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja" data-view="">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文字数カウント & 保存ツール</title>
+
+<style>
+/* ===== フォント定義 ===== */
+:root {
+  --bg:#f9f9f9;
+  --card:#ffffff;
+  --text:#1f2933;
+  --muted:#555;
+  --accent:#2563eb;
+}
+
+html[lang="ja"] body {
+  font-family:
+    "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP",
+    "Yu Gothic",
+    system-ui,
+    sans-serif;
+}
+
+html[lang="en"] body {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  max-width:720px;
+  margin:30px auto;
+  padding:20px;
+}
+
+/* ===== 広告 ===== */
+.ad-sp { display:none; }
+.ad-pc { display:block; }
+
+html[data-view="sp"] .ad-sp { display:block; }
+html[data-view="sp"] .ad-pc { display:none; }
+
+@media (max-width:768px) {
+  html[data-view="auto"] .ad-sp { display:block; }
+  html[data-view="auto"] .ad-pc { display:none; }
+}
+
+.ad-hidden { display:none !important; }
+
+/* ===== UI ===== */
+.card {
+  background:var(--card);
+  border-radius:12px;
+  padding:20px;
+}
+
+textarea {
+  width:100%;
+  min-height:160px;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  resize:none;
+  font-size:1em;
+}
+
+.counter {
+  text-align:right;
+  margin-top:15px;
+}
+
+button {
+  margin-top:10px;
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:var(--accent);
+  color:#fff;
+  cursor:pointer;
+}
+
+footer {
+  margin-top:30px;
+  font-size:0.85em;
+  text-align:center;
+  color:var(--muted);
+}
+footer a {
+  color:var(--accent);
+  text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>文字数カウント & 保存ツール</h1>
+
+<div class="card">
+  <textarea id="textInput" placeholder="ここにテキストを入力してください..."></textarea>
+
+  <div class="counter">
+    <div>文字数: <span id="charCount">0</span></div>
+    <div>バイト数: <span id="byteCount">0</span></div>
+    <div>行数: <span id="lineCount">1</span></div>
+  </div>
+
+  <button id="downloadBtn">テキストをダウンロード (.txt)</button>
+
+  <!-- 広告 -->
+  <div class="ad-sp">
+    <script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script>
+  </div>
+  <div class="ad-pc">
+    <script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 Shinorail Lab / 篠ノ井乗務区</p>
+  <p><a href="terms.html">利用規約 / Privacy Policy</a></p>
+</footer>
+
+<script>
+'use strict';
+
+/* ===== 同意チェック ===== */
+if (localStorage.getItem('agreed') !== 'true') {
+  location.href = 'index.html';
+}
+
+/* ===== 表示モード ===== */
+const view = localStorage.getItem('viewMode') || 'auto';
+document.documentElement.setAttribute('data-view', view);
+
+/* ===== 広告ON/OFF ===== */
+if (localStorage.getItem('showAds') === 'false') {
+  document.querySelectorAll('.ad-sp,.ad-pc')
+    .forEach(e => e.classList.add('ad-hidden'));
+}
+
+/* ===== 言語自動判定（中身で切替） ===== */
+const textInput = document.getElementById('textInput');
+function detectLang(text) {
+  return /[ぁ-んァ-ン一-龯]/.test(text) ? 'ja' : 'en';
+}
+
+/* ===== カウント ===== */
+const cc = document.getElementById('charCount');
+const bc = document.getElementById('byteCount');
+const lc = document.getElementById('lineCount');
+
+function bytes(s) {
+  return new TextEncoder('utf-8').encode(s).length;
+}
+
+function update() {
+  const v = textInput.value;
+  cc.textContent = v.length;
+  bc.textContent = bytes(v);
+  lc.textContent = v.split('\n').length;
+  document.documentElement.lang = detectLang(v);
+}
+
+textInput.addEventListener('input', update);
+
+/* ===== UTF-8 ダウンロード（文字化け防止） ===== */
+document.getElementById('downloadBtn').onclick = () => {
+  const text = textInput.value;
+  const blob = new Blob(
+    ['\uFEFF' + text],
+    { type: 'text/plain;charset=utf-8;' }
+  );
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'text.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+};
+</script>
+
+</body>
+</html>

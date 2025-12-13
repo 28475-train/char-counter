@@ -5,124 +5,68 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="language" content="ja">
-<title>文字数カウント & 保存ツール</title>
+<title>初期設定・同意</title>
 
 <style>
-:root {
-  --bg:#f9f9f9;
-  --card:#ffffff;
-  --text:#1f2933;
-  --muted:#555;
-  --accent:#2563eb;
-  --danger:#e53935;
-}
-
-[data-theme="dark"] {
-  --bg:#0f172a;
-  --card:#1e293b;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
-  --accent:#60a5fa;
-}
-
-* { box-sizing:border-box; }
-
 body {
-  font-family:
-    "Hiragino Kaku Gothic ProN",
-    "Noto Sans JP",
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  max-width:720px;
-  margin:30px auto;
-  padding:20px;
-}
-
-header {
+  font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",system-ui,sans-serif;
+  background:#f3f4f6;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin-bottom:20px;
-}
-
-header h1 {
-  font-size:1.6em;
+  justify-content:center;
+  height:100vh;
   margin:0;
 }
 
+.modal {
+  background:#ffffff;
+  border-radius:16px;
+  padding:24px;
+  max-width:420px;
+  width:100%;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+
+h1 {
+  margin-top:0;
+  font-size:1.4em;
+  text-align:center;
+}
+
+section {
+  margin-top:16px;
+}
+
 button {
-  padding:6px 10px;
+  width:100%;
+  margin-top:8px;
+  padding:12px;
   border:none;
-  border-radius:6px;
-  background:var(--accent);
+  border-radius:8px;
+  background:#2563eb;
   color:#fff;
+  font-size:1em;
   cursor:pointer;
 }
 
-.card {
-  background:var(--card);
-  border-radius:12px;
-  padding:20px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+button.sub {
+  background:#64748b;
 }
 
-.controls {
-  margin-bottom:10px;
-  font-size:0.95em;
+button.agree {
+  background:#16a34a;
+  font-weight:bold;
 }
 
-.controls button {
-  margin-right:5px;
-}
-
-.controls input {
-  width:90px;
-  padding:4px;
-}
-
-textarea {
-  width:100%;
-  min-height:150px;
-  padding:12px;
-  font-size:1em;
-  border-radius:8px;
-  border:1px solid #ccc;
-  resize:none;
-}
-
-.counter {
-  text-align:right;
-  margin-top:15px;
-}
-
-.ad-area {
-  margin:20px 0;
-  text-align:center;
-}
-
-/* 広告出し分け */
-.ad-sp { display:none; }
-.ad-pc { display:block; }
-
-@media (max-width:768px) {
-  .ad-sp { display:block; }
-  .ad-pc { display:none; }
-}
-
-footer {
-  margin-top:30px;
+.notice {
+  margin-top:12px;
   font-size:0.85em;
+  color:#555;
   text-align:center;
-  color:var(--muted);
 }
 
-footer a {
-  color:var(--accent);
+.notice a {
+  color:#2563eb;
   text-decoration:none;
 }
 </style>
@@ -130,110 +74,71 @@ footer a {
 
 <body>
 
-<header>
-  <h1>文字数カウント & 保存ツール</h1>
-  <button id="themeBtn">ダークモード</button>
-</header>
+<div class="modal">
+  <h1>ご利用にあたって</h1>
 
-<div class="card">
+  <section>
+    <p>表示モードを選択してください</p>
+    <button onclick="setView('sp')">📱 スマホ表示</button>
+    <button onclick="setView('pc')">🖥 PC表示</button>
+  </section>
 
-  <div class="controls">
-    上限文字数：
-    <button onclick="setLimit(280)">280</button>
-    <button onclick="setLimit(500)">500</button>
-    <button onclick="setLimit(1000)">1000</button>
-    カスタム
-    <input type="number" id="customLimit" min="1">
-    <button onclick="applyCustom()">設定</button>
+  <section>
+    <p>広告表示</p>
+    <button onclick="setAds(true)">広告を表示する</button>
+    <button onclick="setAds(false)">広告を表示しない</button>
+  </section>
+
+  <section>
+    <button class="agree" onclick="agree()">同意して利用開始</button>
+  </section>
+
+  <div class="notice">
+    <a href="terms.html">利用規約</a> /
+    <a href="terms.html#privacy">プライバシーポリシー</a> /
+    <a href="terms.html#ads">広告ポリシー</a>
   </div>
-
-  <textarea id="textInput" placeholder="ここにテキストを入力してください..."></textarea>
-
-  <div class="counter">
-    <div>文字数: <span id="charCount">0</span></div>
-    <div>バイト数: <span id="byteCount">0</span></div>
-    <div>行数: <span id="lineCount">1</span></div>
-    <div>残り文字数: <span id="remaining">280</span></div>
-  </div>
-
-  <!-- 広告 -->
-  <div class="ad-area">
-    <!-- スマホ用 -->
-    <div class="ad-sp">
-      <script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script>
-    </div>
-    <!-- PC用 -->
-    <div class="ad-pc">
-      <script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script>
-    </div>
-  </div>
-
 </div>
-
-<footer>
-  <p>© 2025 Shinorail Lab / 篠ノ井乗務区</p>
-  <p><a href="terms.html">利用規約 / Privacy Policy</a></p>
-</footer>
 
 <script>
 'use strict';
 
-/* 日本語固定 */
-document.documentElement.lang = 'ja';
+/* ===== 同意ログ送信先（指定URL） ===== */
+const GAS_URL =
+  "https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec";
 
-let MAX_CHARS = 280;
+let viewMode = null;
+let adsMode = null;
 
-const t = document.getElementById('textInput');
-const cc = document.getElementById('charCount');
-const bc = document.getElementById('byteCount');
-const lc = document.getElementById('lineCount');
-const rem = document.getElementById('remaining');
-
-function countBytes(str) {
-  return new TextEncoder('utf-8').encode(str).length;
+function setView(v) {
+  viewMode = v;
+  localStorage.setItem('viewMode', v);
 }
 
-function update() {
-  let v = t.value;
-  if (v.length > MAX_CHARS) {
-    v = v.slice(0, MAX_CHARS);
-    t.value = v;
+function setAds(v) {
+  adsMode = v;
+  localStorage.setItem('showAds', v ? 'true' : 'false');
+}
+
+function agree() {
+  if (!viewMode || adsMode === null) {
+    alert('すべて選択してください');
+    return;
   }
-  cc.textContent = v.length;
-  bc.textContent = countBytes(v);
-  lc.textContent = v.split('\n').length;
-  rem.textContent = MAX_CHARS - v.length;
+
+  localStorage.setItem('agreed', 'true');
+
+  /* 同意日時のみ送信 */
+  fetch(GAS_URL, { method:'POST', mode:'no-cors' });
+
+  location.href = 'counter.html';
 }
 
-t.addEventListener('input', update);
-
-function setLimit(n) {
-  MAX_CHARS = n;
-  update();
+/* 既に同意済みならスキップ */
+if (localStorage.getItem('agreed') === 'true') {
+  location.href = 'counter.html';
 }
-
-function applyCustom() {
-  const v = parseInt(document.getElementById('customLimit').value, 10);
-  if (v > 0) {
-    MAX_CHARS = v;
-    update();
-  }
-}
-
-/* ダークモード */
-let dark = false;
-document.getElementById('themeBtn').onclick = () => {
-  dark = !dark;
-  document.documentElement.setAttribute(
-    'data-theme',
-    dark ? 'dark' : 'light'
-  );
-  document.getElementById('themeBtn').textContent =
-    dark ? 'ライトモード' : 'ダークモード';
-};
 </script>
 
 </body>
 </html>
-
-

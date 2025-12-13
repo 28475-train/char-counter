@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="language" content="ja">
+<title>利用規約 / Privacy Policy</title>
+
+<style>
+:root {
+  --bg:#f9f9f9; --card:#fff; --text:#1f2933; --muted:#555; --accent:#2563eb;
+}
+[data-theme="dark"] {
+  --bg:#0f172a; --card:#1e293b; --text:#e5e7eb; --muted:#9ca3af; --accent:#60a5fa;
+}
+*{box-sizing:border-box;}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;
+  background:var(--bg); color:var(--text);
+  max-width:900px; margin:30px auto; padding:20px;
+}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+section{background:var(--card);border-radius:12px;padding:20px;margin-bottom:20px;}
+h2{border-bottom:1px solid #ccc;padding-bottom:5px;}
+footer{text-align:center;font-size:.85em;color:var(--muted);}
+footer a{color:var(--accent);text-decoration:none;}
+button{padding:6px 10px;border:none;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer;}
+</style>
+</head>
+
+<body>
+<header>
+  <h1>利用規約 / Privacy Policy</h1>
+  <button id="themeBtn">ダークモード</button>
+</header>
+
+<section>
+<h2>利用規約（日本語）</h2>
+<p>本ツールは非商用・個人利用に限り使用できます。</p>
+<p>商用利用、業務利用、広告収益を伴う利用は禁止します。</p>
+<p>外部リンク（Twitter 等）の内容について、制作者は責任を負いません。</p>
+</section>
+
+<section>
+<h2>Terms of Use (English)</h2>
+<p>This tool is provided for non-commercial personal use only.</p>
+<p>Commercial use, business use, or monetized use is strictly prohibited.</p>
+<p>The creator is not responsible for external linked websites.</p>
+</section>
+
+<section>
+<h2>プライバシーポリシー / Privacy Policy</h2>
+<p>入力されたテキストはサーバーへ送信されません。</p>
+<p>No personal data is collected or transmitted.</p>
+</section>
+
+<section>
+<h2>ライセンス / License</h2>
+<p>© 2025 Shinorail Lab / 篠ノ井乗務区</p>
+<p>
+Licensed under
+<a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">
+CC BY-NC 4.0
+</a>
+</p>
+</section>
+
+<footer>
+<p><a href="index.html">← ツールへ戻る</a></p>
+</footer>
+
+<script>
+'use strict';
+document.documentElement.lang='ja';
+let dark=false;
+document.getElementById('themeBtn').onclick=()=>{
+  dark=!dark;
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+};
+</script>
+</body>
+</html>

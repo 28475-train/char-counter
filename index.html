@@ -2,143 +2,53 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="language" content="ja">
 <title>初期設定・同意</title>
-
 <style>
-body {
-  font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",system-ui,sans-serif;
-  background:#f3f4f6;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
-  margin:0;
-}
-
-.modal {
-  background:#ffffff;
-  border-radius:16px;
-  padding:24px;
-  max-width:420px;
-  width:100%;
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
-}
-
-h1 {
-  margin-top:0;
-  font-size:1.4em;
-  text-align:center;
-}
-
-section {
-  margin-top:16px;
-}
-
-button {
-  width:100%;
-  margin-top:8px;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  background:#2563eb;
-  color:#fff;
-  font-size:1em;
-  cursor:pointer;
-}
-
-button.sub {
-  background:#64748b;
-}
-
-button.agree {
-  background:#16a34a;
-  font-weight:bold;
-}
-
-.notice {
-  margin-top:12px;
-  font-size:0.85em;
-  color:#555;
-  text-align:center;
-}
-
-.notice a {
-  color:#2563eb;
-  text-decoration:none;
-}
+body{font-family:"Noto Sans JP",system-ui,sans-serif;background:#f3f4f6;
+display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.box{background:#fff;padding:24px;border-radius:14px;max-width:420px;width:100%}
+button{width:100%;margin-top:8px;padding:12px;border:none;border-radius:8px;
+background:#2563eb;color:#fff;cursor:pointer}
+.agree{background:#16a34a;font-weight:bold}
+.links{text-align:center;font-size:.85em;margin-top:10px}
+.links a{color:#2563eb;text-decoration:none}
 </style>
 </head>
-
 <body>
+<div class="box">
+<h2>ご利用にあたって</h2>
 
-<div class="modal">
-  <h1>ご利用にあたって</h1>
+<p>表示モード</p>
+<button onclick="setView('sp')">📱 スマホ</button>
+<button onclick="setView('pc')">🖥 PC</button>
 
-  <section>
-    <p>表示モードを選択してください</p>
-    <button onclick="setView('sp')">📱 スマホ表示</button>
-    <button onclick="setView('pc')">🖥 PC表示</button>
-  </section>
+<p style="margin-top:12px">広告表示</p>
+<button onclick="setAds(true)">広告ON</button>
+<button onclick="setAds(false)">広告OFF</button>
 
-  <section>
-    <p>広告表示</p>
-    <button onclick="setAds(true)">広告を表示する</button>
-    <button onclick="setAds(false)">広告を表示しない</button>
-  </section>
+<button class="agree" onclick="agree()">同意して利用開始</button>
 
-  <section>
-    <button class="agree" onclick="agree()">同意して利用開始</button>
-  </section>
-
-  <div class="notice">
-    <a href="terms.html">利用規約</a> /
-    <a href="terms.html#privacy">プライバシーポリシー</a> /
-    <a href="terms.html#ads">広告ポリシー</a>
-  </div>
+<div class="links">
+<a href="terms.html">利用規約</a> /
+<a href="terms.html#privacy">プライバシーポリシー</a>
+</div>
 </div>
 
 <script>
-'use strict';
-
-/* ===== 同意ログ送信先（指定URL） ===== */
-const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec";
-
-let viewMode = null;
-let adsMode = null;
-
-function setView(v) {
-  viewMode = v;
-  localStorage.setItem('viewMode', v);
+const GAS_URL="https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec";
+let view=null, ads=null;
+function setView(v){view=v;localStorage.setItem('viewMode',v);}
+function setAds(v){ads=v;localStorage.setItem('showAds',v?'true':'false');}
+function agree(){
+ if(!view||ads===null){alert("すべて選択してください");return;}
+ localStorage.setItem('agreed','true');
+ fetch(GAS_URL,{method:'POST',mode:'no-cors'});
+ location.href='counter.html';
 }
-
-function setAds(v) {
-  adsMode = v;
-  localStorage.setItem('showAds', v ? 'true' : 'false');
-}
-
-function agree() {
-  if (!viewMode || adsMode === null) {
-    alert('すべて選択してください');
-    return;
-  }
-
-  localStorage.setItem('agreed', 'true');
-
-  /* 同意日時のみ送信 */
-  fetch(GAS_URL, { method:'POST', mode:'no-cors' });
-
-  location.href = 'counter.html';
-}
-
-/* 既に同意済みならスキップ */
-if (localStorage.getItem('agreed') === 'true') {
-  location.href = 'counter.html';
+if(localStorage.getItem('agreed')==='true'){
+ location.href='counter.html';
 }
 </script>
-
 </body>
 </html>

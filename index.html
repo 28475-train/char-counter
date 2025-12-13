@@ -9,10 +9,12 @@
 
 <style>
 :root {
-  --bg:#f9f9f9; --card:#fff; --text:#1f2933; --muted:#555; --accent:#2563eb;
+  --bg:#f9f9f9; --card:#fff; --text:#1f2933;
+  --muted:#555; --accent:#2563eb; --danger:#e53935;
 }
 [data-theme="dark"] {
-  --bg:#0f172a; --card:#1e293b; --text:#e5e7eb; --muted:#9ca3af; --accent:#60a5fa;
+  --bg:#0f172a; --card:#1e293b; --text:#e5e7eb;
+  --muted:#9ca3af; --accent:#60a5fa;
 }
 *{box-sizing:border-box;}
 body{
@@ -25,8 +27,12 @@ button{padding:6px 10px;border:none;border-radius:6px;background:var(--accent);c
 .card{background:var(--card);border-radius:12px;padding:20px;}
 textarea{width:100%;min-height:150px;padding:12px;border-radius:8px;border:1px solid #ccc;}
 .counter{text-align:right;margin-top:15px;}
+.controls{margin-bottom:10px;}
+.controls button{margin-right:5px;}
+input[type="number"]{width:90px;padding:5px;}
 footer{text-align:center;font-size:.85em;color:var(--muted);margin-top:30px;}
 footer a{color:var(--accent);text-decoration:none;}
+.warning{color:var(--danger);}
 </style>
 </head>
 
@@ -37,12 +43,26 @@ footer a{color:var(--accent);text-decoration:none;}
 </header>
 
 <div class="card">
+
+  <div class="controls">
+    上限文字数：
+    <button onclick="setLimit(280)">280</button>
+    <button onclick="setLimit(500)">500</button>
+    <button onclick="setLimit(1000)">1000</button>
+    カスタム
+    <input type="number" id="customLimit" min="1">
+    <button onclick="applyCustom()">設定</button>
+  </div>
+
   <textarea id="textInput" placeholder="ここにテキストを入力してください..."></textarea>
+
   <div class="counter">
     <div>文字数: <span id="charCount">0</span></div>
     <div>バイト数: <span id="byteCount">0</span></div>
     <div>行数: <span id="lineCount">1</span></div>
+    <div>残り文字数: <span id="remaining">280</span></div>
   </div>
+
 </div>
 
 <footer>
@@ -54,19 +74,44 @@ footer a{color:var(--accent);text-decoration:none;}
 'use strict';
 document.documentElement.lang='ja';
 
+let MAX_CHARS = 280;
+
 const t=document.getElementById('textInput');
 const cc=document.getElementById('charCount');
 const bc=document.getElementById('byteCount');
 const lc=document.getElementById('lineCount');
+const rem=document.getElementById('remaining');
 
 function bytes(s){return new TextEncoder('utf-8').encode(s).length;}
+
 function update(){
-  cc.textContent=t.value.length;
-  bc.textContent=bytes(t.value);
-  lc.textContent=t.value.split('\n').length;
+  let v=t.value;
+  if(v.length>MAX_CHARS){
+    v=v.slice(0,MAX_CHARS);
+    t.value=v;
+  }
+  cc.textContent=v.length;
+  bc.textContent=bytes(v);
+  lc.textContent=v.split('\n').length;
+  rem.textContent=MAX_CHARS-v.length;
 }
+
 t.addEventListener('input',update);
 
+function setLimit(n){
+  MAX_CHARS=n;
+  update();
+}
+
+function applyCustom(){
+  const v=parseInt(document.getElementById('customLimit').value,10);
+  if(v>0){
+    MAX_CHARS=v;
+    update();
+  }
+}
+
+// ダークモード
 let dark=false;
 document.getElementById('themeBtn').onclick=()=>{
   dark=!dark;
@@ -75,3 +120,4 @@ document.getElementById('themeBtn').onclick=()=>{
 </script>
 </body>
 </html>
+

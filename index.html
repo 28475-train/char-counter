@@ -1,11 +1,195 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>メンテナンス中</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文字数カウント & 保存ツール</title>
+<style>
+body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f9f9f9; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+h1 { text-align:center; font-size:1.6em; margin-bottom:20px; }
+textarea { width:100%; min-height:150px; padding:10px; font-size:1em; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; resize:none; overflow:hidden;}
+.counter { margin-top:15px; font-size:1.1em; line-height:1.6; text-align:right;}
+.counter span { font-weight:bold; color:#333; }
+.warning { color:red; font-weight:bold; }
+.settings { margin-bottom:15px; text-align:right;}
+input[type="number"] { width:100px; padding:5px; border-radius:6px; border:1px solid #ccc; font-size:1em;}
+button { margin-top:5px; margin-right:5px; padding:8px 15px; font-size:0.9em; border:none; border-radius:6px; cursor:pointer; background:#4CAF50; color:white; transition:0.3s;}
+button:hover { background:#45a049; }
+#recentButtons { margin-top:10px; text-align:right;}
+footer { margin-top:30px; padding-top:15px; border-top:1px solid #ccc; font-size:0.85em; color:#555; text-align:center;}
+footer a { color:#0077cc; text-decoration:none; margin:0 5px;}
+footer a:hover { text-decoration:underline;}
+.credit-section { margin-top:20px; padding:10px; background:#fff; border-radius:8px; border:1px solid #ddd; font-size:0.9em; color:#333;}
+.credit-section h2 { font-size:1.1em; margin-bottom:10px; text-align:center;}
+</style>
 </head>
 <body>
-    <h1>現在メンテナンス中です</h1>
-    <p>ご不便をおかけしますが、しばらくお待ちください。</p>
+<h1>文字数カウント & 保存ツール</h1>
+
+<div class="settings">
+  上限文字数: <input type="number" id="maxCharsInput" value="280" min="1"> 文字
+  <div style="margin-top:10px;">
+    <button id="set280Btn">280に設定</button>
+    <button id="set500Btn">500に設定</button>
+    <button id="set1000Btn">1000に設定</button>
+    <button id="setCustomBtn">カスタム設定</button>
+  </div>
+  <div id="recentButtons"></div>
+  <button id="clearRecentBtn" style="background:#f44336;">履歴を削除</button>
+</div>
+
+<textarea id="textInput" placeholder="ここにテキストを入力してください..."></textarea>
+<div class="counter">
+  文字数: <span id="charCount">0</span><br>
+  バイト数: <span id="byteCount">0</span><br>
+  行数: <span id="lineCount">1</span><br>
+  残り文字数: <span id="remaining">280</span>
+</div>
+
+<button id="saveBtn" style="background:#2196F3; margin-top:15px;">テキストを保存 (.txt)</button>
+<p style="font-size:0.85em; color:#555;">※保存のときは端末に保存され、サーバーには送信されません。</p>
+
+<div class="credit-section">
+<h2>制作者情報</h2>
+<p>© しのれーるらぼ / 制作者: 篠ノ井乗務区</p>
+<p>
+<a href="https://x.com/Shino_Rail" target="_blank">Twitter (Shino_Rail)</a> |
+<a href="https://x.com/shinorail_lab" target="_blank">Twitter (Lab)</a>
+</p>
+<p>
+<a href="http://sites.google.com/view/shinorail/" target="_blank">篠ノ井乗務区サイト</a> |
+<a href="https://sites.google.com/view/shinorail-lab/" target="_blank">しのれーるらぼサイト</a>
+</p>
+<p>Copyright 2025 制作 / All Rights Reserved / 無断転載禁止 / 利用は個人目的に限る / 商用利用禁止</p>
+<p><a href="https://sites.google.com/view/shinorail-lab/terms" target="_blank">利用規約 (日本語)</a> | <a href="https://sites.google.com/view/shinorail-lab/terms-of-use" target="_blank">Terms of Use (English)</a></p>
+</div>
+
+<footer>
+<p>このツールは文字数・バイト数・行数をカウントし、上限設定や保存も可能なシンプル文字数チェッカーです。</p>
+</footer>
+
+<script>
+const textInput = document.getElementById("textInput");
+const charCount = document.getElementById("charCount");
+const byteCount = document.getElementById("byteCount");
+const lineCount = document.getElementById("lineCount");
+const remaining = document.getElementById("remaining");
+const maxCharsInput = document.getElementById("maxCharsInput");
+
+const set280Btn = document.getElementById("set280Btn");
+const set500Btn = document.getElementById("set500Btn");
+const set1000Btn = document.getElementById("set1000Btn");
+const setCustomBtn = document.getElementById("setCustomBtn");
+const recentButtonsDiv = document.getElementById("recentButtons");
+const clearRecentBtn = document.getElementById("clearRecentBtn");
+const saveBtn = document.getElementById("saveBtn");
+
+let MAX_CHARS = parseInt(maxCharsInput.value, 10);
+let recentValues = JSON.parse(localStorage.getItem("recentMaxChars")) || [];
+
+function countBytes(str) {
+  return new TextEncoder().encode(str).length;
+}
+
+function updateCount() {
+  let text = textInput.value;
+  if (text.length > MAX_CHARS) {
+    text = text.substring(0, MAX_CHARS);
+    textInput.value = text;
+  }
+  const chars = text.length;
+  const bytes = countBytes(text);
+  const lines = text.split(/\n/).length;
+  const remain = MAX_CHARS - chars;
+
+  charCount.textContent = chars;
+  byteCount.textContent = bytes;
+  lineCount.textContent = lines;
+  remaining.textContent = remain;
+
+  if (remain < 0) remaining.classList.add("warning");
+  else remaining.classList.remove("warning");
+
+  // 自動リサイズ
+  textInput.style.height = "auto";
+  textInput.style.height = textInput.scrollHeight + "px";
+}
+
+function setMaxChars(value) {
+  MAX_CHARS = value;
+  maxCharsInput.value = value;
+  updateCount();
+  addRecentValue(value);
+}
+
+function addRecentValue(value) {
+  if (!recentValues.includes(value)) {
+    recentValues.unshift(value);
+    if (recentValues.length > 5) recentValues.pop();
+    localStorage.setItem("recentMaxChars", JSON.stringify(recentValues));
+    renderRecentButtons();
+  }
+}
+
+function renderRecentButtons() {
+  recentButtonsDiv.innerHTML = recentValues.length > 0 ? "最近使った上限: " : "";
+  recentValues.forEach(val => {
+    const btn = document.createElement("button");
+    btn.textContent = val + "に設定";
+    btn.addEventListener("click", () => setMaxChars(val));
+    recentButtonsDiv.appendChild(btn);
+  });
+}
+
+clearRecentBtn.addEventListener("click", () => {
+  if (confirm("履歴を本当に削除しますか？")) {
+    recentValues = [];
+    localStorage.removeItem("recentMaxChars");
+    renderRecentButtons();
+  }
+});
+
+maxCharsInput.addEventListener("input", () => {
+  MAX_CHARS = parseInt(maxCharsInput.value, 10) || 1;
+  updateCount();
+});
+
+set280Btn.addEventListener("click", () => setMaxChars(280));
+set500Btn.addEventListener("click", () => setMaxChars(500));
+set1000Btn.addEventListener("click", () => setMaxChars(1000));
+
+setCustomBtn.addEventListener("click", () => {
+  const custom = prompt("上限文字数を入力してください:", MAX_CHARS);
+  if (custom && !isNaN(custom) && custom > 0) setMaxChars(parseInt(custom,10));
+});
+
+saveBtn.addEventListener("click", () => {
+  let text = textInput.value;
+  text += "\n\n© しのれーるらぼ / 制作者: 篠ノ井乗務区\nAll Rights Reserved / 無断転載禁止 / 利用は個人目的に限る / 商用利用禁止";
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+
+  const now = new Date();
+  const timestamp = now.getFullYear().toString() +
+                    ("0" + (now.getMonth()+1)).slice(-2) +
+                    ("0" + now.getDate()).slice(-2) + "_" +
+                    ("0" + now.getHours()).slice(-2) +
+                    ("0" + now.getMinutes()).slice(-2) +
+                    ("0" + now.getSeconds()).slice(-2);
+  const randomNum = Math.floor(Math.random() * 10000);
+  a.download = `text_${timestamp}_${randomNum}.txt`;
+
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+textInput.addEventListener("input", updateCount);
+window.addEventListener("load", () => {
+  renderRecentButtons();
+  updateCount();
+});
+</script>
 </body>
 </html>

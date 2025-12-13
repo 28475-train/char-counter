@@ -7,7 +7,6 @@
 <title>文字数カウント & 保存ツール</title>
 
 <style>
-/* ===== フォント定義 ===== */
 :root {
   --bg:#f9f9f9;
   --card:#ffffff;
@@ -43,6 +42,47 @@ body {
   padding:20px;
 }
 
+.card {
+  background:var(--card);
+  border-radius:12px;
+  padding:20px;
+}
+
+textarea {
+  width:100%;
+  min-height:180px;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  resize:none;
+  font-size:1em;
+}
+
+.counter {
+  text-align:right;
+  margin-top:15px;
+}
+
+.controls {
+  margin-top:15px;
+  font-size:0.9em;
+}
+
+.controls label {
+  display:block;
+  margin-bottom:6px;
+}
+
+button {
+  margin-top:10px;
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:var(--accent);
+  color:#fff;
+  cursor:pointer;
+}
+
 /* ===== 広告 ===== */
 .ad-sp { display:none; }
 .ad-pc { display:block; }
@@ -56,38 +96,6 @@ html[data-view="sp"] .ad-pc { display:none; }
 }
 
 .ad-hidden { display:none !important; }
-
-/* ===== UI ===== */
-.card {
-  background:var(--card);
-  border-radius:12px;
-  padding:20px;
-}
-
-textarea {
-  width:100%;
-  min-height:160px;
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  resize:none;
-  font-size:1em;
-}
-
-.counter {
-  text-align:right;
-  margin-top:15px;
-}
-
-button {
-  margin-top:10px;
-  padding:10px 14px;
-  border:none;
-  border-radius:8px;
-  background:var(--accent);
-  color:#fff;
-  cursor:pointer;
-}
 
 footer {
   margin-top:30px;
@@ -107,23 +115,45 @@ footer a {
 <h1>文字数カウント & 保存ツール</h1>
 
 <div class="card">
-  <textarea id="textInput" placeholder="ここにテキストを入力してください..."></textarea>
 
-  <div class="counter">
-    <div>文字数: <span id="charCount">0</span></div>
-    <div>バイト数: <span id="byteCount">0</span></div>
-    <div>行数: <span id="lineCount">1</span></div>
-  </div>
+<textarea id="textInput" placeholder="ここにテキストを入力してください..."></textarea>
 
-  <button id="downloadBtn">テキストをダウンロード (.txt)</button>
+<div class="counter">
+  <div>文字数: <span id="charCount">0</span></div>
+  <div>バイト数: <span id="byteCount">0</span></div>
+  <div>行数: <span id="lineCount">1</span></div>
+</div>
 
-  <!-- 広告 -->
-  <div class="ad-sp">
-    <script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script>
-  </div>
-  <div class="ad-pc">
-    <script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script>
-  </div>
+<div class="controls">
+  <label>
+    保存形式：
+    <select id="format">
+      <option value="txt">TXT</option>
+      <option value="md">Markdown</option>
+      <option value="csv">CSV</option>
+    </select>
+  </label>
+
+  <label>
+    文字コード：
+    <select id="encoding">
+      <option value="utf8bom">UTF-8（BOMあり）</option>
+      <option value="utf8">UTF-8（BOMなし）</option>
+      <option value="sjis">Shift_JIS</option>
+    </select>
+  </label>
+</div>
+
+<button id="downloadBtn">ダウンロード</button>
+
+<!-- 広告 -->
+<div class="ad-sp">
+<script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script>
+</div>
+<div class="ad-pc">
+<script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script>
+</div>
+
 </div>
 
 <footer>
@@ -140,8 +170,10 @@ if (localStorage.getItem('agreed') !== 'true') {
 }
 
 /* ===== 表示モード ===== */
-const view = localStorage.getItem('viewMode') || 'auto';
-document.documentElement.setAttribute('data-view', view);
+document.documentElement.setAttribute(
+  'data-view',
+  localStorage.getItem('viewMode') || 'auto'
+);
 
 /* ===== 広告ON/OFF ===== */
 if (localStorage.getItem('showAds') === 'false') {
@@ -149,42 +181,66 @@ if (localStorage.getItem('showAds') === 'false') {
     .forEach(e => e.classList.add('ad-hidden'));
 }
 
-/* ===== 言語自動判定（中身で切替） ===== */
-const textInput = document.getElementById('textInput');
-function detectLang(text) {
-  return /[ぁ-んァ-ン一-龯]/.test(text) ? 'ja' : 'en';
-}
-
-/* ===== カウント ===== */
+/* ===== 要素 ===== */
+const t = document.getElementById('textInput');
 const cc = document.getElementById('charCount');
 const bc = document.getElementById('byteCount');
 const lc = document.getElementById('lineCount');
 
+/* ===== 言語判定 ===== */
+function detectLang(s) {
+  return /[ぁ-んァ-ン一-龯]/.test(s) ? 'ja' : 'en';
+}
+
+/* ===== カウント ===== */
 function bytes(s) {
   return new TextEncoder('utf-8').encode(s).length;
 }
 
 function update() {
-  const v = textInput.value;
+  const v = t.value;
   cc.textContent = v.length;
   bc.textContent = bytes(v);
   lc.textContent = v.split('\n').length;
   document.documentElement.lang = detectLang(v);
 }
+t.addEventListener('input', update);
 
-textInput.addEventListener('input', update);
+/* ===== 日時付きファイル名 ===== */
+function fileName(ext) {
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return `text_${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.${ext}`;
+}
 
-/* ===== UTF-8 ダウンロード（文字化け防止） ===== */
+/* ===== Shift_JIS 変換 ===== */
+function toSJIS(str) {
+  return new TextEncoder('shift-jis').encode(str);
+}
+
+/* ===== ダウンロード ===== */
 document.getElementById('downloadBtn').onclick = () => {
-  const text = textInput.value;
-  const blob = new Blob(
-    ['\uFEFF' + text],
-    { type: 'text/plain;charset=utf-8;' }
-  );
+  let text = t.value;
+  const fmt = format.value;
+  const enc = encoding.value;
+
+  if (fmt === 'csv') {
+    text = `"${text.replace(/"/g,'""')}"`;
+  }
+
+  let blob;
+  if (enc === 'sjis') {
+    blob = new Blob([toSJIS(text)], { type:'text/plain' });
+  } else if (enc === 'utf8bom') {
+    blob = new Blob(['\uFEFF'+text], { type:'text/plain;charset=utf-8;' });
+  } else {
+    blob = new Blob([text], { type:'text/plain;charset=utf-8;' });
+  }
+
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'text.txt';
+  a.download = fileName(fmt);
   a.click();
   URL.revokeObjectURL(url);
 };

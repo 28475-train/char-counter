@@ -9,34 +9,127 @@
 
 <style>
 :root {
-  --bg:#f9f9f9; --card:#fff; --text:#1f2933;
-  --muted:#555; --accent:#2563eb; --danger:#e53935;
+  --bg:#f9f9f9;
+  --card:#ffffff;
+  --text:#1f2933;
+  --muted:#555;
+  --accent:#2563eb;
+  --danger:#e53935;
 }
+
 [data-theme="dark"] {
-  --bg:#0f172a; --card:#1e293b; --text:#e5e7eb;
-  --muted:#9ca3af; --accent:#60a5fa;
+  --bg:#0f172a;
+  --card:#1e293b;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --accent:#60a5fa;
 }
-*{box-sizing:border-box;}
-body{
-  font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;
-  background:var(--bg); color:var(--text);
-  max-width:720px; margin:30px auto; padding:20px;
+
+* { box-sizing:border-box; }
+
+body {
+  font-family:
+    "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  max-width:720px;
+  margin:30px auto;
+  padding:20px;
 }
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-button{padding:6px 10px;border:none;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer;}
-.card{background:var(--card);border-radius:12px;padding:20px;}
-textarea{width:100%;min-height:150px;padding:12px;border-radius:8px;border:1px solid #ccc;}
-.counter{text-align:right;margin-top:15px;}
-.controls{margin-bottom:10px;}
-.controls button{margin-right:5px;}
-input[type="number"]{width:90px;padding:5px;}
-footer{text-align:center;font-size:.85em;color:var(--muted);margin-top:30px;}
-footer a{color:var(--accent);text-decoration:none;}
-.warning{color:var(--danger);}
+
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+header h1 {
+  font-size:1.6em;
+  margin:0;
+}
+
+button {
+  padding:6px 10px;
+  border:none;
+  border-radius:6px;
+  background:var(--accent);
+  color:#fff;
+  cursor:pointer;
+}
+
+.card {
+  background:var(--card);
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.controls {
+  margin-bottom:10px;
+  font-size:0.95em;
+}
+
+.controls button {
+  margin-right:5px;
+}
+
+.controls input {
+  width:90px;
+  padding:4px;
+}
+
+textarea {
+  width:100%;
+  min-height:150px;
+  padding:12px;
+  font-size:1em;
+  border-radius:8px;
+  border:1px solid #ccc;
+  resize:none;
+}
+
+.counter {
+  text-align:right;
+  margin-top:15px;
+}
+
+.ad-area {
+  margin:20px 0;
+  text-align:center;
+}
+
+/* 広告出し分け */
+.ad-sp { display:none; }
+.ad-pc { display:block; }
+
+@media (max-width:768px) {
+  .ad-sp { display:block; }
+  .ad-pc { display:none; }
+}
+
+footer {
+  margin-top:30px;
+  font-size:0.85em;
+  text-align:center;
+  color:var(--muted);
+}
+
+footer a {
+  color:var(--accent);
+  text-decoration:none;
+}
 </style>
 </head>
 
 <body>
+
 <header>
   <h1>文字数カウント & 保存ツール</h1>
   <button id="themeBtn">ダークモード</button>
@@ -63,6 +156,18 @@ footer a{color:var(--accent);text-decoration:none;}
     <div>残り文字数: <span id="remaining">280</span></div>
   </div>
 
+  <!-- 広告 -->
+  <div class="ad-area">
+    <!-- スマホ用 -->
+    <div class="ad-sp">
+      <script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script>
+    </div>
+    <!-- PC用 -->
+    <div class="ad-pc">
+      <script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script>
+    </div>
+  </div>
+
 </div>
 
 <footer>
@@ -72,52 +177,63 @@ footer a{color:var(--accent);text-decoration:none;}
 
 <script>
 'use strict';
-document.documentElement.lang='ja';
+
+/* 日本語固定 */
+document.documentElement.lang = 'ja';
 
 let MAX_CHARS = 280;
 
-const t=document.getElementById('textInput');
-const cc=document.getElementById('charCount');
-const bc=document.getElementById('byteCount');
-const lc=document.getElementById('lineCount');
-const rem=document.getElementById('remaining');
+const t = document.getElementById('textInput');
+const cc = document.getElementById('charCount');
+const bc = document.getElementById('byteCount');
+const lc = document.getElementById('lineCount');
+const rem = document.getElementById('remaining');
 
-function bytes(s){return new TextEncoder('utf-8').encode(s).length;}
-
-function update(){
-  let v=t.value;
-  if(v.length>MAX_CHARS){
-    v=v.slice(0,MAX_CHARS);
-    t.value=v;
-  }
-  cc.textContent=v.length;
-  bc.textContent=bytes(v);
-  lc.textContent=v.split('\n').length;
-  rem.textContent=MAX_CHARS-v.length;
+function countBytes(str) {
+  return new TextEncoder('utf-8').encode(str).length;
 }
 
-t.addEventListener('input',update);
+function update() {
+  let v = t.value;
+  if (v.length > MAX_CHARS) {
+    v = v.slice(0, MAX_CHARS);
+    t.value = v;
+  }
+  cc.textContent = v.length;
+  bc.textContent = countBytes(v);
+  lc.textContent = v.split('\n').length;
+  rem.textContent = MAX_CHARS - v.length;
+}
 
-function setLimit(n){
-  MAX_CHARS=n;
+t.addEventListener('input', update);
+
+function setLimit(n) {
+  MAX_CHARS = n;
   update();
 }
 
-function applyCustom(){
-  const v=parseInt(document.getElementById('customLimit').value,10);
-  if(v>0){
-    MAX_CHARS=v;
+function applyCustom() {
+  const v = parseInt(document.getElementById('customLimit').value, 10);
+  if (v > 0) {
+    MAX_CHARS = v;
     update();
   }
 }
 
-// ダークモード
-let dark=false;
-document.getElementById('themeBtn').onclick=()=>{
-  dark=!dark;
-  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+/* ダークモード */
+let dark = false;
+document.getElementById('themeBtn').onclick = () => {
+  dark = !dark;
+  document.documentElement.setAttribute(
+    'data-theme',
+    dark ? 'dark' : 'light'
+  );
+  document.getElementById('themeBtn').textContent =
+    dark ? 'ライトモード' : 'ダークモード';
 };
 </script>
+
 </body>
 </html>
+
 

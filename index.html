@@ -14,6 +14,7 @@
 <meta property="og:site_name" content="文字数カウントツール">
 <meta name="twitter:card" content="summary_large_image">
 <style>
+/* index.html固有のスタイル */
 body{font-family:"Noto Sans JP",system-ui,sans-serif;
 max-width:720px;margin:30px auto;padding:20px; text-align:center;}
 .agreement-card{
@@ -35,7 +36,8 @@ max-width:720px;margin:30px auto;padding:20px; text-align:center;}
   padding:12px;
   margin-top:20px;
   background:var(--accent);
-  color:#fff;
+  /* color:#fffをCSS変数に変更し、テーマが反映されるように調整 */
+  color: var(--card); 
   font-weight:bold;
   border:none;
   border-radius:8px;

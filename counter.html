@@ -3,71 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>【リアルタイム】文字数カウント・行数計測ツール | ファイル保存機能付き</title>
+<title>リアルタイム 文字数カウント 行数計測ツール ファイル保存機能付き</title>
 <meta name="description" content="リアルタイムで文字数と行数を即座に計測する無料の文字数カウントツール。Twitter/SNS向けに文字数制限も設定可能。TXT, Markdown, CSV形式でのファイル保存に対応。">
-
 <link rel="stylesheet" href="style.css">
-
 </head>
-
-<body data-theme="light_green"> <script>
-// 制限アクセス数 (1000アクセスで制限)
-const ACCESS_LIMIT = 1000;
+<body data-theme="light_green">
+<script>
 const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP3bBp_wdlo-5k_Wuag1dH0D3cuUg5pYqLf6E2cf2L1NcIY476DqyHw/exec"; 
-
-
-/* ===== 待機ページへのリダイレクトチェック ===== */
-async function checkAccessForWaiting() {
-    try {
-        const response = await fetch(ACCESS_GAS_URL);
-        if (!response.ok) {
-            console.error("GASアクセスエラー。待機ページチェックをスキップします。");
-            return; 
-        }
-        const data = await response.json();
-        const accessCount = data.count || 0;
-
-        // アクセス数が制限を超えていたら待機ページへリダイレクト
-        if (accessCount > ACCESS_LIMIT) {
-            location.href = 'pages/waiting.html';
-        }
-    } catch (error) {
-        console.error('アクセス数チェック中にエラーが発生しました:', error);
-    }
-}
-
-
-/* ===== テーマ設定の適用 (CSS変数切り替え) ===== */
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme) {
     document.body.setAttribute('data-theme', savedTheme);
 }
-
-/* 初回同意チェック */
 if(localStorage.getItem('agreed')!=='true'){
   location.href='index.html';
 }
 </script>
-
-<script>
-// ページロード時に待機チェックを実行
-window.addEventListener('load', checkAccessForWaiting);
-</script>
-
-
-<h1>文字数カウント & 保存ツール</h1>
-
+<h1>文字数カウント 保存ツール</h1>
 <div style="text-align:right; font-size:0.9em; margin-bottom:16px;">
   訪問回数: <span id="accessCounter" style="font-weight:bold;">読み込み中...</span>
 </div>
-
 <div class="notice">
   <strong>お知らせ</strong>
   <div id="noticeList">読み込み中...</div>
 </div>
-
 <div class="card">
-
 <div class="controls">
   上限文字数：
   <button onclick="setLimit(280)">280</button>
@@ -77,15 +36,12 @@ window.addEventListener('load', checkAccessForWaiting);
   <input type="number" id="customLimit" min="1" style="width:80px">
   <button onclick="setCustom()">設定</button>
 </div>
-
 <textarea id="text" placeholder="ここにテキストを入力してください..."></textarea>
-
 <div class="info">
   <p>文字数: <span id="char">0</span></p>
   <p>行数: <span id="line">1</span></p>
   <p>残り文字数: <span id="remain">280</span></p>
 </div>
-
 <div class="controls">
   保存形式：
   <select id="format">
@@ -96,21 +52,13 @@ window.addEventListener('load', checkAccessForWaiting);
   <button class="save-btn" onclick="download()">保存</button>
   <button class="clear-btn" onclick="clearText()">すべてクリア</button>
 </div>
-
 </div>
-
 <div id="ad-area">
 <script src="https://adm.shinobi.jp/o/908d65c8b7bcdd909305dd25f407426f"></script>
 </div>
-
-
 <a href="settings.html" class="settings-btn">⚙</a>
-
-
 <script>
-/* ===== アクセスカウンター (GAS連携) ===== */
 const accessCounterElement = document.getElementById('accessCounter');
-
 function fetchAccessCount() {
   fetch(ACCESS_GAS_URL)
     .then(response => {
@@ -121,7 +69,6 @@ function fetchAccessCount() {
     })
     .then(data => {
       if (data && data.count !== undefined) {
-        // カウントを3桁区切りで表示
         accessCounterElement.textContent = data.count.toLocaleString();
       } else {
         accessCounterElement.textContent = 'エラー';
@@ -132,12 +79,7 @@ function fetchAccessCount() {
       accessCounterElement.textContent = '取得失敗';
     });
 }
-
-// ページロード時にカウンターを読み込む
 window.addEventListener('load', fetchAccessCount);
-
-
-/* ===== お知らせ取得（GAS） ===== */
 fetch("https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec")
   .then(r=>r.json())
   .then(list=>{
@@ -161,26 +103,20 @@ fetch("https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5
   .catch(()=>{
     document.getElementById('noticeList').textContent='お知らせを取得できませんでした';
   });
-
-/* ===== カウント ===== */
-let LIMIT = 280; // 初期値を280に設定
+let LIMIT = 280;
 const text = document.getElementById('text');
 const char = document.getElementById('char');
 const line = document.getElementById('line');
 const remain = document.getElementById('remain');
 const customLimitInput = document.getElementById('customLimit');
-
 function update() {
   const v = text.value;
   const currentLength = v.length;
   const currentLines = v.split('\n').length;
   const remainingCount = LIMIT - currentLength;
-
   char.textContent = currentLength;
   line.textContent = currentLines;
   remain.textContent = remainingCount;
-
-  // 制限を超えた場合に色を変更（自動切り捨ては行わない）
   if (remainingCount < 0) {
     remain.style.color = 'red';
     remain.style.fontWeight = 'bold';
@@ -189,10 +125,7 @@ function update() {
     remain.style.fontWeight = '';
   }
 }
-
-// 初期設定とイベントリスナーの設定
 function initializeCounter() {
-  // 保存されたカスタム制限値があれば読み込む
   const storedLimit = localStorage.getItem('charLimit');
   if (storedLimit && !isNaN(storedLimit) && Number(storedLimit) > 0) {
     LIMIT = Number(storedLimit);
@@ -200,17 +133,15 @@ function initializeCounter() {
   } else {
      customLimitInput.value = LIMIT;
   }
-  update(); // ページロード時に一度カウントを更新
+  update();
   text.addEventListener('input', update);
 }
-
 function setLimit(n) {
   LIMIT = n;
-  localStorage.setItem('charLimit', n); // 制限値を保存
-  customLimitInput.value = n; // カスタム入力欄を更新
+  localStorage.setItem('charLimit', n);
+  customLimitInput.value = n;
   update();
 }
-
 function setCustom() {
   const n = Number(customLimitInput.value);
   if (n > 0) {
@@ -219,67 +150,38 @@ function setCustom() {
     alert('上限文字数には1以上の数字を入力してください。');
   }
 }
-
-// ページロード時に初期化関数を呼び出す
 window.addEventListener('load', initializeCounter);
-
-
-/* ===== すべてクリア機能 ===== */
 function clearText() {
   if (confirm('入力内容をすべて消去してもよろしいですか？この操作は元に戻せません。')) {
     text.value = '';
-    update(); // カウントをリセット
+    update();
   }
 }
-
-
-/* ===== 表示モード / 広告設定の初期読み込み ===== */
-// 広告設定はsettings.htmlで変更され、counter.htmlは読み取り専用になる
 const view = localStorage.getItem('viewMode');
 if (view) {
   document.documentElement.setAttribute('data-view', view);
 }
-
 const ads = localStorage.getItem('showAds');
-// 広告非表示設定がされている場合、広告エリアを非表示にする
 if (ads === 'false') {
     const adArea = document.getElementById('ad-area');
     if (adArea) {
         adArea.style.display = 'none';
     }
 }
-// <html>タグのdata-ads属性は、CSSの広告制御のために残します。
 document.documentElement.setAttribute('data-ads', ads === 'false' ? 'false' : 'true');
-
-
-/* ===== 保存（文字化け対策済み） ===== */
 function download(){
   const f = document.getElementById('format').value;
   const d = new Date();
-  
-  // ファイル名の生成
   const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const timeStr = `${String(d.getHours()).padStart(2, '0')}${String(d.getMinutes()).padStart(2, '0')}`;
   const name = `text_${dateStr}_${timeStr}.${f}`;
-  
   let c = text.value;
-  
-  // CSV形式の処理
   if (f === 'csv') {
-      // 引用符を二重化し、全体を引用符で囲む
       c = `"${c.replace(/"/g, '""')}"`; 
   }
-  
-  // 1. BOM (Byte Omark Mark) の追加
-  // Windows環境での文字化けを防ぐため、UTF-8 BOM付きにする
   const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-  
-  // 2. テキストコンテンツの生成
   const textBlob = new Blob([c], {type: 'text/plain;charset=utf-8;'});
-  
-  // 3. BOMとテキストコンテンツを結合
   const b = new Blob([bom, textBlob], {type: 'text/plain;charset=utf-8'});
-
   const a = document.createElement('a');
   a.href = URL.createObjectURL(b);
   a.download = name;
@@ -287,6 +189,6 @@ function download(){
   URL.revokeObjectURL(a.href);
 }
 </script>
-
 </body>
 </html>
+    

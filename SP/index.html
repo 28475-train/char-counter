@@ -1,31 +1,159 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-ads="true">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SP版 トップ</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>【SP版】トップページ | ツール</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+/* SP版固有のスタイル */
+.tool-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px; /* SP版に合わせてパディング調整 */
+}
+
+.tool-item {
+    background: var(--card);
+    padding: 15px; /* SP版に合わせてパディング調整 */
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: background 0.2s;
+    border: 1px solid var(--border);
+}
+
+.tool-item:active {
+    background: var(--accent-light);
+}
+
+.tool-item a {
+    display: block;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.tool-item h2 {
+    margin-top: 0;
+    color: var(--accent);
+    font-size: 1.3em; /* SP版に合わせてフォントサイズ調整 */
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 5px;
+}
+
+.tool-item p {
+    margin-bottom: 0;
+    color: var(--text-soft);
+    font-size: 0.9em;
+}
+
+h1 {
+    font-size: 1.8em;
+    padding: 0 15px;
+}
+</style>
 </head>
-<body>
+<body data-theme="light_green">
 <script>
-// SP/PC振り分け判定
+// --- バージョン情報 ---
+const APP_VERSION = "v1.2.0"; 
+// ----------------------
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (!isMobile) { location.href = '../index.html'; } // PCにリダイレクト
 
-// PCから誤ってアクセスされた場合のチェック
-if (!isMobile) {
-    location.href = '../counter.html'; // PC版カウンターへ戻す
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+
+// テーマの適用
+function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
 }
 
-// 親の index.html から同意を得てきたか確認
-if (!document.referrer.includes('../index.html')) {
-    location.href = '../index.html'; // 同意画面に戻す
+window.onload = function() { 
+    document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
+    
+    // テーマのロードと適用
+    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
+    applyTheme(savedTheme);
 }
-
-
-// 同意済みSPユーザーは SP版カウンターへリダイレクト
-location.href = 'counter.html';
-
-// 念のため、リダイレクトが行われなかった場合の表示
-document.write('<p style="text-align:center; padding-top: 50px;">SP版カウンターページへ移動しています...</p>');
 </script>
+
+<div class="main-content-area">
+
+    <header class="header">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <a href="index.html" class="header-title">ツールボックス (SP版)</a>
+    </header>
+
+    <div class="top-ad-header" style="height: 50px;">
+        <div id="ad-area-top-sp">
+            <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+        </div>
+    </div>
+
+    <nav class="side-nav" id="sideNav">
+        <a href="counter.html">📝 文字数カウント</a> 
+        <a href="roulette.html">🎲 ルーレット</a> 
+        <a href="settings.html">⚙ 設定</a>
+        <a href="help.html">ヘルプ</a>
+        <a href="about.html">制作者</a>
+    </nav>
+    
+    <div class="content-wrapper">
+
+        <h1>多機能ツールボックスへようこそ</h1>
+        <p style="color: var(--text-soft); padding: 0 15px;">使用したいツールを選択してください。全てのデータはブラウザ内に保存されます。</p>
+
+        <div class="tool-list">
+            
+            <div class="tool-item">
+                <a href="counter.html">
+                    <h2>📝 文字数カウント</h2>
+                    <p>リアルタイムで文字数、行数、バイト数を測定します。</p>
+                </a>
+            </div>
+
+            <div class="tool-item">
+                <a href="roulette.html">
+                    <h2>🎲 ルーレット・目標カウントダウン</h2>
+                    <p>目標設定とルーレット機能を組み合わせた便利ツールです。</p>
+                </a>
+            </div>
+
+            <div class="tool-item">
+                <a href="settings.html">
+                    <h2>⚙ 設定</h2>
+                    <p>テーマカラーの変更、ルーレット目標の設定、データ管理を行います。</p>
+                </a>
+            </div>
+        </div>
+
+        <h2 style="padding: 0 15px; margin-top: 40px; font-size: 1.3em; border-bottom: 2px solid var(--accent-light);">その他</h2>
+        <div class="tool-list" style="padding-top: 0;">
+            <div class="tool-item">
+                <a href="help.html">
+                    <h2>ヘルプ</h2>
+                    <p>ツールの使い方や機能の詳細を確認できます。</p>
+                </a>
+            </div>
+            <div class="tool-item">
+                <a href="about.html">
+                    <h2>制作者</h2>
+                    <p>制作者情報と著作権表示を確認できます。</p>
+                </a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<div class="bottom-ad-footer" style="height: 50px;">
+    <div id="ad-area-bottom-sp">
+        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+    </div>
+</div>
+
+<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
+    <p>Version <span id="appVersionDisplay"></span></p>
+</footer>
 </body>
 </html>

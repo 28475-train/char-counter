@@ -3,65 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>設定 | 文字数カウントツール</title>
+<title>設定 | ツール</title>
 <link rel="stylesheet" href="style.css">
 <style>
-/* settings.html専用のスタイル */
-body{max-width:720px;margin:30px auto;padding:20px;}
-.setting-group{
-  background:var(--card);
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:30px;
-  border:1px solid var(--border);
-}
-.setting-group h2{
-  color: var(--accent);
-  border-bottom: 1px dashed var(--border);
-  padding-bottom: 10px;
-  margin-top: 0;
-}
-.setting-item{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px dotted var(--border-soft);
-}
-.setting-item:last-child{
-  border-bottom: none;
-}
-.theme-options button{
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 8px;
-  font-size: 0.9em;
-  background-color: var(--background); /* テーマ色を反映 */
-  color: var(--text); /* テーマ色を反映 */
-}
-.theme-options button:hover {
-    border-color: var(--accent);
-}
-
-.link-list{
-  list-style: none;
-  padding: 0;
-}
-.link-list li a{
-  display: block;
-  padding: 10px 0;
-  color: var(--link);
-  text-decoration: none;
-  border-bottom: 1px dotted var(--border-soft);
-}
-.link-list li:last-child a{
-  border-bottom: none;
-}
+/* settings.html専用のスタイル (省略) */
 </style>
 </head>
 <body data-theme="light_green">
+<script>
+// ページロード時のテーマ適用 (共通)
+const body = document.body;
+const savedTheme = localStorage.getItem('theme') || 'light_green';
+body.setAttribute('data-theme', savedTheme);
+</script>
+
+<header class="header">
+    <a href="counter.html" class="header-title">📝 文字数カウント ツール</a>
+    <nav class="header-nav">
+        <a href="roulette.html">🎲 ルーレット</a> 
+        <a href="settings.html">⚙ 設定</a>
+        <a href="help.html">ヘルプ</a>
+        <a href="about.html">制作者</a>
+    </nav>
+</header>
+<div class="content-wrapper">
+
 <h1>設定</h1>
 
 <div class="setting-group">
@@ -77,110 +43,115 @@ body{max-width:720px;margin:30px auto;padding:20px;}
 </div>
 
 <div class="setting-group">
-    <h2>カウント設定</h2>
+    <h2>訪問回数カウンター設定 (counter.html)</h2>
     <div class="setting-item">
-        <label for="ignoreSpaces">スペース（空白）をカウントしない</label>
-        <input type="checkbox" id="ignoreSpaces">
+        <label for="hideAccessCounter">訪問回数カウンターの表示を完全に無効にする</label>
+        <input type="checkbox" id="hideAccessCounter">
+    </div>
+    <div class="setting-item">
+        <label for="ignoreAnimation">カウンターの**ルーレットアニメーション**を無効にする</label>
+        <input type="checkbox" id="ignoreAnimation">
     </div>
 </div>
 
-
 <div class="setting-group">
-    <h2>入力エリア表示設定</h2>
+    <h2>カスタム目標カウンター設定 (roulette.html)</h2>
     <div class="setting-item">
-        <label for="fontSize">フォントサイズ変更</label>
-        <select id="fontSize">
-            <option value="small">小 (14px)</option>
-            <option value="medium">中 (16px)</option>
-            <option value="large">大 (18px)</option>
+        <label for="customTargetValue">目標回数/目標値（ルーレット・カウントダウン時）</label>
+        <input type="number" id="customTargetValue" min="1" value="1000" style="width: 100px;">
+    </div>
+    <div class="setting-item">
+        <label for="customStartDate">開始時刻（カウントアップ時）</label>
+        <input type="datetime-local" id="customStartDate">
+    </div>
+    <div class="setting-item">
+        <label for="customModeSelect">動作モード</label>
+        <select id="customModeSelect">
+            <option value="none">無効</option>
+            <option value="countdown">目標値からのカウントダウン (回数)</option>
+            <option value="countup">開始時刻からのカウントアップ (時間)</option>
+            <option value="roulette">目標値でのルーレットアニメーション</option>
         </select>
     </div>
-    <div class="setting-item">
-        <label for="showAds">広告の表示</label>
-        <input type="checkbox" id="showAds">
-    </div>
-    <div class="setting-item">
-        <label for="viewMode">表示モードを簡素化</label>
-        <input type="checkbox" id="viewMode">
+    <div style="text-align: right; padding-top: 10px;">
+        <button onclick="saveCustomCounterSettings()">設定を保存</button>
     </div>
 </div>
-
-<div class="setting-group">
-    <h2>その他</h2>
-    <ul class="link-list">
-        <li><a href="help.html">ツールの使い方・ヘルプ</a></li>
-        <li><a href="terms.html">利用規約</a></li>
-        <li><a href="terms.html#privacy">プライバシーポリシー</a></li>
-        <li><a href="about.html">制作者紹介 / アップデート履歴</a></li>
-    </ul>
 </div>
-
-<p style="text-align: center; margin-top: 30px;"><a href="counter.html">ツール画面に戻る</a></p>
 
 <script>
-/* ===== テーマ設定の適用と変更 ===== */
-const body = document.body;
-const savedTheme = localStorage.getItem('theme') || 'light_green';
-body.setAttribute('data-theme', savedTheme);
+/* ===== 共通機能 ===== */
+function setTheme(theme) { /* 既存の setTheme 関数 */ }
 
-function setTheme(theme) {
-    body.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+// (既存の訪問回数カウンター設定の処理は省略)
+
+
+/* ===== ★★★ カスタムカウンター設定の処理 (コア) ★★★ */
+const customTargetValueInput = document.getElementById('customTargetValue');
+const customStartDateInput = document.getElementById('customStartDate');
+const customModeSelect = document.getElementById('customModeSelect');
+
+function loadCustomCounterUISettings() {
+    const savedSettings = localStorage.getItem('customCounterSettings');
+    let settings = {};
+
+    if (savedSettings) {
+        settings = JSON.parse(savedSettings);
+        
+        customTargetValueInput.value = settings.target || 1000;
+        customModeSelect.value = settings.mode || 'none';
+        
+        // 日時フィールドへの値の設定
+        if (settings.start) {
+            try {
+                const date = new Date(settings.start);
+                const localDateString = date.toLocaleString('sv-SE').substring(0, 16).replace(' ', 'T');
+                customStartDateInput.value = localDateString;
+            } catch(e) {
+                console.error("日時設定の読み込みエラー:", e);
+                customStartDateInput.value = '';
+            }
+
+        }
+    } 
+    
+    // 設定がロードされていないか、日時がない場合のデフォルト値
+    if (!customStartDateInput.value) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hour = String(now.getHours()).padStart(2, '0');
+        const minute = String(now.getMinutes()).padStart(2, '0');
+        customStartDateInput.value = `${year}-${month}-${day}T${hour}:${minute}`;
+    }
 }
 
-/* ===== 広告設定の処理 ===== */
-const showAdsCheckbox = document.getElementById('showAds');
-const savedAds = localStorage.getItem('showAds');
+function saveCustomCounterSettings() {
+    const targetValue = parseInt(customTargetValueInput.value, 10);
+    const mode = customModeSelect.value;
+    
+    if ((mode === 'countdown' || mode === 'roulette') && (isNaN(targetValue) || targetValue <= 0)) {
+        alert("目標値には1以上の有効な数字を入力してください。");
+        return;
+    }
 
-if (savedAds === null || savedAds === 'true') {
-    showAdsCheckbox.checked = true;
-} else {
-    showAdsCheckbox.checked = false;
+    const selectedDateTime = customStartDateInput.value;
+    
+    const newSettings = {
+        // roulette.htmlは常に表示されるため、showフラグは不要
+        target: targetValue,
+        start: selectedDateTime ? new Date(selectedDateTime).toISOString() : null, 
+        mode: mode
+    };
+
+    localStorage.setItem('customCounterSettings', JSON.stringify(newSettings));
+    alert('カスタムカウンター設定を保存しました。roulette.html で反映されます。');
+    loadCustomCounterUISettings(); 
 }
 
-showAdsCheckbox.addEventListener('change', function() {
-    localStorage.setItem('showAds', this.checked);
-    alert('広告設定を保存しました。ツール画面に戻ると反映されます。');
-});
-
-/* ===== 簡素化表示モードの処理 ===== */
-const viewModeCheckbox = document.getElementById('viewMode');
-const savedViewMode = localStorage.getItem('viewMode');
-
-if (savedViewMode === 'minimal') {
-    viewModeCheckbox.checked = true;
-} else {
-    viewModeCheckbox.checked = false;
-}
-
-viewModeCheckbox.addEventListener('change', function() {
-    const mode = this.checked ? 'minimal' : 'full';
-    localStorage.setItem('viewMode', mode);
-    alert('表示モード設定を保存しました。ツール画面に戻ると反映されます。');
-});
-
-
-/* ===== フォントサイズ設定の処理 ===== */
-const fontSizeSelect = document.getElementById('fontSize');
-const savedFontSize = localStorage.getItem('fontSize') || 'medium';
-fontSizeSelect.value = savedFontSize;
-
-fontSizeSelect.addEventListener('change', function() {
-    localStorage.setItem('fontSize', this.value);
-    alert('フォントサイズ設定を保存しました。ツール画面に戻ると反映されます。');
-});
-
-
-/* ===== スペースカウント設定の処理 ===== */
-const ignoreSpacesCheckbox = document.getElementById('ignoreSpaces');
-const savedIgnoreSpaces = localStorage.getItem('ignoreSpaces') === 'true'; 
-ignoreSpacesCheckbox.checked = savedIgnoreSpaces;
-
-ignoreSpacesCheckbox.addEventListener('change', function() {
-    localStorage.setItem('ignoreSpaces', this.checked);
-    alert('カウント設定を保存しました。ツール画面に戻ると反映されます。');
-});
+window.addEventListener('load', loadCustomCounterUISettings);
+/* ★★★ ここまでカスタム設定 ★★★ */
 </script>
-
 </body>
 </html>

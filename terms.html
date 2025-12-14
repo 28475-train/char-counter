@@ -18,15 +18,13 @@ section h2 {
     padding-bottom: 5px;
 }
 .back-link a {
-    color: var(--accent);
+    color: var(--link);
     text-decoration: none;
     font-weight: bold;
 }
 </style>
 </head>
-<body>
-
-<h1>利用規約・プライバシーポリシー</h1>
+<body data-theme="light_green"> <h1>利用規約・プライバシーポリシー</h1>
 
 <section>
 <h2>利用規約</h2>
@@ -58,5 +56,14 @@ section h2 {
 </section>
 
 <p class="back-link"><a href="index.html">トップへ戻る</a></p>
+
+<script>
+// テーマ設定の適用
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.body.setAttribute('data-theme', savedTheme);
+}
+</script>
+
 </body>
 </html>

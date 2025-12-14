@@ -5,7 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>【SP版】リアルタイム 文字数カウント</title>
 <meta name="description" content="リアルタイムで文字数と行数を即座に計測する無料の文字数カウントツール。">
-<link rel="stylesheet" href="../style.css"> </head>
+<link rel="stylesheet" href="../style.css"> <style>
+/* SP版向けにテキストエリアのサイズを調整 */
+.content-wrapper textarea {
+    width: 100%;
+    min-height: 200px; /* SP向けに高さを固定 */
+    box-sizing: border-box;
+    padding: 10px;
+}
+.card {
+    padding: 15px;
+}
+.info p {
+    margin: 5px 0;
+}
+</style>
+</head>
 <body data-theme="light_green">
 <script>
 // --- バージョン情報 ---
@@ -16,18 +31,97 @@ const APP_VERSION = "v1.2.0";
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 if (!isMobile) {
-    // PCから誤ってアクセスされた場合は PC版カウンターへリダイレクト
-    location.href = '../counter.html';
+    location.href = '../counter.html'; // PC版カウンターへリダイレクト
 } else {
-    // SPユーザーは SP/index.html 経由でアクセスさせる
     // ページを直接開いた場合は SP/index.html へ戻す
     if (!document.referrer.includes('SP/index.html')) {
         location.href = 'index.html'; 
     }
 }
 
-// 既存の設定ロード (テーマ、広告、フォントサイズなど) - 簡略化
-// ...
+// 既存の設定ロード (テーマ、広告など) - 簡略化
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) { document.body.setAttribute('data-theme', savedTheme); }
+const hideAds = localStorage.getItem('hideAds') === 'true';
+if (hideAds) { document.body.setAttribute('data-ads', 'false'); }
+
+
+// === 文字数カウントロジック (PC版と共有) ===
+function updateCount() {
+    const textarea = document.getElementById('text');
+    const charDisplay = document.getElementById('char');
+    const lineDisplay = document.getElementById('line');
+    const remainDisplay = document.getElementById('remain');
+    const byteCountDisplay = document.getElementById('byteCount');
+    const fullWidthCountDisplay = document.getElementById('fullWidthCount');
+    const halfWidthCountDisplay = document.getElementById('halfWidthCount');
+    
+    let text = textarea.value;
+    const limit = parseInt(document.getElementById('customLimit').value) || 280;
+    const ignoreSpaces = localStorage.getItem('ignoreSpaces') === 'true'; 
+
+    if (ignoreSpaces) {
+        text = text.replace(/[\s\r\n\t]/g, ''); // スペース、改行、タブを削除
+    }
+
+    // 文字数、行数
+    const charCount = text.length;
+    const lineCount = text.split('\n').length;
+    const remainCount = limit - charCount;
+    
+    charDisplay.textContent = charCount;
+    lineDisplay.textContent = lineCount;
+    remainDisplay.textContent = remainCount;
+    remainDisplay.style.color = remainCount < 0 ? 'red' : 'var(--text-highlight)';
+
+    // バイト数、全角/半角 (簡易計算)
+    let byteCount = 0;
+    let fullWidthCount = 0;
+    let halfWidthCount = 0;
+    
+    for (let i = 0; i < text.length; i++) {
+        const charCode = text.charCodeAt(i);
+        if (charCode >= 0x0000 && charCode <= 0x00FF) { // ASCII/半角
+            byteCount += 1;
+            halfWidthCount++;
+        } else { // 全角
+            byteCount += 2; // UTF-8で日本語は主に3バイトだが、簡易的に2バイトとして計算
+            fullWidthCount++;
+        }
+    }
+    byteCountDisplay.textContent = byteCount;
+    fullWidthCountDisplay.textContent = fullWidthCount;
+    halfWidthCountDisplay.textContent = halfWidthCount;
+}
+
+// 上限文字数設定 (PC版と共有)
+function setLimit(value) {
+    document.getElementById('customLimit').value = value;
+    updateCount();
+}
+function setCustom() {
+    const customValue = document.getElementById('customLimit').value;
+    if (customValue > 0) {
+        setLimit(customValue);
+    } else {
+        alert('1以上の数値を入力してください。');
+    }
+}
+function download() { /* ダウンロードロジックは省略 */ alert('保存機能のロジックが未実装です。'); }
+function clearText() { 
+    document.getElementById('text').value = ''; 
+    updateCount(); 
+}
+
+window.onload = function() {
+    // 初期設定値のロード (例: 制限値)
+    const customLimitInput = document.getElementById('customLimit');
+    customLimitInput.value = localStorage.getItem('charLimit') || 280;
+    
+    const textarea = document.getElementById('text');
+    textarea.addEventListener('input', updateCount);
+    updateCount(); // 初回実行
+}
 </script>
 
 <div class="top-ad-header" style="height: 50px;">
@@ -53,6 +147,44 @@ if (!isMobile) {
     
     <div class="content-wrapper">
         <h1>文字数カウント 保存ツール (SP)</h1>
+        
+        <div class="card">
+            <div class="controls" style="margin-bottom: 10px;">
+              上限文字数：
+              <button onclick="setLimit(140)">140</button>
+              <button onclick="setLimit(280)">280</button>
+              カスタム
+              <input type="number" id="customLimit" min="1" value="280" style="width:70px">
+              <button onclick="setCustom()">設定</button>
+            </div>
+            
+            <textarea id="text" placeholder="ここにテキストを入力してください..."></textarea>
+            
+            <div class="info">
+              <p>文字数: <span id="char">0</span></p>
+              <p>行数: <span id="line">1</span></p>
+              <p>残り文字数: <span id="remain">280</span></p>
+
+              <hr style="margin: 10px 0; border: none; border-top: 1px dashed var(--border);">
+              <p style="font-size: 0.9em;">
+                  詳細:
+                  全角 <span id="fullWidthCount">0</span>字 / 
+                  半角 <span id="halfWidthCount">0</span>字 / 
+                  <span style="font-weight: bold;">推定バイト数 <span id="byteCount">0</span> bytes</span>
+              </p>
+            </div>
+
+            <div class="controls" style="margin-top: 15px; text-align: center;">
+              <select id="format" style="padding: 8px;">
+                <option value="txt">TXT</option>
+                <option value="md">Markdown</option>
+                <option value="csv">CSV</option>
+              </select>
+              <button class="save-btn" onclick="download()">保存</button>
+              <button class="clear-btn" onclick="clearText()" style="background-color: #d9534f;">すべてクリア</button>
+            </div>
+
+        </div>
         </div>
 </div>
 
@@ -67,12 +199,9 @@ if (!isMobile) {
 </footer>
 
 <script>
-// ナビゲーションメニューの開閉
-function toggleMenu() {
-    document.getElementById('sideNav').classList.toggle('open');
-}
-// バージョン情報をフッターに表示
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
 document.getElementById('appVersionDisplay').textContent = APP_VERSION;
+// (SP版にはアクセス数が多くないため、訪問回数カウンターの表示要素は省略しています)
 </script>
 </body>
 </html>

@@ -3,17 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>リアルタイム 文字数カウント 行数計測ツール ファイル保存機能付き</title>
-<meta name="description" content="リアルタイムで文字数と行数を即座に計測する無料の文字数カウントツール。Twitter/SNS向けに文字数制限も設定可能。TXT, Markdown, CSV形式でのファイル保存に対応。">
+<title>【PC版】リアルタイム 文字数カウント 行数計測ツール</title>
+<meta name="description" content="リアルタイムで文字数と行数を即座に計測する無料の文字数カウントツール。">
 <link rel="stylesheet" href="style.css">
-<link rel="canonical" href="https://28475-train.github.io/char-counter/counter.html">
-<meta property="og:title" content="【リアルタイム】文字数カウント・保存ツール">
-<meta property="og:description" content="リアルタイムで文字数と行数を即座に計測する無料ツール。ファイル保存機能付き。">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://28475-train.github.io/char-counter/counter.html">
-<meta property="og:image" content="https://28475-train.github.io/char-counter/images/tool_image.png">
-<meta property="og:site_name" content="文字数カウントツール">
-<meta name="twitter:card" content="summary_large_image">
 </head>
 <body data-theme="light_green">
 <script>
@@ -21,99 +13,86 @@
 const APP_VERSION = "v1.2.0"; 
 // ----------------------
 
-// アクセスカウンターのGAS URL (省略)
-const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP3bBp_wdlo-5k_Wuag1dH0D3cuUg5pYqLf6E2cf2L1NcIY476DqyHw/exec";
-// お知らせ用GAS URL (省略)
-const NOTICE_GAS_URL = "https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec"; 
+// SP/PC振り分け判定
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-// ページロード時の設定の適用 (既存)
+if (isMobile) {
+    // SPユーザーは SP/index.html へリダイレクト
+    location.href = 'SP/index.html';
+} else {
+    // PCユーザーは index.html 経由でアクセスさせる
+    // ページを直接開いた場合は index.html へ戻す (毎回同意のため)
+    if (!document.referrer.includes('index.html')) {
+        location.href = 'index.html';
+    }
+}
+
+// 既存の設定ロード (テーマ、広告、フォントサイズなど) - 簡略化
 const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-    document.body.setAttribute('data-theme', savedTheme);
-}
-const savedFontSize = localStorage.getItem('fontSize');
-if (savedFontSize) {
-    document.body.setAttribute('data-font', savedFontSize);
-}
+if (savedTheme) { document.body.setAttribute('data-theme', savedTheme); }
 const hideAds = localStorage.getItem('hideAds') === 'true';
-if (hideAds) {
-    document.body.setAttribute('data-ads', 'false');
-}
-
-// ★★★ 同意チェックの再有効化 ★★★
-if(localStorage.getItem('agreed')!=='true'){
-  location.href='index.html';
-}
+if (hideAds) { document.body.setAttribute('data-ads', 'false'); }
 </script>
 
-<header class="header">
-    <a href="counter.html" class="header-title">📝 カウンター ツール</a>
-    <nav class="header-nav">
+<div class="top-ad-header">
+    <div id="ad-area-top-pc">
+        AD: PC Top Banner 728x90
+    </div>
+</div>
+
+<div class="main-content-area">
+
+    <header class="header">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <a href="counter.html" class="header-title">📝 カウンター ツール (PC版)</a>
+    </header>
+
+    <nav class="side-nav" id="sideNav">
         <a href="counter.html" class="active-tab">📝 文字数カウント</a> 
         <a href="roulette.html">🎲 ルーレット</a> 
         <a href="settings.html">⚙ 設定</a>
         <a href="help.html">ヘルプ</a>
         <a href="about.html">制作者</a>
     </nav>
-</header>
-<div class="content-wrapper">
+    
+    <div class="content-wrapper">
 
-<h1>文字数カウント 保存ツール</h1>
+        <h1>文字数カウント 保存ツール</h1>
 
-<div id="accessCounterContainer" style="text-align:right; font-size:0.9em; margin-bottom:16px;">
-  訪問回数: <span id="accessCounter" style="font-weight:bold;">読み込み中...</span>
+        <div id="accessCounterContainer" style="text-align:right; font-size:0.9em; margin-bottom:16px;">
+          訪問回数: <span id="accessCounter" style="font-weight:bold;">読み込み中...</span>
+        </div>
+        <div class="card">
+            <textarea id="text" placeholder="ここにテキストを入力してください..."></textarea>
+            <div class="info">
+                <p>文字数: <span id="char">0</span></p>
+            </div>
+            <div class="controls">
+                <button class="save-btn" onclick="download()">保存</button>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="notice">
-  <strong>お知らせ</strong>
-  <div id="noticeList">読み込み中...</div>
-</div>
-<div class="card">
-<div class="controls">
-  上限文字数：
-  <button onclick="setLimit(280)">280</button>
-  <button onclick="setLimit(500)">500</button>
-  <button onclick="setLimit(1000)">1000</button>
-  カスタム
-  <input type="number" id="customLimit" min="1" style="width:80px">
-  <button onclick="setCustom()">設定</button>
-</div>
-<textarea id="text" placeholder="ここにテキストを入力してください..."></textarea>
-<div class="info">
-  <p>文字数: <span id="char">0</span></p>
-  <p>行数: <span id="line">1</span></p>
-  <p>残り文字数: <span id="remain">280</span></p>
 
-  <hr style="margin: 10px 0; border: none; border-top: 1px dashed var(--border);">
-  <p style="font-size: 0.9em;">
-      詳細:
-      全角 <span id="fullWidthCount">0</span>字 / 
-      半角 <span id="halfWidthCount">0</span>字 / 
-      <span style="font-weight: bold;">推定バイト数 <span id="byteCount">0</span> bytes</span>
-  </p>
+<div class="bottom-ad-footer">
+    <div id="ad-area-bottom-pc">
+        AD: PC Bottom Banner 468x60
+    </div>
 </div>
-<div class="controls">
-  保存形式：
-  <select id="format">
-    <option value="txt">TXT</option>
-    <option value="md">Markdown</option>
-    <option value="csv">CSV</option>
-  </select>
-  <button class="save-btn" onclick="download()">保存</button>
-  <button class="clear-btn" onclick="clearText()">すべてクリア</button>
-</div>
-</div>
-<div id="ad-area">
-<script src="https://adm.shinobi.jp/o/908d65c8b7bcdd909305dd25f407426f"></script>
-</div>
-</div>
+
 <footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
     <p>Version <span id="appVersionDisplay"></span></p>
 </footer>
-<script>
-// (既存のJavaScriptロジックは省略)
 
+<script>
+// ナビゲーションメニューの開閉
+function toggleMenu() {
+    document.getElementById('sideNav').classList.toggle('open');
+}
 // バージョン情報をフッターに表示
 document.getElementById('appVersionDisplay').textContent = APP_VERSION;
+
+// (既存の文字数カウント、ダウンロード、カウンターロジックなどは省略)
 </script>
 </body>
 </html>

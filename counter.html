@@ -22,7 +22,25 @@ const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP
 // お知らせ用GAS URL
 const NOTICE_GAS_URL = "https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec"; 
 
-// (既存の初期設定と同意チェックのロジックは省略)
+// ページロード時の設定の適用
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.body.setAttribute('data-theme', savedTheme);
+}
+const savedFontSize = localStorage.getItem('fontSize');
+if (savedFontSize) {
+    document.body.setAttribute('data-font', savedFontSize);
+}
+// 広告非表示設定の適用 (復旧)
+const hideAds = localStorage.getItem('hideAds') === 'true';
+if (hideAds) {
+    document.body.setAttribute('data-ads', 'false');
+}
+
+// 同意チェック (既存)
+if(localStorage.getItem('agreed')!=='true'){
+  location.href='index.html';
+}
 </script>
 
 <header class="header">
@@ -103,11 +121,31 @@ if (HIDE_COUNTER) {
 function animateCounter(targetCount) { /* 既存の animateCounter 関数 */ }
 function fetchAccessCount() { /* 既存の fetchAccessCount 関数 */ }
 
+// === 文字数カウントロジック (既存) ===
+const textarea = document.getElementById('text');
+const charDisplay = document.getElementById('char');
+// (その他のDOM要素と文字数カウントロジック、initializeCounter関数、ダウンロード/クリア関数などは省略 - 既存通り)
+
+// 文字数カウント関数にスペース無視設定を反映
+function updateCount() {
+    let text = textarea.value;
+    const ignoreSpaces = localStorage.getItem('ignoreSpaces') === 'true'; // 設定を読み込み
+    
+    if (ignoreSpaces) {
+        text = text.replace(/[\s\r\n\t]/g, ''); // スペース、改行、タブを削除
+    }
+
+    // (文字数、行数、残り文字数、バイト数などの計算ロジックは省略)
+    // charDisplay.textContent = text.length;
+}
+textarea.addEventListener('input', updateCount);
 window.addEventListener('load', fetchAccessCount);
 
-
-// === 文字数カウントロジック (既存) ===
-// (お知らせの読み込み、主要な変数定義、自動保存、履歴管理、カウントロジック、初期化、制限設定、クリア、ダウンロード機能は省略 - 既存通り)
+// 広告エリアの制御 (CSSでbody[data-ads="false"]のときに非表示にするのが望ましい)
+const adArea = document.getElementById('ad-area');
+if (hideAds && adArea) {
+    adArea.style.display = 'none';
+}
 </script>
 </body>
 </html>

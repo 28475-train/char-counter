@@ -30,16 +30,17 @@ max-width:500px;margin:30px auto;padding:20px}
     margin-right: 8px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: #fff;
+    background: var(--bg);
+    color: var(--text);
     cursor: pointer;
-    margin-bottom: 5px; /* ボタンが縦に並んでも間隔を空ける */
+    margin-bottom: 5px;
 }
 .setting-group button:hover {
     background: var(--accent-soft);
 }
 .active-btn {
     background: var(--accent) !important;
-    color: #fff;
+    color: #fff !important;
     border: none !important;
 }
 .back-btn {
@@ -60,7 +61,7 @@ max-width:500px;margin:30px auto;padding:20px}
     padding: 0;
 }
 .link-list a {
-    color: var(--accent);
+    color: var(--link);
     text-decoration: none;
     display: block;
     padding: 8px 0;
@@ -68,9 +69,19 @@ max-width:500px;margin:30px auto;padding:20px}
 }
 </style>
 </head>
-<body>
+<body data-theme="light_green"> <h1>ユーザー設定</h1>
 
-<h1>ユーザー設定</h1>
+<div class="setting-group" id="themeSettings">
+    <h2>デザインテーマ</h2>
+    <p>現在の設定: <strong id="currentTheme">Light Green</strong></p>
+    <button onclick="setTheme('light_green', 'Light Green')">Light Green (緑)</button>
+    <button onclick="setTheme('dark_blue', 'Dark Blue')">Dark Blue (ダーク)</button>
+    <button onclick="setTheme('modern_blue', 'Modern Blue')">Modern Blue (青)</button>
+    <button onclick="setTheme('monochrome', 'Monochrome')">Monochrome (モノクロ)</button>
+    <button onclick="setTheme('earth_tone', 'Earth Tone')">Earth Tone (茶)</button>
+    <button onclick="setRandomTheme()">💡ランダム</button>
+    <p style="font-size: 0.85em; margin-top: 10px; color: #6b7280;">※設定変更後、ツール画面に戻ると反映されます。</p>
+</div>
 
 <div class="setting-group" id="viewModeSettings">
     <h2>表示モード</h2>
@@ -92,12 +103,24 @@ max-width:500px;margin:30px auto;padding:20px}
     <ul class="link-list">
         <li><a href="terms.html">利用規約</a></li>
         <li><a href="terms.html#privacy">プライバシーポリシー</a></li>
+        <li><a href="about.html">制作者紹介</a></li>
     </ul>
 </div>
 
 <a href="counter.html" class="back-btn">ツール画面に戻る</a>
 
 <script>
+const THEMES = {
+    'light_green': 'Light Green',
+    'dark_blue': 'Dark Blue',
+    'modern_blue': 'Modern Blue',
+    'monochrome': 'Monochrome',
+    'earth_tone': 'Earth Tone'
+};
+
+const currentThemeElement = document.getElementById('currentTheme');
+const themeButtons = document.querySelectorAll('#themeSettings button');
+
 const currentViewModeElement = document.getElementById('currentViewMode');
 const viewSpBtn = document.getElementById('viewSpBtn');
 const viewPcBtn = document.getElementById('viewPcBtn');
@@ -107,6 +130,10 @@ const adsOnBtn = document.getElementById('adsOnBtn');
 const adsOffBtn = document.getElementById('adsOffBtn');
 
 function loadSettings() {
+    // テーマの読み込み
+    const theme = localStorage.getItem('theme') || 'light_green';
+    updateThemeDisplay(theme);
+
     // 表示モードの読み込み
     const view = localStorage.getItem('viewMode') || 'pc';
     updateViewModeDisplay(view);
@@ -115,6 +142,40 @@ function loadSettings() {
     const showAds = localStorage.getItem('showAds') !== 'false';
     updateAdsDisplay(showAds);
 }
+
+// --- テーマ設定ロジック ---
+
+function updateThemeDisplay(theme) {
+    const themeName = THEMES[theme] || 'Light Green';
+    currentThemeElement.textContent = themeName;
+    document.body.setAttribute('data-theme', theme);
+    
+    // アクティブボタンの切り替え
+    themeButtons.forEach(btn => {
+        const themeKey = btn.getAttribute('onclick')?.match(/'(.*?)'/)?.[1];
+        if (themeKey === theme) {
+            btn.classList.add('active-btn');
+        } else {
+            btn.classList.remove('active-btn');
+        }
+    });
+}
+
+function setTheme(themeKey, themeName) {
+    localStorage.setItem('theme', themeKey);
+    updateThemeDisplay(themeKey);
+    alert(`デザインテーマを「${themeName}」に設定しました。`);
+}
+
+function setRandomTheme() {
+    const keys = Object.keys(THEMES);
+    const randomIndex = Math.floor(Math.random() * keys.length);
+    const randomKey = keys[randomIndex];
+    const randomName = THEMES[randomKey];
+    setTheme(randomKey, randomName);
+}
+
+// --- その他設定ロジック（変更なし） ---
 
 function updateViewModeDisplay(view) {
     currentViewModeElement.textContent = (view === 'sp' ? 'スマホ' : 'PC');

@@ -53,6 +53,7 @@
 * {
     box-sizing: border-box;
     font-family: "Noto Sans JP", system-ui, sans-serif;
+    /* CSS変数が反映されやすいよう、transitionにbackground-colorを追加 */
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
@@ -130,7 +131,7 @@ a:hover {
     border: none;
     border-radius: 6px;
     background-color: var(--accent);
-    color: #fff;
+    color: var(--card); /* ボタン内のテキストもCSS変数で制御 */
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -140,21 +141,14 @@ a:hover {
     filter: brightness(1.1);
 }
 
-.controls input[type="number"] {
-    padding: 8px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background-color: var(--card);
-    color: var(--text);
-    text-align: center;
-}
-
+.controls input[type="number"],
 .controls select {
     padding: 8px;
     border: 1px solid var(--border);
     border-radius: 6px;
     background-color: var(--card);
     color: var(--text);
+    text-align: center;
 }
 
 .save-btn {
@@ -218,7 +212,7 @@ a:hover {
     width: 50px;
     height: 50px;
     background-color: var(--accent);
-    color: #fff;
+    color: var(--card); /* ボタン内のテキストもCSS変数で制御 */
     border-radius: 50%;
     text-align: center;
     line-height: 50px;
@@ -258,4 +252,4 @@ a:hover {
 }
 [data-view="minimal"] .info p {
     font-size: 1.0em;
-      }
+}

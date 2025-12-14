@@ -5,17 +5,147 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>【PC版】設定 | ツール</title>
 <link rel="stylesheet" href="style.css">
-<style> /* CSS省略 */ </style>
+<style>
+/* PC版のコンテンツ幅を設定 */
+body{ max-width: 720px; margin: 0 auto; padding: 0; }
+
+.settings-group {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+    border: 1px solid var(--border);
+}
+
+.settings-group h2 {
+    margin-top: 0;
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+}
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-label {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.setting-control select, 
+.setting-control input[type="date"],
+.setting-control input[type="time"] {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--background);
+    color: var(--text-color);
+    margin-left: 10px;
+}
+
+.setting-control button {
+    padding: 8px 15px;
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #e6ffe6;
+    color: #388E3C;
+    font-weight: bold;
+    display: none;
+}
+</style>
 </head>
 <body data-theme="light_green">
 <script>
 // --- バージョン情報 ---
 const APP_VERSION = "v1.2.0"; 
 // ----------------------
-// SP/PC振り分けとリファラーチェック (省略)
-// 設定処理関数 (setTheme, saveDisplaySettings, saveCustomCounterSettings, clearHistory) (省略)
-// ロード処理 (onload) (省略)
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (isMobile) { location.href = 'SP/settings.html'; }
+
 function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+
+// ★★★ 機能復旧: テーマ切り替えロジック ★★★
+function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('selectedTheme', theme);
+}
+
+// ★★★ 機能復旧: ルーレット目標設定ロジック ★★★
+function saveRouletteSettings() {
+    const targetDate = document.getElementById('targetDate').value;
+    const targetTime = document.getElementById('targetTime').value;
+    const rouletteItems = document.getElementById('rouletteItems').value;
+
+    if (!targetDate || !targetTime) {
+        alert("目標日時を設定してください。");
+        return;
+    }
+
+    // 日付と時間を結合してDateオブジェクトを作成
+    const targetDateTimeString = targetDate + "T" + targetTime + ":00";
+    const targetDateTime = new Date(targetDateTimeString);
+
+    // LocalStorageに保存
+    localStorage.setItem('rouletteTargetDate', targetDateTime.toISOString());
+    localStorage.setItem('rouletteItems', rouletteItems);
+    
+    showSuccessMessage("ルーレットの設定を保存しました。");
+}
+
+function showSuccessMessage(message) {
+    const msgElement = document.getElementById('successMessage');
+    msgElement.textContent = message;
+    msgElement.style.display = 'block';
+    setTimeout(() => {
+        msgElement.style.display = 'none';
+    }, 3000);
+}
+
+window.onload = function() { 
+    document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
+
+    // テーマのロードとイベントリスナー設定
+    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
+    document.getElementById('themeSelector').value = savedTheme;
+    applyTheme(savedTheme);
+
+    document.getElementById('themeSelector').addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+    });
+
+    // ルーレット設定のロードとイベントリスナー設定
+    document.getElementById('saveRouletteButton').addEventListener('click', saveRouletteSettings);
+
+    // 既存のルーレット設定をロード
+    const savedDate = localStorage.getItem('rouletteTargetDate');
+    if (savedDate) {
+        const dateObj = new Date(savedDate);
+        // ISO形式の yyyy-mm-dd
+        document.getElementById('targetDate').value = dateObj.toISOString().slice(0, 10);
+        // ISO形式の HH:MM
+        document.getElementById('targetTime').value = dateObj.toTimeString().slice(0, 5); 
+    }
+    const savedItems = localStorage.getItem('rouletteItems') || "成功,失敗,大成功,やり直し";
+    document.getElementById('rouletteItems').value = savedItems;
+}
 </script>
 
 <div class="main-content-area">
@@ -23,13 +153,13 @@ function toggleMenu() { document.getElementById('sideNav').classList.toggle('ope
 
         <header class="header">
             <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-            <a href="counter.html" class="header-title">⚙ 設定 (PC版)</a>
+            <a href="counter.html" class="header-title">設定 (PC版)</a>
         </header>
 
         <div class="top-ad-header">
             <div id="ad-area-top-pc">
                 <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-                </div>
+            </div>
         </div>
 
         <nav class="side-nav" id="sideNav">
@@ -41,15 +171,82 @@ function toggleMenu() { document.getElementById('sideNav').classList.toggle('ope
         </nav>
         
         <div class="content-wrapper">
+
             <h1>設定</h1>
+            
+            <div id="successMessage" class="message">設定を保存しました。</div>
+
+            <div class="settings-group">
+                <h2>デザイン設定</h2>
+                
+                <div class="setting-item">
+                    <span class="setting-label">テーマカラー</span>
+                    <div class="setting-control">
+                        <select id="themeSelector">
+                            <option value="light_green">ライトグリーン (標準)</option>
+                            </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <span class="setting-label">フォント設定</span>
+                    <div class="setting-control">
+                        <p style="font-size: 0.9em; color: var(--text-soft);">日本語・英語に最適なフォントを自動適用しています。</p>
+                    </div>
+                </div>
+
             </div>
+
+            <div class="settings-group">
+                <h2>ルーレット・カウントダウン目標設定</h2>
+                
+                <div class="setting-item">
+                    <span class="setting-label">目標日付</span>
+                    <div class="setting-control">
+                        <input type="date" id="targetDate">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <span class="setting-label">目標時刻</span>
+                    <div class="setting-control">
+                        <input type="time" id="targetTime">
+                    </div>
+                </div>
+
+                <div class="setting-item" style="flex-direction: column; align-items: flex-start;">
+                    <span class="setting-label" style="margin-bottom: 5px;">ルーレット項目 (カンマ区切り)</span>
+                    <textarea id="rouletteItems" style="width: 100%; min-height: 80px; font-size: 14px;"></textarea>
+                    <p style="font-size: 0.8em; color: var(--text-soft); margin-top: 5px;">例: 大成功,成功,失敗</p>
+                </div>
+
+                <div style="text-align: right; margin-top: 15px;">
+                    <button id="saveRouletteButton">設定を保存</button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h2>データ管理</h2>
+                <div class="setting-item">
+                    <span class="setting-label">ローカルデータのクリア</span>
+                    <div class="setting-control">
+                        <button onclick="if(confirm('全てのローカル設定と保存データを削除してもよろしいですか？')) { localStorage.clear(); window.location.reload(); }">データ削除</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px; font-size: 0.8em; color: var(--text-soft);">
+                <p>Version <span id="appVersionDisplay"></span></p>
+            </div>
+            
+        </div>
     </div>
 </div>
 
 <div class="bottom-ad-footer">
     <div id="ad-area-bottom-pc">
         <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-        </div>
+    </div>
 </div>
 
 <footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">

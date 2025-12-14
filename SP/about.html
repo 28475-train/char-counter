@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja" data-ads="true">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>【SP版】制作者情報 | ツール</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+.content-wrapper h2 {
+    margin-top: 20px;
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 5px;
+}
+.content-wrapper p {
+    margin-bottom: 10px;
+}
+/* Googleフォームのコンテナ */
+.google-form-container {
+    background: var(--card);
+    padding: 10px 5px; 
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid var(--border);
+}
+/* Googleフォームの iframe にレスポンシブなスタイルを適用 */
+.google-form-container iframe {
+    /* フォームの幅を100%に設定し、レスポンシブに対応 */
+    width: 100%;
+    /* 高さはお客様のフォームの高さ (1269px) を参考に設定 */
+    min-height: 1280px; 
+    border: none;
+}
+</style>
+</head>
+<body data-theme="light_green">
+<script>
+// --- バージョン情報 ---
+const APP_VERSION = "v1.2.0"; 
+// ----------------------
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (!isMobile) { location.href = '../about.html'; }
+
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+window.onload = function() {
+    document.getElementById('appVersionDisplay').textContent = APP_VERSION;
+    document.getElementById('versionDisplay').textContent = APP_VERSION;
+}
+</script>
+
+<div class="main-content-area">
+
+    <header class="header">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <a href="counter.html" class="header-title" style="font-size: 1.2em;">制作者 (SP版)</a>
+    </header>
+
+    <div class="top-ad-header" style="height: 50px;">
+        <div id="ad-area-top-sp">
+            <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+        </div>
+    </div>
+
+    <nav class="side-nav" id="sideNav">
+        <a href="counter.html">📝 文字数カウント</a> 
+        <a href="roulette.html">🎲 ルーレット</a> 
+        <a href="settings.html">⚙ 設定</a>
+        <a href="help.html">ヘルプ</a>
+        <a href="about.html" class="active-tab">制作者</a>
+    </nav>
+    
+    <div class="content-wrapper">
+        <h1>制作者情報</h1>
+        
+        <h2>ツールについて</h2>
+        <p>このツールは、28475-trainによって開発・公開されています。</p>
+        <p>バージョン: <span id="versionDisplay"></span></p>
+
+        <h2>免責事項</h2>
+        <p>本ツールの利用により生じた損害について、制作者は一切責任を負いません。ご利用は自己責任でお願いします。</p>
+        
+        <h2>フィードバック・お問い合わせ</h2>
+        <div class="google-form-container">
+            <p style="margin-bottom: 10px;">バグ報告や機能改善の要望はこちらのフォームからお送りください。</p>
+            
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScFVI6vJbrB7MRcI8Fjxh1rCTOuvu-ncsN4oo6S5PfPfyJpPQ/viewform?embedded=true" width="100%" height="1280" frameborder="0" marginheight="0" marginwidth="0" loading="lazy">読み込んでいます…</iframe>
+
+        </div>
+        </div>
+</div>
+
+<div class="bottom-ad-footer" style="height: 50px;">
+    <div id="ad-area-bottom-sp">
+        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+    </div>
+</div>
+
+<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
+    <p>Version <span id="appVersionDisplay"></span></p>
+</footer>
+</body>
+</html>

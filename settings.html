@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>設定</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* settings.html専用のレイアウト */
+body {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    background: var(--bg);
+}
+.setting-group {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+}
+.setting-group h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+button {
+    padding: 10px 15px;
+    margin-right: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+}
+button:hover {
+    background: var(--accent-soft);
+}
+.active-btn {
+    background: var(--accent) !important;
+    color: #fff;
+    border: none !important;
+}
+.back-btn {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: #4f46e5;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+}
+.link-list {
+    list-style: none;
+    padding: 0;
+}
+.link-list a {
+    color: #4f46e5;
+    text-decoration: none;
+    display: block;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+}
+</style>
+</head>
+<body>
+
+<h1>ユーザー設定</h1>
+
+<div class="setting-group" id="viewModeSettings">
+    <h2>表示モード</h2>
+    <p>現在の設定: <strong id="currentViewMode">PC</strong></p>
+    <button id="viewSpBtn" onclick="setViewMode('sp')">📱 スマホ</button>
+    <button id="viewPcBtn" onclick="setViewMode('pc')">🖥 PC</button>
+</div>
+
+<div class="setting-group" id="adsSettings">
+    <h2>広告表示</h2>
+    <p>現在の設定: <strong id="currentAds">ON</strong></p>
+    <button id="adsOnBtn" onclick="setAds(true)">広告ON</button>
+    <button id="adsOffBtn" onclick="setAds(false)">広告OFF</button>
+    <p style="font-size: 0.85em; margin-top: 10px; color: #6b7280;">※設定変更後、ツール画面に戻ると反映されます。</p>
+</div>
+
+<div class="setting-group">
+    <h2>その他</h2>
+    <ul class="link-list">
+        <li><a href="terms.html">利用規約</a></li>
+        <li><a href="terms.html#privacy">プライバシーポリシー</a></li>
+    </ul>
+</div>
+
+<a href="counter.html" class="back-btn">ツール画面に戻る</a>
+
+<script>
+const currentViewModeElement = document.getElementById('currentViewMode');
+const viewSpBtn = document.getElementById('viewSpBtn');
+const viewPcBtn = document.getElementById('viewPcBtn');
+
+const currentAdsElement = document.getElementById('currentAds');
+const adsOnBtn = document.getElementById('adsOnBtn');
+const adsOffBtn = document.getElementById('adsOffBtn');
+
+function loadSettings() {
+    // 表示モードの読み込み
+    const view = localStorage.getItem('viewMode') || 'pc';
+    updateViewModeDisplay(view);
+
+    // 広告設定の読み込み
+    const showAds = localStorage.getItem('showAds') !== 'false';
+    updateAdsDisplay(showAds);
+}
+
+function updateViewModeDisplay(view) {
+    currentViewModeElement.textContent = (view === 'sp' ? 'スマホ' : 'PC');
+    viewSpBtn.classList.toggle('active-btn', view === 'sp');
+    viewPcBtn.classList.toggle('active-btn', view === 'pc');
+}
+
+function updateAdsDisplay(showAds) {
+    currentAdsElement.textContent = showAds ? 'ON' : 'OFF';
+    adsOnBtn.classList.toggle('active-btn', showAds);
+    adsOffBtn.classList.toggle('active-btn', !showAds);
+}
+
+function setViewMode(view) {
+    localStorage.setItem('viewMode', view);
+    updateViewModeDisplay(view);
+    alert(`表示モードを「${view === 'sp' ? 'スマホ' : 'PC'}」に設定しました。`);
+}
+
+function setAds(show) {
+    localStorage.setItem('showAds', show ? 'true' : 'false');
+    updateAdsDisplay(show);
+    alert(`広告表示を「${show ? 'ON' : 'OFF'}」に設定しました。`);
+}
+
+window.addEventListener('load', loadSettings);
+</script>
+
+</body>
+</html>

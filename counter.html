@@ -62,13 +62,10 @@ if(localStorage.getItem('agreed')!=='true'){
 
 </div>
 
-<div class="ad-sp">
-<script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script>
+<div id="ad-area">
+<script src="https://adm.shinobi.jp/o/908d65c8b7bcdd909305dd25f407426f"></script>
 </div>
 
-<div class="ad-pc">
-<script src="https://adm.shinobi.jp/s/025d5af8ede4ff475032852f62945fae"></script>
-</div>
 
 <a href="settings.html" class="settings-btn">⚙</a>
 
@@ -209,7 +206,14 @@ if (view) {
 }
 
 const ads = localStorage.getItem('showAds');
-// 'false'が設定されていれば、data-ads="false"を付与し、CSSで非表示にする
+// 広告非表示設定がされている場合、広告エリアを非表示にする
+if (ads === 'false') {
+    const adArea = document.getElementById('ad-area');
+    if (adArea) {
+        adArea.style.display = 'none';
+    }
+}
+// <html>タグのdata-ads属性は、CSSの広告制御のために残します。
 document.documentElement.setAttribute('data-ads', ads === 'false' ? 'false' : 'true');
 
 

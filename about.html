@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>制作者紹介</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* about.html専用のレイアウト */
+body{
+    max-width: 720px;
+    margin: 30px auto;
+    padding: 20px;
+}
+.profile-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+}
+.profile-card h2 {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent-soft);
+    padding-bottom: 5px;
+    margin-top: 0;
+}
+.back-link a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<h1>制作者紹介</h1>
+
+<div class="profile-card">
+    <h2>制作者情報</h2>
+    <p><strong>制作者名:</strong> 篠ノ井乗務区 (Shino Rail)</p>
+    <p><strong>関連リンク:</strong></p>
+    <ul>
+        <li><a href="https://x.com/shinorail_lab">X (旧Twitter) - @shinorail_lab</a></li>
+        <li><a href="https://x.com/Shino_Rail">X (旧Twitter) - @Shino_Rail</a></li>
+        <li><a href="https://28475-train.github.io/snr-rail/index.html">公式サイト (順次公開中)</a></li>
+    </ul>
+    <p><strong>制作日:</strong> 2025年12月 (最新版)</p>
+</div>
+
+<div class="profile-card">
+    <h2>ツール制作の目的</h2>
+    <p>本ツールは、文字数をリアルタイムで確認し、手軽にファイルを保存することを目的として開発されました。</p>
+    <p>シンプルで使いやすいインターフェースを意識し、利用者が日常のテキスト作業をスムーズに行えるよう設計しています。</p>
+</div>
+
+<div class="profile-card">
+    <h2>利用技術</h2>
+    <ul>
+        <li>HTML5 / CSS3 (レスポンシブデザイン、テーマ切替)</li>
+        <li>JavaScript (カウントロジック、データ保存、設定機能、ランダムテーマ)</li>
+        <li>Google Apps Script (GAS) (アクセスカウンター、お知らせ配信)</li>
+    </ul>
+</div>
+
+<p class="back-link"><a href="counter.html">ツール画面に戻る</a></p>
+
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カスタム ルーレット・カウントダウン ツール</title>
+<meta name="description" content="目標回数、開始時刻、ルーレットモードを自由に設定できるカスタムカウンターツールです。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light_green">
+<script>
+// ページロード時のテーマ適用 (共通)
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.body.setAttribute('data-theme', savedTheme);
+}
+</script>
+
+<header class="header">
+    <a href="counter.html" class="header-title">🎲 ルーレット・カウントダウン</a>
+    <nav class="header-nav">
+        <a href="counter.html">📝 カウント</a> 
+        <a href="settings.html">⚙ 設定</a>
+        <a href="help.html">ヘルプ</a>
+        <a href="about.html">制作者</a>
+    </nav>
+</header>
+<div class="content-wrapper">
+
+<h1>カスタム ルーレット・カウントダウン</h1>
+
+<div id="customCounterContainer" class="card" style="margin-top: 20px; padding: 30px; border: 2px solid var(--accent); text-align: center;">
+  <h2 style="margin-top: 0; font-size: 1.4em;">現在のカスタム目標</h2>
+  
+  <div id="customCounterDisplay" style="font-size: 4em; font-weight: bold; color: var(--text-highlight); min-height: 1.2em;">
+    ---
+  </div>
+  
+  <p id="customCounterLabel" style="font-size: 1.1em; margin-top: 10px;">設定画面で目標を設定してください。</p>
+
+  <div style="margin-top: 20px;">
+      <a href="settings.html" style="text-decoration: none; padding: 8px 15px; background-color: var(--accent); color: white; border-radius: 6px;">設定画面へ</a>
+  </div>
+</div>
+<div id="ad-area" style="margin-top: 30px;">
+<script src="https://adm.shinobi.jp/o/908d65c8b7bcdd909305dd25f407426f"></script>
+</div>
+</div>
+
+<script>
+// === ★★★ カスタムカウンター機能のロジック (コア) ★★★
+const customContainer = document.getElementById('customCounterContainer');
+const customDisplay = document.getElementById('customCounterDisplay');
+const customLabel = document.getElementById('customCounterLabel');
+let customSettings = {};
+let counterInterval = null; 
+
+function loadCustomCounterSettings() {
+    const savedSettings = localStorage.getItem('customCounterSettings');
+    if (savedSettings) {
+        customSettings = JSON.parse(savedSettings);
+    } else {
+        customSettings = { show: true, target: 1000, start: null, mode: 'none' };
+    }
+
+    if (customSettings.mode !== 'none') {
+        startCustomCounter();
+    } else {
+        customDisplay.textContent = '---';
+        customLabel.textContent = 'カスタムカウンターは現在「無効」です。設定を変更してください。';
+    }
+}
+
+// ルーレットアニメーション関数
+function runRouletteAnimation(targetCount) {
+    const ROULETTE_DURATION = 3000; 
+    let startTime = null;
+    let frameId;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = timestamp - startTime;
+        const ratio = Math.min(progress / ROULETTE_DURATION, 1);
+
+        if (ratio < 1) {
+            // アニメーション中: ランダムな数字を表示
+            const countLength = String(targetCount).length > 3 ? String(targetCount).length : 4;
+            let randomNum = '';
+            for (let i = 0; i < countLength; i++) {
+                randomNum += Math.floor(Math.random() * 10);
+            }
+            customDisplay.textContent = randomNum;
+            frameId = window.requestAnimationFrame(step);
+        } else {
+            // アニメーション終了: 最終的な数字を表示
+            customDisplay.textContent = targetCount.toLocaleString();
+            customLabel.textContent = `ルーレット完了！目標値 ${targetCount.toLocaleString()} で停止しました。`;
+            window.cancelAnimationFrame(frameId);
+        }
+    }
+
+    frameId = window.requestAnimationFrame(step);
+}
+
+// カウンターの開始関数
+function startCustomCounter() {
+    if (counterInterval) clearInterval(counterInterval); 
+
+    const { target, start, mode } = customSettings;
+    const targetVal = parseInt(target, 10);
+
+    if (mode === 'roulette') {
+        customLabel.textContent = `目標値 ${targetVal.toLocaleString()} に向けてルーレットを開始します...`;
+        runRouletteAnimation(targetVal);
+        return;
+    }
+
+    if (mode === 'countdown') {
+        customLabel.textContent = `目標値 ${targetVal.toLocaleString()} 回からのカウントダウン中...`;
+        let currentValue = targetVal;
+        
+        customDisplay.textContent = currentValue.toLocaleString();
+        
+        counterInterval = setInterval(() => {
+            currentValue--;
+            customDisplay.textContent = currentValue.toLocaleString();
+
+            if (currentValue <= 0) {
+                clearInterval(counterInterval);
+                customDisplay.textContent = "0";
+                customLabel.textContent = "カウントダウン完了！";
+            }
+        }, 1000); 
+
+    } else if (mode === 'countup' && start) {
+        const startDate = new Date(start).getTime();
+        customLabel.textContent = `${new Date(start).toLocaleString()} からの経過時間`;
+
+        counterInterval = setInterval(() => {
+            const now = Date.now();
+            if (isNaN(startDate)) {
+                 customDisplay.textContent = '開始時刻が無効です';
+                 clearInterval(counterInterval);
+                 return;
+            }
+
+            const elapsedMs = now - startDate;
+            const totalSeconds = Math.floor(elapsedMs / 1000);
+
+            // 時刻表示形式 (HH:MM:SS)
+            const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            
+            customDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+            
+        }, 1000); 
+    }
+}
+
+// ページロード時にカスタムカウンターの設定を読み込む
+window.addEventListener('load', loadCustomCounterSettings);
+// ★★★ ここまでカスタムカウンター ★★★
+</script>
+</body>
+</html>

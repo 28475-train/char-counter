@@ -3,50 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>【PC版】トップページ | ツール</title>
+<title>【PC版】多機能ツールボックス | 篠ノ井乗務区制作</title>
 <link rel="stylesheet" href="style.css">
 <style>
 /* PC版のコンテンツ幅を設定 */
 body{ max-width: 720px; margin: 0 auto; padding: 0; }
-
-.tool-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
     padding: 20px;
 }
-
-.tool-item {
+.tool-card {
     background: var(--card);
-    padding: 20px;
-    border-radius: 10px;
+    padding: 30px;
+    border-radius: 12px;
     box-shadow: var(--shadow);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
     border: 1px solid var(--border);
 }
-
-.tool-item:hover {
-    transform: translateY(-3px);
+.tool-card:hover {
+    transform: translateY(-5px);
     box-shadow: var(--shadow-hover);
 }
-
-.tool-item a {
-    display: block;
-    text-decoration: none;
-    color: var(--text-color);
+.tool-card h2 {
+    color: var(--accent-dark);
+    font-size: 1.8em;
+    margin-bottom: 10px;
 }
-
-.tool-item h2 {
-    margin-top: 0;
-    color: var(--accent);
-    font-size: 1.5em;
-    border-bottom: 2px solid var(--accent-light);
-    padding-bottom: 5px;
-}
-
-.tool-item p {
-    margin-bottom: 0;
+.tool-card p {
     color: var(--text-soft);
+    margin-bottom: 20px;
+}
+.tool-card a {
+    display: inline-block;
+    background-color: var(--accent);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.tool-card a:hover {
+    background-color: var(--accent-dark);
+    text-decoration: none;
 }
 </style>
 </head>
@@ -55,104 +56,55 @@ body{ max-width: 720px; margin: 0 auto; padding: 0; }
 // --- バージョン情報 ---
 const APP_VERSION = "v1.2.0"; 
 // ----------------------
+// ★★★ 自動リダイレクトを再開 ★★★
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 if (isMobile) { location.href = 'SP/index.html'; }
 
 function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
-
-// テーマの適用
-function applyTheme(theme) {
-    document.body.setAttribute('data-theme', theme);
-}
+function applyTheme(theme) { document.body.setAttribute('data-theme', theme); }
 
 window.onload = function() { 
     document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
-    
-    // テーマのロードと適用
     const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
     applyTheme(savedTheme);
 }
 </script>
 
-<div class="main-content-area">
-    <div style="max-width: 720px; margin: 0 auto;">
-
-        <header class="header">
-            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-            <a href="index.html" class="header-title">ツールボックス (PC版)</a>
-        </header>
-
-        <div class="top-ad-header">
-            <div id="ad-area-top-pc">
-                <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-            </div>
-        </div>
-
-        <nav class="side-nav" id="sideNav">
-            <a href="counter.html">📝 文字数カウント</a> 
-            <a href="roulette.html">🎲 ルーレット</a> 
-            <a href="settings.html">⚙ 設定</a>
-            <a href="help.html">ヘルプ</a>
-            <a href="about.html">制作者</a>
-        </nav>
-        
-        <div class="content-wrapper">
-
+<div class="content-wrapper">
             <h1>多機能ツールボックスへようこそ</h1>
-            <p style="color: var(--text-soft); padding: 0 20px;">使用したいツールを選択してください。全てのデータはブラウザ内に保存されます。</p>
-
-            <div class="tool-list">
-                
-                <div class="tool-item">
-                    <a href="counter.html">
-                        <h2>📝 文字数カウント</h2>
-                        <p>リアルタイムで文字数、行数、バイト数を測定します。</p>
-                    </a>
+            
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <h2>📝 文字数カウント</h2>
+                    <p>テキストの文字数、行数、バイト数をリアルタイムで計測します。目標設定やデータ保存も可能です。</p>
+                    <a href="counter.html">使う</a>
                 </div>
-
-                <div class="tool-item">
-                    <a href="roulette.html">
-                        <h2>🎲 ルーレット・目標カウントダウン</h2>
-                        <p>目標設定とルーレット機能を組み合わせた便利ツールです。</p>
-                    </a>
+                <div class="tool-card">
+                    <h2>🎲 ルーレット / カウントダウン</h2>
+                    <p>目標日時までのカウントダウン、または設定した項目からランダムに一つを選ぶルーレット機能です。</p>
+                    <a href="roulette.html">使う</a>
                 </div>
-
-                <div class="tool-item">
-                    <a href="settings.html">
-                        <h2>⚙ 設定</h2>
-                        <p>テーマカラーの変更、ルーレット目標の設定、データ管理を行います。</p>
-                    </a>
-                </div>
-            </div>
-
-            <h2 style="padding: 0 20px; margin-top: 40px; border-bottom: 2px solid var(--accent-light);">その他</h2>
-            <div class="tool-list" style="padding-top: 0;">
-                <div class="tool-item">
-                    <a href="help.html">
-                        <h2>ヘルプ</h2>
-                        <p>ツールの使い方や機能の詳細を確認できます。</p>
-                    </a>
-                </div>
-                <div class="tool-item">
-                    <a href="about.html">
-                        <h2>制作者</h2>
-                        <p>制作者情報と著作権表示を確認できます。</p>
-                    </a>
+                <div class="tool-card">
+                    <h2>⚙ 設定</h2>
+                    <p>テーマカラーの変更、ルーレット項目や目標日時の設定を行います。</p>
+                    <a href="settings.html">設定へ</a>
                 </div>
             </div>
             
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="font-size: 0.9em; color: var(--text-soft);">バージョン <span id="appVersionDisplay"></span></p>
+                <p><a href="privacy.html" style="font-size: 0.85em;">プライバシーポリシー</a> | <a href="terms.html" style="font-size: 0.85em;">利用規約</a></p>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="bottom-ad-footer">
-    <div id="ad-area-bottom-pc">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-    </div>
-</div>
+<div class="bottom-ad-footer"><div id="ad-area-bottom"></div></div>
 
 <footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Version <span id="appVersionDisplay"></span></p>
+    <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
 </footer>
+
+<script src="ads.js"></script>
 </body>
 </html>

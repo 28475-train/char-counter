@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja" data-ads="true">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>【SP版】プライバシーポリシー | 篠ノ井乗務区制作</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+/* SP版固有のスタイル調整 */
+.policy-content {
+    background: var(--card);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    font-size: 0.9em;
+}
+
+.policy-content h2 {
+    color: var(--accent-dark);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 5px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.3em;
+}
+
+.policy-content h3 {
+    color: var(--text-color);
+    margin-top: 15px;
+    font-size: 1.1em;
+}
+.policy-content ul {
+    margin-left: 15px;
+    list-style: disc;
+    padding-left: 0;
+}
+</style>
+</head>
+<body data-theme="light_green">
+<script>
+// --- バージョン情報 ---
+const APP_VERSION = "v1.2.0"; 
+// ----------------------
+// ★★★ 自動リダイレクトを再開 ★★★
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (!isMobile) { location.href = '../privacy.html'; }
+
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+function applyTheme(theme) { document.body.setAttribute('data-theme', theme); }
+
+window.onload = function() { 
+    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
+    applyTheme(savedTheme);
+}
+</script>
+
+<div class="main-content-area">
+
+    <header class="header">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <a href="counter.html" class="header-title" style="font-size: 1.2em;">プライバシーポリシー (SP版)</a>
+    </header>
+
+    <div class="top-ad-header" style="height: 50px;"><div id="ad-area-top"></div></div>
+
+    <nav class="side-nav" id="sideNav">
+        <a href="counter.html">📝 文字数カウント</a> 
+        <a href="roulette.html">🎲 ルーレット</a> 
+        <a href="settings.html">⚙ 設定</a>
+        <a href="help.html">ヘルプ</a>
+        <a href="about.html">制作者</a>
+    </nav>
+    
+    <div class="content-wrapper">
+        <h1>プライバシーポリシー</h1>
+        
+        <div class="policy-content">
+            <p>本ツールボックスは、以下のポリシーに基づき運営されます。</p>
+
+            <h2>第1条 (個人情報の収集)</h2>
+            <p>本サービスは、個人を特定できる情報は収集していません。アクセス情報や利用状況に関する非個人情報を収集します。</p>
+
+            <h2>第2条 (広告の配信について)</h2>
+            <p>本サービスでは、**shinobi.jp** を含む広告配信サービスを利用しており、これらの事業者はCookieを使用して利用者様に最適化された広告を表示する場合があります。</p>
+
+            <h2>第3条 (Cookieの使用について)</h2>
+            <p>本サービスでは、データ保存（ローカルストレージ）による利便性向上、および広告配信の最適化のためにCookieに類似する技術を使用しています。</p>
+            <p>ブラウザの設定でCookieの利用を拒否できますが、一部機能が正常に動作しない可能性があります。</p>
+            
+            <h2>第4条 (著作権情報)</h2>
+            <p>本ツールの著作権は、「篠ノ井乗務区制作」に帰属します。</p>
+            
+            <p style="text-align: right; margin-top: 30px; color: var(--text-soft);">2024年1月1日 制定</p>
+        </div>
+        
+    </div>
+</div>
+
+<div class="bottom-ad-footer" style="height: 50px;"><div id="ad-area-bottom"></div></div>
+
+<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
+    <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
+</footer>
+
+<script src="../ads.js"></script>
+</body>
+</html>

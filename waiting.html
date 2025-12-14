@@ -40,12 +40,24 @@
 </style>
 </head>
 <body data-theme="light_green">
+<script>
+// --- テーマ適用ロジック (省略) ---
+function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+}
+
+window.onload = function() { 
+    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
+    applyTheme(savedTheme);
+}
+</script>
+
 <div class="main-content-area">
     <div class="waiting-container">
-        <h1>⚙ 処理中です...</h1>
+        <h1>⚠️ ただいま更新中です</h1>
         <div class="spinner"></div>
-        <p style="margin-bottom: 30px;">しばらくお待ちください。自動的に次のページへ移動します。</p>
-        <p style="font-size: 0.8em; color: var(--text-soft);">数秒経っても切り替わらない場合は、ブラウザを再読み込みしてください。</p>
+        <p style="margin-bottom: 30px;">サービス向上のため、一時的にメンテナンスを行っております。</p>
+        <p style="font-size: 0.8em; color: var(--text-soft);">公開までしばらくお待ちください。</p>
     </div>
 </div>
 

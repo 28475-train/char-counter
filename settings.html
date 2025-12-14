@@ -6,13 +6,8 @@
 <title>【PC版】設定 | ツール</title>
 <link rel="stylesheet" href="style.css">
 <style>
-/* settings.html専用のスタイル (前回の回答と同じ) */
-body{
-  max-width: 720px;
-  margin: 0 auto; /* ヘッダー/フッター固定のため margin-top/bottom をリセット */
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
+/* settings.html専用のスタイル */
+body{ max-width: 720px; margin: 0 auto; padding: 0; }
 .setting-group{
   background: var(--card);
   border-radius: 12px;
@@ -21,7 +16,23 @@ body{
   border: 1px solid var(--border);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
-/* ... その他 settings.html 専用CSS ... */
+.setting-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-soft);
+  gap: 20px;
+}
+.setting-item:last-child { border-bottom: none; }
+.setting-item input[type="number"],
+.setting-item input[type="datetime-local"] { width: 150px; text-align: right; }
+.theme-options button{
+    padding: 8px 15px; margin-right: 5px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer;
+    background-color: var(--background); color: var(--text-color);
+}
+.theme-options button:hover { opacity: 0.8; }
+.theme-options button.active { border-color: var(--accent); font-weight: bold; background-color: var(--accent-light); }
 </style>
 </head>
 <body data-theme="light_green">
@@ -30,35 +41,92 @@ body{
 const APP_VERSION = "v1.2.0"; 
 // ----------------------
 
-// SP/PC振り分け判定
+// SP/PC振り分けとリファラーチェック (毎回同意)
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
 if (isMobile) {
     location.href = 'SP/index.html';
 } else {
-    // ページを直接開いた場合は index.html へ戻す (毎回同意のため)
     if (!document.referrer.includes('index.html')) {
         location.href = 'index.html';
     }
 }
 
-// 既存の設定ロード (テーマ、広告など) - 簡略化
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) { document.body.setAttribute('data-theme', savedTheme); }
-const hideAds = localStorage.getItem('hideAds') === 'true';
-if (hideAds) { document.body.setAttribute('data-ads', 'false'); }
+// === 設定処理関数 ===
 
-// (その他の設定関連JavaScript関数は省略)
+function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-options button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.toLowerCase().replace(' ', '_') === theme) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+function setTheme(theme) {
+    localStorage.setItem('theme', theme);
+    applyTheme(theme);
+}
+
+function saveDisplaySettings() {
+    const hideAds = document.getElementById('hideAds').checked;
+    const ignoreSpaces = document.getElementById('ignoreSpaces').checked;
+    
+    localStorage.setItem('hideAds', hideAds);
+    localStorage.setItem('ignoreSpaces', ignoreSpaces);
+    
+    document.body.setAttribute('data-ads', hideAds ? 'false' : 'true');
+    alert('表示設定を保存しました。');
+}
+
+function saveCustomCounterSettings() {
+    const targetValue = document.getElementById('customTargetValue').value;
+    
+    if (targetValue > 0) {
+        localStorage.setItem('customTargetValue', targetValue);
+        alert(`カスタム目標を ${targetValue} に設定しました。`);
+    } else {
+        alert('無効な目標値です。1以上の数値を入力してください。');
+    }
+}
+
+function clearHistory() {
+    if (confirm('自動保存された履歴データをすべて削除してもよろしいですか？')) {
+        // 例: 'autoSavedText' などのキーを削除
+        localStorage.removeItem('autoSavedText');
+        alert('履歴データを削除しました。');
+    }
+}
+
+// === ロード処理 ===
+window.onload = function() {
+    // テーマのロード
+    const savedTheme = localStorage.getItem('theme') || 'light_green';
+    applyTheme(savedTheme);
+
+    // 表示設定のロード
+    document.getElementById('hideAds').checked = localStorage.getItem('hideAds') === 'true';
+    document.getElementById('ignoreSpaces').checked = localStorage.getItem('ignoreSpaces') === 'true';
+
+    // カスタム目標のロード
+    document.getElementById('customTargetValue').value = localStorage.getItem('customTargetValue') || 1000;
+
+    document.getElementById('appVersionDisplay').textContent = APP_VERSION;
+}
+
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
 </script>
 
 <div class="top-ad-header">
     <div id="ad-area-top-pc">
-        AD: PC Top Banner 728x90
-    </div>
+        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+        </div>
 </div>
 
 <div class="main-content-area">
-    <div style="max-width: 720px; margin: 0 auto;"> <header class="header">
+    <div style="max-width: 720px; margin: 0 auto;">
+
+        <header class="header">
             <div class="menu-toggle" onclick="toggleMenu()">☰</div>
             <a href="counter.html" class="header-title">⚙ 設定 (PC版)</a>
         </header>
@@ -71,44 +139,65 @@ if (hideAds) { document.body.setAttribute('data-ads', 'false'); }
             <a href="about.html">制作者</a>
         </nav>
         
-        <h1>設定</h1>
+        <div class="content-wrapper">
+            <h1>設定</h1>
 
-        <div class="setting-group">
-            <h2>デザインテーマ</h2>
+            <div class="setting-group">
+                <h2>デザインテーマ</h2>
+                <div class="setting-item">
+                    <label>テーマを選択</label>
+                    <div class="theme-options">
+                        <button onclick="setTheme('light_green')">Light Green</button>
+                        <button onclick="setTheme('dark_blue')">Dark Blue</button>
+                        <button onclick="setTheme('simple_white')">Simple White</button>
+                    </div>
+                </div>
             </div>
 
-        <div class="setting-group">
-            <h2>訪問回数カウンター設定 (counter.html)</h2>
+            <div class="setting-group">
+                <h2>カスタム目標カウンター設定</h2>
+                <div class="setting-item">
+                    <label for="customTargetValue">目標回数/目標値</label>
+                    <input type="number" id="customTargetValue" min="1" value="1000">
+                </div>
+                <div style="text-align: right; padding-top: 15px;">
+                    <button onclick="saveCustomCounterSettings()">設定を保存</button>
+                </div>
             </div>
 
-        <div class="setting-group">
-            <h2>カスタム目標カウンター設定 (roulette.html)</h2>
+            <div class="setting-group">
+                <h2>入力・表示設定</h2>
+                <div class="setting-item">
+                    <label for="ignoreSpaces">スペース（空白）をカウントしない</label>
+                    <input type="checkbox" id="ignoreSpaces">
+                </div>
+                <div class="setting-item">
+                    <label for="hideAds">広告の表示を無効にする</label>
+                    <input type="checkbox" id="hideAds">
+                </div>
+                <div style="text-align: right; padding-top: 15px;">
+                    <button onclick="saveDisplaySettings()">表示設定を保存</button>
+                </div>
             </div>
 
-        <div class="setting-group">
-            <h2>入力・表示設定 (counter.html)</h2>
+            <div class="setting-group">
+                <h2>履歴管理</h2>
+                <div style="text-align: right; padding-top: 15px;">
+                    <button onclick="clearHistory()" style="background-color: #d9534f; color: white; padding: 10px 15px; border: none; border-radius: 4px;">履歴をすべてクリア</button>
+                </div>
             </div>
-
-        <div class="setting-group">
-            <h2>履歴管理 (自動保存されたテキスト)</h2>
-            </div>
+        </div>
     </div>
 </div>
 
 <div class="bottom-ad-footer">
     <div id="ad-area-bottom-pc">
-        AD: PC Bottom Banner 468x60
-    </div>
+        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+        </div>
 </div>
 
 <footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
     <p>Version <span id="appVersionDisplay"></span></p>
 </footer>
-
-<script>
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
-document.getElementById('appVersionDisplay').textContent = APP_VERSION;
-// (設定画面のロード/保存ロジックは省略)
-</script>
 </body>
 </html>

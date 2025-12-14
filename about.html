@@ -57,6 +57,8 @@ section h2{
     <div id="releaseNotes">リリースノートを読み込み中...</div>
 </section>
 
+<p style="text-align: center; margin-top: 30px;"><a href="counter.html">ツール画面に戻る</a></p>
+
 <script>
 // テーマ設定の適用 (ローカルストレージから読み込み)
 const savedTheme = localStorage.getItem('theme');
@@ -65,7 +67,7 @@ if (savedTheme) {
 }
 
 // === リリースノートの外部読み込み ===
-// ★ リリースノート用GAS URLを設定
+// ★ リリースノート用GAS URLを設定 (修正済み)
 const RELEASE_NOTES_GAS_URL = "https://script.google.com/macros/s/AKfycbzHWLSZ5PsrQs2SyFY9hVclq7UI8on6R67d8IkxDMS_XZB_d9PWTis_8xiMIYG5NHlENQ/exec"; 
 
 fetch(RELEASE_NOTES_GAS_URL)

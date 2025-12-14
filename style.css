@@ -1,11 +1,13 @@
-/* 色調整：全体的にコントラストを上げ、視認性を高めました */
+/* 色調整：全体的に緑色基調にし、視認性を高めるコントラスト調整 */
 :root{
-  --bg:#ffffff;
-  --card:#f3f4f6;    /* 明るい灰色に変更 (視認性向上) */
-  --accent:#10b981;  /* 深い緑に変更 (目立つように) */
-  --accent-soft:#d1fae5; /* 明るすぎない緑に変更 */
-  --text:#1f2937;
-  --border:#d1d5db;  /* ボーダーを濃くしました */
+  --bg:#f8fff8;        /* 非常に薄い緑の背景 (メイン) */
+  --card:#eefbe7;      /* 薄い緑のカード背景 */
+  --accent:#059669;    /* 深い緑（保存ボタン、設定ボタン、ハイライト） */
+  --accent-soft:#d1fae5; /* 薄いアクセント（ホバー、お知らせ背景） */
+  --text:#1f2937;      /* 濃いテキスト色 */
+  --border:#34d399;    /* 明確な境界線用の緑 */
+  --danger:#84cc16;    /* クリアボタン用（オリーブグリーン） */
+  --danger-hover:#65a30d; /* クリアボタンのホバー色 */
 }
 
 body{
@@ -39,11 +41,11 @@ h1{margin-top:0}
 .notice-item{
   margin-top:10px;
   padding-top:10px;
-  border-top:1px dashed #6ee7b7; /* 区切り線を濃くしました */
+  border-top:1px dashed #6ee7b7;
 }
 .notice-date{
   font-size:.8em;
-  color:#065f46; /* 日付の色を濃くしました */
+  color:#065f46;
 }
 .notice-title{
   font-weight:bold;
@@ -64,6 +66,8 @@ textarea{
   border:1px solid var(--border);
   background:#fff;
   cursor:pointer;
+  /* 文字色をテキスト色に統一 */
+  color:var(--text);
 }
 
 .controls button:hover{
@@ -72,32 +76,32 @@ textarea{
 
 .info p{margin:4px 0}
 
-/* 保存ボタンのデザインをより目立たせる */
+/* 保存ボタンのデザイン */
 .save-btn{
   background:var(--accent);
   color:#fff;
   border:none;
   font-weight: bold;
-  padding: 8px 16px; /* サイズを大きく */
+  padding: 8px 16px;
 }
 
 .save-btn:hover{
-  filter: brightness(1.1); /* ホバーで明るく */
+  filter: brightness(1.1);
   background:var(--accent);
 }
 
-/* すべてクリアボタンのスタイルを追加 */
+/* すべてクリアボタンのスタイル（緑色統一、高コントラスト） */
 .clear-btn {
-  background: #f87171; /* 赤色系 */
+  background: var(--danger); /* オリーブグリーン系 */
   color: #fff;
   border: none;
   font-weight: bold;
   padding: 8px 16px;
-  margin-left: 8px; /* 保存ボタンとの間隔 */
+  margin-left: 8px;
 }
 
 .clear-btn:hover {
-  background: #ef4444; /* ホバーで濃い赤 */
+  background: var(--danger-hover); /* ホバーで濃いオリーブグリーン */
 }
 
 
@@ -105,11 +109,13 @@ textarea{
   position:fixed;
   bottom:20px;
   right:20px;
+  /* aタグなのでボタンデザインを反映 */
   padding:10px 14px;
   border:none;
   border-radius:50px;
   background:var(--accent);
   color:#fff;
+  text-decoration: none; /* aタグの装飾を削除 */
 }
 
 /* 広告表示の制御 */
@@ -125,20 +131,58 @@ html[data-ads="false"] .ad-pc {
 }
 
 
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+/* 設定画面のスタイル (settings.html 用) */
+.setting-group {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
 }
-.modal.hidden{display:none}
-
-.modal-box{
-  background:#fff;
-  border-radius:14px;
-  padding:20px;
-  max-width:420px;
-  width:100%;
+.setting-group h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+.setting-group button {
+    padding: 10px 15px;
+    margin-right: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+}
+.setting-group button:hover {
+    background: var(--accent-soft);
+}
+.active-btn {
+    background: var(--accent) !important;
+    color: #fff;
+    border: none !important;
+}
+.back-btn {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: var(--accent); /* 緑に統一 */
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+}
+.link-list {
+    list-style: none;
+    padding: 0;
+}
+.link-list a {
+    color: var(--accent); /* リンク色も緑に */
+    text-decoration: none;
+    display: block;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
 }

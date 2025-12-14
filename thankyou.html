@@ -3,100 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>送信完了 | ツール</title>
+<title>完了しました | ツール</title>
 <link rel="stylesheet" href="style.css">
 <style>
-/* サンキューページ専用スタイル */
-.thank-you-message {
+.thankyou-container {
     text-align: center;
-    padding: 60px 20px;
+    padding: 50px 20px;
+    max-width: 600px;
+    margin: 50px auto;
     background: var(--card);
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
 }
-.thank-you-message h1 {
-    color: var(--accent);
-    font-size: 2.5em;
+
+.thankyou-container h1 {
+    font-size: 2em;
+    color: var(--accent-dark);
     margin-bottom: 20px;
-}
-.thank-you-message p {
-    font-size: 1.1em;
-    margin-bottom: 30px;
-}
-.thank-you-message a {
-    display: inline-block;
-    padding: 12px 25px;
-    background-color: var(--text-highlight);
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-.thank-you-message a:hover {
-    background-color: var(--accent);
 }
 </style>
 </head>
 <body data-theme="light_green">
-<script>
-// --- バージョン情報 ---
-const APP_VERSION = "v1.2.0"; 
-// ----------------------
-
-// SP/PC振り分け
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (isMobile) {
-    location.href = 'SP/thankyou.html';
-}
-
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
-window.onload = function() { document.getElementById('appVersionDisplay').textContent = APP_VERSION; }
-</script>
-
 <div class="main-content-area">
-
-    <header class="header">
-        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-        <a href="counter.html" class="header-title">送信完了 (PC版)</a>
-    </header>
-
-    <div class="top-ad-header">
-        <div id="ad-area-top-pc">
-            <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-            </div>
-    </div>
-
-    <nav class="side-nav" id="sideNav">
-        <a href="counter.html">📝 文字数カウント</a> 
-        <a href="roulette.html">🎲 ルーレット</a> 
-        <a href="settings.html">⚙ 設定</a>
-        <a href="help.html">ヘルプ</a>
-        <a href="about.html">制作者</a>
-    </nav>
-    
-    <div class="content-wrapper" style="max-width: 600px; margin: 20px auto;">
-        
-        <div class="thank-you-message">
-            <h1>ご意見ありがとうございます！</h1>
-            <p>
-                フィードバックの内容を確かに受け取りました。<br>
-                今後のツールの改善に活用させていただきます。
-            </p>
-            <a href="index.html">トップページに戻る</a>
-        </div>
-        
+    <div class="thankyou-container">
+        <h1>✅ ありがとうございます！</h1>
+        <p style="margin-bottom: 30px;">[フォーム送信、または何らかの操作]が完了しました。</p>
+        <a href="index.html" class="button" style="padding: 10px 20px; background-color: var(--accent); color: white; border-radius: 5px; display: inline-block;">ツールボックスに戻る</a>
     </div>
 </div>
 
-<div class="bottom-ad-footer">
-    <div id="ad-area-bottom-pc">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-        </div>
-</div>
+<div class="bottom-ad-footer"><div id="ad-area-bottom"></div></div>
+<script src="ads.js"></script>
 
-<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Version <span id="appVersionDisplay"></span></p>
-</footer>
 </body>
 </html>

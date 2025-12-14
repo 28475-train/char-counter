@@ -3,52 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>初期設定・同意</title>
+<title>文字数カウント & 保存ツール</title>
+
+<link rel="stylesheet" href="style.css">
+
 <style>
-body{font-family:"Noto Sans JP",system-ui,sans-serif;background:#f3f4f6;
-display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
-.box{background:#fff;padding:24px;border-radius:14px;max-width:420px;width:100%}
-button{width:100%;margin-top:8px;padding:12px;border:none;border-radius:8px;
-background:#2563eb;color:#fff;cursor:pointer}
-.agree{background:#16a34a;font-weight:bold}
-.links{text-align:center;font-size:.85em;margin-top:10px}
-.links a{color:#2563eb;text-decoration:none}
+/* index.html専用のスタイル */
+body{font-family:"Noto Sans JP",system-ui,sans-serif;
+max-width:720px;margin:30px auto;padding:20px; text-align:center;}
+.agreement-card{
+  background:var(--card);
+  border-radius:14px;
+  padding:20px;
+  margin-top:50px;
+  border:1px solid var(--border);
+  text-align:left;
+}
+.agreement-card h2{
+    color: var(--accent);
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 10px;
+}
+.agree-btn{
+  display:block;
+  width:100%;
+  padding:12px;
+  margin-top:20px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:bold;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  text-align:center;
+  text-decoration: none;
+}
+.agree-btn:hover{
+    filter: brightness(1.1);
+}
 </style>
 </head>
-<body>
-<div class="box">
-<h2>ご利用にあたって</h2>
 
-<p>表示モード</p>
-<button onclick="setView('sp')">📱 スマホ</button>
-<button onclick="setView('pc')">🖥 PC</button>
+<body data-theme="light_green"> <h1>文字数カウント & 保存ツールへようこそ</h1>
 
-<p style="margin-top:12px">広告表示</p>
-<button onclick="setAds(true)">広告ON</button>
-<button onclick="setAds(false)">広告OFF</button>
+<div class="agreement-card">
+    <h2>ご利用にあたっての同意</h2>
+    <p>本ツールは、利用規約およびプライバシーポリシーに同意の上、ご利用いただけます。</p>
 
-<button class="agree" onclick="agree()">同意して利用開始</button>
+    <ul style="font-size: 0.9em; padding-left: 20px;">
+        <li>データの処理・保存はすべてお使いの**端末内**で行われます。</li>
+        <li>アクセス状況の把握のため、**アクセスカウンター**を設置しています。</li>
+        <li>収益化のため、**広告**が表示されます（設定で非表示にできます）。</li>
+    </ul>
 
-<div class="links">
-<a href="terms.html">利用規約</a> /
-<a href="terms.html#privacy">プライバシーポリシー</a>
-</div>
+    <p style="margin-top: 15px;">詳細については、<a href="terms.html" style="color: var(--link); text-decoration: none; font-weight: bold;">利用規約・プライバシーポリシー</a>をご確認ください。</p>
+
+    <button class="agree-btn" onclick="agreeAndRedirect()">同意してツールを使う</button>
 </div>
 
 <script>
-const GAS_URL="https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec";
-let view=null, ads=null;
-function setView(v){view=v;localStorage.setItem('viewMode',v);}
-function setAds(v){ads=v;localStorage.setItem('showAds',v?'true':'false');}
-function agree(){
- if(!view||ads===null){alert("すべて選択してください");return;}
- localStorage.setItem('agreed','true');
- fetch(GAS_URL,{method:'POST',mode:'no-cors'});
- location.href='counter.html';
+/* ===== テーマ設定の適用 (全ページ共通) ===== */
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.body.setAttribute('data-theme', savedTheme);
 }
-if(localStorage.getItem('agreed')==='true'){
- location.href='counter.html';
+
+// 制限アクセス数 (例: 10000アクセス/日以上で制限)
+const ACCESS_LIMIT = 10000;
+const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP3bBp_wdlo-5k_Wuag1dH0D3cuUg5pYqLf6E2cf2L1NcIY476DqyHw/exec"; 
+
+
+// 1. アクセス数チェック
+async function checkAccessAndRedirect() {
+    try {
+        const response = await fetch(ACCESS_GAS_URL);
+        if (!response.ok) {
+            console.error("GASアクセスエラー。待機ページチェックをスキップします。");
+            return; 
+        }
+        const data = await response.json();
+        const accessCount = data.count || 0;
+
+        // アクセス数が制限を超えていたら待機ページへ
+        if (accessCount > ACCESS_LIMIT) {
+            location.href = 'pages/waiting.html';
+        }
+    } catch (error) {
+        console.error('アクセス数チェック中にエラーが発生しました:', error);
+    }
+}
+
+
+function agreeAndRedirect() {
+    // 2. 同意フラグをローカルストレージに保存
+    localStorage.setItem('agreed', 'true');
+    // 3. ツール画面へ移動
+    location.href = 'counter.html';
+}
+
+
+// ページロード時にアクセスチェックを実行
+window.addEventListener('load', checkAccessAndRedirect);
+
+
+// 既に同意済みの場合は自動でcounter.htmlへリダイレクト
+if (localStorage.getItem('agreed') === 'true') {
+    checkAccessAndRedirect().then(() => {
+        location.href = 'counter.html';
+    });
 }
 </script>
+
 </body>
 </html>

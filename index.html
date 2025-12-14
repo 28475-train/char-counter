@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>文字数カウント 保存ツール</title>
 <link rel="stylesheet" href="style.css">
+<link rel="canonical" href="https://28475-train.github.io/char-counter/index.html">
+<meta property="og:title" content="【リアルタイム】文字数カウント・保存ツール">
+<meta property="og:description" content="リアルタイムで文字数と行数を即座に計測する無料ツール。ファイル保存機能付き。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://28475-train.github.io/char-counter/index.html">
+<meta property="og:image" content="https://28475-train.github.io/char-counter/images/tool_image.png">
+<meta property="og:site_name" content="文字数カウントツール">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 body{font-family:"Noto Sans JP",system-ui,sans-serif;
 max-width:720px;margin:30px auto;padding:20px; text-align:center;}
@@ -54,14 +62,17 @@ max-width:720px;margin:30px auto;padding:20px; text-align:center;}
     <button class="agree-btn" onclick="agreeAndRedirect()">同意してツールを使う</button>
 </div>
 <script>
+// テーマの適用
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme) {
     document.body.setAttribute('data-theme', savedTheme);
 }
+// 同意処理
 function agreeAndRedirect() {
     localStorage.setItem('agreed', 'true');
     location.href = 'counter.html';
 }
+// 同意済みなら直接ツールへ
 if (localStorage.getItem('agreed') === 'true') {
     location.href = 'counter.html';
 }

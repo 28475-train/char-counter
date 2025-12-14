@@ -74,7 +74,7 @@ body{
     transform: translateY(1px);
 }
 
-.clear-btn, button[onclick="saveCustomCounterSettings()"] {
+.clear-btn, button[onclick^="save"], button[onclick="clearHistory()"] {
     background-color: var(--accent);
     color: white;
     border: none;
@@ -84,8 +84,9 @@ body{
     font-size: 1em;
     font-weight: bold;
     transition: background-color 0.2s;
+    margin-left: 10px;
 }
-.clear-btn:hover, button[onclick="saveCustomCounterSettings()"]:hover {
+.clear-btn:hover, button[onclick^="save"]:hover, button[onclick="clearHistory()"]:hover {
     background-color: var(--accent-dark);
 }
 
@@ -104,18 +105,66 @@ body{
 .link-list li a:hover {
     color: var(--accent);
 }
+
+/* 履歴表示用 */
+#historyList div {
+    background: var(--background);
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-soft);
+    font-size: 0.9em;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
 </style>
 </head>
 <body data-theme="light_green">
 <script>
+// ページロード時のテーマ適用
 const body = document.body;
 const savedTheme = localStorage.getItem('theme') || 'light_green';
 body.setAttribute('data-theme', savedTheme);
+
 function setTheme(theme) {
     body.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
 }
-// (他の共通関数は省略)
+
+// 履歴関連の共通関数 (復旧)
+function getHistory() {
+    try {
+        const history = localStorage.getItem('textHistory');
+        return history ? JSON.parse(history) : [];
+    } catch {
+        return [];
+    }
+}
+function clearHistory() {
+    if (confirm('すべての履歴を完全に削除します。よろしいですか？')) {
+        localStorage.removeItem('textHistory');
+        renderHistory();
+        alert('履歴を削除しました。');
+    }
+}
+function renderHistory() {
+    const list = document.getElementById('historyList');
+    if (!list) return;
+    const history = getHistory();
+    list.innerHTML = '';
+    
+    if (history.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-soft);">履歴はありません。</p>';
+        return;
+    }
+
+    history.forEach((item, index) => {
+        const div = document.createElement('div');
+        const content = item.length > 50 ? item.substring(0, 50) + '...' : item;
+        div.innerHTML = `<strong>${index + 1}.</strong> ${new Date(item.timestamp).toLocaleString()}<br>${content}`;
+        list.appendChild(div);
+    });
+}
 </script>
 
 <header class="header">
@@ -180,14 +229,41 @@ function setTheme(theme) {
 </div>
 
 <div class="setting-group">
-    <h2>入力エリア表示設定 (counter.html)</h2>
+    <h2>入力・表示設定 (counter.html)</h2>
+    <div class="setting-item">
+        <label for="ignoreSpaces">スペース（空白）をカウントしない</label>
+        <input type="checkbox" id="ignoreSpaces">
     </div>
+    <div class="setting-item">
+        <label for="hideAds">広告の表示を無効にする</label>
+        <input type="checkbox" id="hideAds">
+    </div>
+    <div class="setting-item">
+        <label for="fontSizeSelect">フォントサイズ</label>
+        <select id="fontSizeSelect">
+            <option value="small">小</option>
+            <option value="medium">中</option>
+            <option value="large">大</option>
+        </select>
+    </div>
+    <div style="text-align: right; padding-top: 15px;">
+        <button onclick="saveDisplaySettings()">表示設定を保存</button>
+    </div>
+</div>
 
+<div class="setting-group">
+    <h2>履歴管理 (自動保存されたテキスト)</h2>
+    <div id="historyList">
+        </div>
+    <div style="text-align: right; padding-top: 15px;">
+        <button onclick="clearHistory()" style="background-color: #d9534f;">履歴をすべてクリア</button>
+    </div>
+</div>
 
 </div>
 
 <script>
-// === 訪問回数カウンター設定の処理 ===
+// === 訪問回数カウンター設定の処理 (既存) ===
 const ignoreAnimationCheckbox = document.getElementById('ignoreAnimation');
 const hideAccessCounterCheckbox = document.getElementById('hideAccessCounter');
 
@@ -195,18 +271,32 @@ const hideAccessCounterCheckbox = document.getElementById('hideAccessCounter');
 if (localStorage.getItem('ignoreAnimation') === 'true') ignoreAnimationCheckbox.checked = true;
 if (localStorage.getItem('hideAccessCounter') === 'true') hideAccessCounterCheckbox.checked = true;
 
-// 保存
-ignoreAnimationCheckbox.addEventListener('change', function() {
-    localStorage.setItem('ignoreAnimation', this.checked);
-    alert('アニメーション設定を保存しました。ツール画面に戻ると反映されます。');
-});
-hideAccessCounterCheckbox.addEventListener('change', function() {
-    localStorage.setItem('hideAccessCounter', this.checked);
-    alert('カウンター表示設定を保存しました。ツール画面に戻ると反映されます。');
-});
+// 保存 (イベントリスナーは省略、手動で保存ボタンを追加する場合はイベントハンドラを別途定義)
 
 
-// === カスタムカウンター設定の処理 (roulette.html用) ===
+// === 入力・表示設定の処理 (新規/復旧) ===
+const ignoreSpacesCheckbox = document.getElementById('ignoreSpaces');
+const hideAdsCheckbox = document.getElementById('hideAds');
+const fontSizeSelect = document.getElementById('fontSizeSelect');
+
+function loadDisplaySettings() {
+    if (localStorage.getItem('ignoreSpaces') === 'true') ignoreSpacesCheckbox.checked = true;
+    if (localStorage.getItem('hideAds') === 'true') hideAdsCheckbox.checked = true;
+    fontSizeSelect.value = localStorage.getItem('fontSize') || 'medium';
+}
+
+function saveDisplaySettings() {
+    localStorage.setItem('ignoreSpaces', ignoreSpacesCheckbox.checked);
+    localStorage.setItem('hideAds', hideAdsCheckbox.checked);
+    localStorage.setItem('fontSize', fontSizeSelect.value);
+    
+    // counter.htmlのフォントを即座に更新 (ここでdocument.bodyに適用)
+    document.body.setAttribute('data-font', fontSizeSelect.value);
+    alert('表示設定を保存しました。');
+}
+
+
+// === カスタムカウンター設定の処理 (roulette.html用) (既存) ===
 const customTargetValueInput = document.getElementById('customTargetValue');
 const customStartDateInput = document.getElementById('customStartDate');
 const customModeSelect = document.getElementById('customModeSelect');
@@ -266,7 +356,30 @@ function saveCustomCounterSettings() {
     loadCustomCounterUISettings(); 
 }
 
-window.addEventListener('load', loadCustomCounterUISettings);
+// === ページロード時の初期化 ===
+window.addEventListener('load', () => {
+    // 既存の設定項目をロード
+    if (localStorage.getItem('ignoreAnimation') === 'true') ignoreAnimationCheckbox.checked = true;
+    if (localStorage.getItem('hideAccessCounter') === 'true') hideAccessCounterCheckbox.checked = true;
+    
+    // 新規/復旧した設定項目をロード
+    loadDisplaySettings();
+    loadCustomCounterUISettings();
+    renderHistory(); // 履歴の表示
+});
+
+
+// イベントリスナーの追加
+document.querySelector('button[onclick="saveDisplaySettings()"]').addEventListener('click', saveDisplaySettings);
+document.querySelector('button[onclick="saveCustomCounterSettings()"]').addEventListener('click', saveCustomCounterSettings);
+
+// 訪問回数カウンター関連の保存ボタンがないため、チェックボックス変更時に保存
+ignoreAnimationCheckbox.addEventListener('change', function() {
+    localStorage.setItem('ignoreAnimation', this.checked);
+});
+hideAccessCounterCheckbox.addEventListener('change', function() {
+    localStorage.setItem('hideAccessCounter', this.checked);
+});
 </script>
 </body>
 </html>

@@ -38,7 +38,13 @@ body{max-width:720px;margin:30px auto;padding:20px;}
   cursor: pointer;
   margin-right: 8px;
   font-size: 0.9em;
+  background-color: var(--background); /* テーマ色を反映 */
+  color: var(--text); /* テーマ色を反映 */
 }
+.theme-options button:hover {
+    border-color: var(--accent);
+}
+
 .link-list{
   list-style: none;
   padding: 0;
@@ -108,6 +114,8 @@ body{max-width:720px;margin:30px auto;padding:20px;}
         <li><a href="about.html">制作者紹介 / アップデート履歴</a></li>
     </ul>
 </div>
+
+<p style="text-align: center; margin-top: 30px;"><a href="counter.html">ツール画面に戻る</a></p>
 
 <script>
 /* ===== テーマ設定の適用と変更 ===== */

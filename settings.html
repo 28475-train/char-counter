@@ -3,205 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>設定</title>
-
+<title>設定 | 文字数カウントツール</title>
 <link rel="stylesheet" href="style.css">
-
 <style>
-/* settings.html専用のレイアウト */
-body{font-family:"Noto Sans JP",system-ui,sans-serif;
-max-width:500px;margin:30px auto;padding:20px}
-.setting-group {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border);
+/* settings.html専用のスタイル */
+body{max-width:720px;margin:30px auto;padding:20px;}
+.setting-group{
+  background:var(--card);
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:30px;
+  border:1px solid var(--border);
 }
-.setting-group h2 {
-    margin-top: 0;
-    font-size: 1.2em;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 8px;
-    margin-bottom: 12px;
+.setting-group h2{
+  color: var(--accent);
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 10px;
+  margin-top: 0;
 }
-.setting-group button {
-    padding: 10px 15px;
-    margin-right: 8px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text);
-    cursor: pointer;
-    margin-bottom: 5px; 
+.setting-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dotted var(--border-soft);
 }
-.setting-group button:hover {
-    background: var(--accent-soft);
+.setting-item:last-child{
+  border-bottom: none;
 }
-.active-btn {
-    background: var(--accent) !important;
-    color: #fff !important;
-    border: none !important;
+.theme-options button{
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 8px;
+  font-size: 0.9em;
 }
-.back-btn {
-    display: block;
-    width: 100%;
-    margin-top: 20px;
-    padding: 12px;
-    background: var(--accent);
-    color: #fff;
-    font-weight: bold;
-    border: none;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 8px;
+.link-list{
+  list-style: none;
+  padding: 0;
 }
-.link-list {
-    list-style: none;
-    padding: 0;
+.link-list li a{
+  display: block;
+  padding: 10px 0;
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--border-soft);
 }
-.link-list a {
-    color: var(--link);
-    text-decoration: none;
-    display: block;
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--border);
+.link-list li:last-child a{
+  border-bottom: none;
 }
 </style>
 </head>
-<body data-theme="light_green"> <h1>ユーザー設定</h1>
+<body data-theme="light_green">
+<h1>設定</h1>
 
-<div class="setting-group" id="themeSettings">
+<div class="setting-group">
     <h2>デザインテーマ</h2>
-    <p>現在の設定: <strong id="currentTheme">Light Green</strong></p>
-    <button onclick="setTheme('light_green', 'Light Green')">Light Green (緑)</button>
-    <button onclick="setTheme('dark_blue', 'Dark Blue')">Dark Blue (ダーク)</button>
-    <button onclick="setTheme('modern_blue', 'Modern Blue')">Modern Blue (青)</button>
-    <button onclick="setTheme('monochrome', 'Monochrome')">Monochrome (モノクロ)</button>
-    <button onclick="setTheme('earth_tone', 'Earth Tone')">Earth Tone (茶)</button>
-    <button onclick="setRandomTheme()">💡ランダム</button>
-    <p style="font-size: 0.85em; margin-top: 10px; color: #6b7280;">※設定変更後、ツール画面に戻ると反映されます。</p>
+    <div class="setting-item">
+        <label>テーマを選択</label>
+        <div class="theme-options">
+            <button onclick="setTheme('light_green')">Light Green</button>
+            <button onclick="setTheme('dark_blue')">Dark Blue</button>
+            <button onclick="setTheme('simple_white')">Simple White</button>
+        </div>
+    </div>
 </div>
 
-<div class="setting-group" id="viewModeSettings">
-    <h2>表示モード</h2>
-    <p>現在の設定: <strong id="currentViewMode">PC</strong></p>
-    <button id="viewSpBtn" onclick="setViewMode('sp')">📱 スマホ</button>
-    <button id="viewPcBtn" onclick="setViewMode('pc')">🖥 PC</button>
+<div class="setting-group">
+    <h2>カウント設定</h2>
+    <div class="setting-item">
+        <label for="ignoreSpaces">スペース（空白）をカウントしない</label>
+        <input type="checkbox" id="ignoreSpaces">
+    </div>
 </div>
 
-<div class="setting-group" id="adsSettings">
-    <h2>広告表示</h2>
-    <p>現在の設定: <strong id="currentAds">ON</strong></p>
-    <button id="adsOnBtn" onclick="setAds(true)">広告ON</button>
-    <button id="adsOffBtn" onclick="setAds(false)">広告OFF</button>
-    <p style="font-size: 0.85em; margin-top: 10px; color: #6b7280;">※設定変更後、ツール画面に戻ると反映されます。</p>
+
+<div class="setting-group">
+    <h2>入力エリア表示設定</h2>
+    <div class="setting-item">
+        <label for="fontSize">フォントサイズ変更</label>
+        <select id="fontSize">
+            <option value="small">小 (14px)</option>
+            <option value="medium">中 (16px)</option>
+            <option value="large">大 (18px)</option>
+        </select>
+    </div>
+    <div class="setting-item">
+        <label for="showAds">広告の表示</label>
+        <input type="checkbox" id="showAds">
+    </div>
+    <div class="setting-item">
+        <label for="viewMode">表示モードを簡素化</label>
+        <input type="checkbox" id="viewMode">
+    </div>
 </div>
 
 <div class="setting-group">
     <h2>その他</h2>
     <ul class="link-list">
+        <li><a href="help.html">ツールの使い方・ヘルプ</a></li>
         <li><a href="terms.html">利用規約</a></li>
         <li><a href="terms.html#privacy">プライバシーポリシー</a></li>
-        <li><a href="about.html">制作者紹介</a></li>
+        <li><a href="about.html">制作者紹介 / アップデート履歴</a></li>
     </ul>
 </div>
 
-<a href="counter.html" class="back-btn">ツール画面に戻る</a>
-
 <script>
-const THEMES = {
-    'light_green': 'Light Green',
-    'dark_blue': 'Dark Blue',
-    'modern_blue': 'Modern Blue',
-    'monochrome': 'Monochrome',
-    'earth_tone': 'Earth Tone'
-};
+/* ===== テーマ設定の適用と変更 ===== */
+const body = document.body;
+const savedTheme = localStorage.getItem('theme') || 'light_green';
+body.setAttribute('data-theme', savedTheme);
 
-const currentThemeElement = document.getElementById('currentTheme');
-const themeButtons = document.querySelectorAll('#themeSettings button');
-
-const currentViewModeElement = document.getElementById('currentViewMode');
-const viewSpBtn = document.getElementById('viewSpBtn');
-const viewPcBtn = document.getElementById('viewPcBtn');
-
-const currentAdsElement = document.getElementById('currentAds');
-const adsOnBtn = document.getElementById('adsOnBtn');
-const adsOffBtn = document.getElementById('adsOffBtn');
-
-function loadSettings() {
-    // テーマの読み込み
-    const theme = localStorage.getItem('theme') || 'light_green';
-    updateThemeDisplay(theme);
-
-    // 表示モードの読み込み
-    const view = localStorage.getItem('viewMode') || 'pc';
-    updateViewModeDisplay(view);
-
-    // 広告設定の読み込み
-    const showAds = localStorage.getItem('showAds') !== 'false';
-    updateAdsDisplay(showAds);
+function setTheme(theme) {
+    body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
 }
 
-// --- テーマ設定ロジック ---
+/* ===== 広告設定の処理 ===== */
+const showAdsCheckbox = document.getElementById('showAds');
+const savedAds = localStorage.getItem('showAds');
 
-function updateThemeDisplay(theme) {
-    const themeName = THEMES[theme] || 'Light Green';
-    currentThemeElement.textContent = themeName;
-    document.body.setAttribute('data-theme', theme);
-    
-    // アクティブボタンの切り替え
-    themeButtons.forEach(btn => {
-        const themeKey = btn.getAttribute('onclick')?.match(/'(.*?)'/)?.[1];
-        if (themeKey === theme) {
-            btn.classList.add('active-btn');
-        } else {
-            btn.classList.remove('active-btn');
-        }
-    });
+if (savedAds === null || savedAds === 'true') {
+    showAdsCheckbox.checked = true;
+} else {
+    showAdsCheckbox.checked = false;
 }
 
-function setTheme(themeKey, themeName) {
-    localStorage.setItem('theme', themeKey);
-    updateThemeDisplay(themeKey);
-    alert(`デザインテーマを「${themeName}」に設定しました。`);
+showAdsCheckbox.addEventListener('change', function() {
+    localStorage.setItem('showAds', this.checked);
+    alert('広告設定を保存しました。ツール画面に戻ると反映されます。');
+});
+
+/* ===== 簡素化表示モードの処理 ===== */
+const viewModeCheckbox = document.getElementById('viewMode');
+const savedViewMode = localStorage.getItem('viewMode');
+
+if (savedViewMode === 'minimal') {
+    viewModeCheckbox.checked = true;
+} else {
+    viewModeCheckbox.checked = false;
 }
 
-function setRandomTheme() {
-    const keys = Object.keys(THEMES);
-    const randomIndex = Math.floor(Math.random() * keys.length);
-    const randomKey = keys[randomIndex];
-    const randomName = THEMES[randomKey];
-    setTheme(randomKey, randomName);
-}
+viewModeCheckbox.addEventListener('change', function() {
+    const mode = this.checked ? 'minimal' : 'full';
+    localStorage.setItem('viewMode', mode);
+    alert('表示モード設定を保存しました。ツール画面に戻ると反映されます。');
+});
 
-// --- その他設定ロジック ---
 
-function updateViewModeDisplay(view) {
-    currentViewModeElement.textContent = (view === 'sp' ? 'スマホ' : 'PC');
-    viewSpBtn.classList.toggle('active-btn', view === 'sp');
-    viewPcBtn.classList.toggle('active-btn', view === 'pc');
-}
+/* ===== フォントサイズ設定の処理 ===== */
+const fontSizeSelect = document.getElementById('fontSize');
+const savedFontSize = localStorage.getItem('fontSize') || 'medium';
+fontSizeSelect.value = savedFontSize;
 
-function updateAdsDisplay(showAds) {
-    currentAdsElement.textContent = showAds ? 'ON' : 'OFF';
-    adsOnBtn.classList.toggle('active-btn', showAds);
-    adsOffBtn.classList.toggle('active-btn', !showAds);
-}
+fontSizeSelect.addEventListener('change', function() {
+    localStorage.setItem('fontSize', this.value);
+    alert('フォントサイズ設定を保存しました。ツール画面に戻ると反映されます。');
+});
 
-function setViewMode(view) {
-    localStorage.setItem('viewMode', view);
-    updateViewModeDisplay(view);
-    alert(`表示モードを「${view === 'sp' ? 'スマホ' : 'PC'}」に設定しました。`);
-}
 
-function setAds(show) {
-    localStorage.setItem('showAds', show ? 'true' : 'false');
-    updateAdsDisplay(show);
-    alert(`広告表示を「${show ? 'ON' : 'OFF'}」に設定しました。`);
-}
+/* ===== スペースカウント設定の処理 ===== */
+const ignoreSpacesCheckbox = document.getElementById('ignoreSpaces');
+const savedIgnoreSpaces = localStorage.getItem('ignoreSpaces') === 'true'; 
+ignoreSpacesCheckbox.checked = savedIgnoreSpaces;
 
-window.addEventListener('load', loadSettings);
+ignoreSpacesCheckbox.addEventListener('change', function() {
+    localStorage.setItem('ignoreSpaces', this.checked);
+    alert('カウント設定を保存しました。ツール画面に戻ると反映されます。');
+});
 </script>
 
 </body>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SP版 トップ</title>
+</head>
+<body>
+<script>
+// SP/PC振り分け判定
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+// PCから誤ってアクセスされた場合のチェック
+if (!isMobile) {
+    location.href = '../counter.html'; // PC版カウンターへ戻す
+}
+
+// 親の index.html から同意を得てきたか確認
+if (!document.referrer.includes('../index.html')) {
+    location.href = '../index.html'; // 同意画面に戻す
+}
+
+
+// 同意済みSPユーザーは SP版カウンターへリダイレクト
+location.href = 'counter.html';
+
+// 念のため、リダイレクトが行われなかった場合の表示
+document.write('<p style="text-align:center; padding-top: 50px;">SP版カウンターページへ移動しています...</p>');
+</script>
+</body>
+</html>

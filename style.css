@@ -1,126 +1,122 @@
-/* --- テーマ色 定義 --- */
-/* (1) デフォルト: LIGHT_GREEN (以前の緑基調) */
-:root, [data-theme="light_green"] {
-  --bg: #f8fff8;
-  --card: #eefbe7;
-  --accent: #059669;
-  --accent-soft: #d1fae5;
-  --text: #1f2937;
-  --border: #34d399;
-  --danger: #84cc16;
-  --danger-hover: #65a30d;
-  --link: var(--accent);
+/*
+ * style.css
+ * 文字数カウントツール用 デザイン定義
+ */
+
+:root {
+    /* デフォルトカラーテーマ (Light Green) */
+    --background: #f0fdf4; /* 非常に明るいグリーン */
+    --card: #ffffff; /* カード背景 */
+    --card-light: #e0f2fe; /* お知らせ背景 */
+    --text: #1f2937; /* 基本テキスト */
+    --text-soft: #4b5563; /* 薄いテキスト */
+    --border: #d1d5db; /* 境界線 */
+    --border-soft: #e5e7eb; /* 薄い境界線 */
+    --accent: #10b981; /* 強調色 (エメラルドグリーン) */
+    --accent-soft: #a7f3d0; /* 強調色の薄い版 */
+    --link: #06b6d4; /* リンク色 (シアン) */
+    --danger: #ef4444; /* 危険色 (赤) */
 }
 
-/* (2) ダークモード: DARK_BLUE */
+/* === Dark Blue Theme === */
 [data-theme="dark_blue"] {
-  --bg: #1f2937;
-  --card: #374151;
-  --accent: #60a5fa;
-  --accent-soft: #1e3a8a;
-  --text: #f3f4f6;
-  --border: #4b5563;
-  --danger: #ef4444;
-  --danger-hover: #dc2626;
-  --link: var(--accent);
+    --background: #0f172a;
+    --card: #1e293b;
+    --card-light: #334155;
+    --text: #f1f5f9;
+    --text-soft: #94a3b8;
+    --border: #334155;
+    --border-soft: #475569;
+    --accent: #3b82f6; /* 青 */
+    --accent-soft: #93c5fd;
+    --link: #60a5fa;
+    --danger: #f87171;
 }
 
-/* (3) 英語モード風: MODERN_BLUE (明るい青基調) */
-[data-theme="modern_blue"] {
-  --bg: #e0f2f1;
-  --card: #ffffff;
-  --accent: #06b6d4;
-  --accent-soft: #a5f3fc;
-  --text: #0f172a;
-  --border: #22d3ee;
-  --danger: #f97316;
-  --danger-hover: #ea580c;
-  --link: var(--accent);
-}
-
-/* (4) シンプル: MONOCHROME (白黒グレー基調) */
-[data-theme="monochrome"] {
-  --bg: #f3f4f6;
-  --card: #ffffff;
-  --accent: #4b5563;
-  --accent-soft: #d1d5db;
-  --text: #1f2937;
-  --border: #9ca3af;
-  --danger: #ef4444;
-  --danger-hover: #dc2626;
-  --link: var(--accent);
-}
-
-/* (5) 和風/アースカラー: EARTH_TONE (茶色系) */
-[data-theme="earth_tone"] {
-  --bg: #fcfcf4;
-  --card: #fffdf5;
-  --accent: #78350f;
-  --accent-soft: #fef3c7;
-  --text: #44403c;
-  --border: #d97706;
-  --danger: #b91c1c;
-  --danger-hover: #991b1b;
-  --link: var(--accent);
+/* === Simple White Theme === */
+[data-theme="simple_white"] {
+    --background: #ffffff;
+    --card: #f9fafb;
+    --card-light: #f3f4f6;
+    --text: #111827;
+    --text-soft: #6b7280;
+    --border: #e5e7eb;
+    --border-soft: #f3f4f6;
+    --accent: #1c64f2; /* 濃い青 */
+    --accent-soft: #bfdbfe;
+    --link: #059669;
+    --danger: #dc2626;
 }
 
 
-/* --- 共通スタイル --- */
-
-body{
-  font-family:"Noto Sans JP",system-ui,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  max-width:720px;
-  margin:30px auto;
-  padding:20px;
+/* === グローバルスタイル === */
+* {
+    box-sizing: border-box;
+    font-family: "Noto Sans JP", system-ui, sans-serif;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
-h1{margin-top:0}
-
-.card{
-  background:var(--card);
-  border-radius:14px;
-  padding:16px;
-  margin-bottom:16px;
-  border:1px solid var(--border);
+body {
+    background-color: var(--background);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
 }
 
-.notice{
-  background:var(--accent-soft);
-  border-left:6px solid var(--accent);
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:16px;
-  font-size:.95em;
+h1 {
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.8em;
 }
 
-.notice-item{
-  margin-top:10px;
-  padding-top:10px;
-  border-top:1px dashed var(--border); 
+a {
+    color: var(--link);
+    text-decoration: none;
 }
-.notice-date{
-  font-size:.8em;
-  color:var(--text); 
-}
-.notice-title{
-  font-weight:bold;
+a:hover {
+    text-decoration: underline;
 }
 
-textarea{
-  width:100%;
-  min-height:160px;
-  padding:12px;
-  font-size:1em;
-  border-radius:10px;
-  border:1px solid var(--border);
-  box-sizing: border-box;
-  background: var(--card); 
-  color: var(--text); 
+/* === メインコンポーネント === */
+.card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
 }
 
-/* コントロールエリアのレスポンシブ対応を強化 */
+/* === テキストエリア === */
+#text {
+    width: 100%;
+    min-height: 250px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--background);
+    color: var(--text);
+    resize: vertical;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* フォントサイズ設定の適用 */
+[data-font="small"] #text {
+    font-size: 14px;
+}
+[data-font="medium"] #text {
+    font-size: 16px;
+}
+[data-font="large"] #text {
+    font-size: 18px;
+}
+
+
+/* === コントロールとボタン === */
 .controls {
     display: flex;
     flex-wrap: wrap;
@@ -128,138 +124,138 @@ textarea{
     gap: 8px;
     margin-bottom: 10px;
 }
-.controls button, select, input[type=number]{
-  padding:6px 10px;
-  border-radius:8px;
-  border:1px solid var(--border);
-  background:var(--bg); 
-  cursor:pointer;
-  color:var(--text);
-  flex-shrink: 0;
-}
-/* カスタム入力欄の幅を調整 */
-#customLimit {
-    flex-grow: 1;
-    min-width: 60px;
-}
 
-.controls button:hover{
-  background:var(--accent-soft);
-}
-
-.info p{margin:4px 0}
-
-/* 保存・クリアボタンをflexで並べる */
-.controls:last-of-type {
-    justify-content: flex-end;
-}
-
-/* 保存ボタンのデザイン */
-.save-btn{
-  background:var(--accent);
-  color:#fff;
-  border:none;
-  font-weight: bold;
-  padding: 8px 16px;
-}
-
-.save-btn:hover{
-  filter: brightness(1.1);
-  background:var(--accent);
-}
-
-/* すべてクリアボタンのスタイル（緑色統一、高コントラスト） */
-.clear-btn {
-  background: var(--danger);
-  color: #fff;
-  border: none;
-  font-weight: bold;
-  padding: 8px 16px;
-  margin-left: 8px;
-}
-
-.clear-btn:hover {
-  background: var(--danger-hover);
-}
-
-
-.settings-btn{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  padding:10px 14px;
-  border:none;
-  border-radius:50px;
-  background:var(--accent);
-  color:#fff;
-  text-decoration: none;
-}
-
-/* 広告表示の制御 */
-#ad-area {
-    text-align: center;
-    margin: 20px 0;
-}
-html[data-ads="false"] #ad-area {
-  display: none !important;
-}
-
-
-/* 設定画面のスタイル (settings.html 用) */
-.setting-group {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border);
-}
-.setting-group h2 {
-    margin-top: 0;
-    font-size: 1.2em;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 8px;
-    margin-bottom: 12px;
-}
-/* 設定画面のボタンもレスポンシブ対応 */
-.setting-group button {
-    padding: 10px 15px;
-    margin-right: 8px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg); 
-    color: var(--text); 
-    cursor: pointer;
-    margin-bottom: 5px;
-}
-.setting-group button:hover {
-    background: var(--accent-soft);
-}
-.active-btn {
-    background: var(--accent) !important;
-    color: #fff !important; 
-    border: none !important;
-}
-.back-btn {
-    display: block;
-    width: 100%;
-    margin-top: 20px;
-    padding: 12px;
-    background: var(--accent);
+.controls button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--accent);
     color: #fff;
     font-weight: bold;
-    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.controls button:hover {
+    filter: brightness(1.1);
+}
+
+.controls input[type="number"] {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--card);
+    color: var(--text);
     text-align: center;
-    text-decoration: none;
+}
+
+.controls select {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--card);
+    color: var(--text);
+}
+
+.save-btn {
+    background-color: var(--link) !important;
+}
+.clear-btn {
+    background-color: var(--danger) !important;
+}
+
+/* === 情報表示エリア === */
+.info p {
+    margin: 6px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1em;
+}
+.info span {
+    font-weight: bold;
+    color: var(--accent);
+}
+
+/* === お知らせエリア === */
+.notice {
+    background-color: var(--card-light);
+    border: 1px solid var(--accent-soft);
     border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-size: 0.9em;
 }
-.link-list {
-    list-style: none;
-    padding: 0;
-}
-.link-list a {
-    color: var(--link); 
-    text-decoration: none;
+.notice strong {
+    color: var(--accent);
     display: block;
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--border);
+    margin-bottom: 8px;
+    font-size: 1.1em;
+    border-bottom: 1px dotted var(--border);
+    padding-bottom: 5px;
 }
+.notice-item {
+    padding: 5px 0;
+    border-bottom: 1px dotted var(--border-soft);
+}
+.notice-item:last-child {
+    border-bottom: none;
+}
+.notice-date {
+    font-size: 0.85em;
+    color: var(--text-soft);
+    margin-bottom: 3px;
+}
+.notice-title {
+    font-weight: bold;
+    color: var(--text);
+}
+
+/* === 設定ボタン (右下固定) === */
+.settings-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 50px;
+    font-size: 1.5em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+.settings-btn:hover {
+    text-decoration: none;
+    filter: brightness(1.1);
+}
+
+/* === 広告エリア (見出し用) === */
+#ad-area {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    /* 広告が表示されないときのために高さを設定 */
+    min-height: 50px;
+    border: 1px solid var(--border-soft);
+    background-color: var(--card);
+    border-radius: 8px;
+    padding: 5px;
+}
+
+/* === 簡素化表示モード (data-view="minimal") === */
+[data-view="minimal"] .controls:first-child,
+[data-view="minimal"] .controls:last-child,
+[data-view="minimal"] .info hr,
+[data-view="minimal"] .info p:last-of-type,
+[data-view="minimal"] .notice,
+[data-view="minimal"] #ad-area {
+    display: none !important;
+}
+[data-view="minimal"] h1 {
+    font-size: 1.5em;
+}
+[data-view="minimal"] .info p {
+    font-size: 1.0em;
+      }

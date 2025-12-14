@@ -2,58 +2,67 @@
 <html lang="ja" data-ads="true">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>404 Not Found | ツール</title>
-<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* 404ページ固有のスタイル */
+.error-container {
+    text-align: center;
+    padding: 50px 20px;
+    max-width: 600px;
+    margin: 50px auto;
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.error-container h1 {
+    font-size: 4em;
+    color: red;
+    margin-bottom: 10px;
+}
+
+.error-container h2 {
+    font-size: 1.5em;
+    color: var(--text-color);
+    margin-bottom: 20px;
+}
+</style>
 </head>
 <body data-theme="light_green">
 <script>
 // --- バージョン情報 ---
 const APP_VERSION = "v1.2.0"; 
 // ----------------------
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
-window.onload = function() { document.getElementById('appVersionDisplay').textContent = APP_VERSION; }
+
+function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+}
+
+window.onload = function() { 
+    // テーマのロードと適用
+    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
+    applyTheme(savedTheme);
+}
 </script>
 
 <div class="main-content-area">
-
-    <header class="header">
-        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-        <a href="counter.html" class="header-title" style="font-size: 1.2em; color: red;">❌ エラー (404 SP版)</a>
-    </header>
-
-    <div class="top-ad-header" style="height: 50px;">
-        <div id="ad-area-top-sp">
-            <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-            </div>
-    </div>
-
-    <nav class="side-nav" id="sideNav">
-        <a href="counter.html">📝 文字数カウント</a> 
-        <a href="roulette.html">🎲 ルーレット</a> 
-        <a href="settings.html">⚙ 設定</a>
-        <a href="help.html">ヘルプ</a>
-        <a href="about.html">制作者</a>
-    </nav>
-    
-    <div class="content-wrapper" style="text-align: center; padding: 50px 10px;">
-        <h1 style="font-size: 2.5em; color: #d9534f;">404 Not Found</h1>
-        <p style="font-size: 1.1em; margin-bottom: 30px;">お探しのページは見つかりませんでした。</p>
-        <a href="../index.html" style="text-decoration: none; padding: 12px 25px; background-color: var(--accent); color: white; border-radius: 8px; font-weight: bold; display: inline-block;">
-            トップページに戻る
-        </a>
-        <p style="margin-top: 30px; font-size: 0.9em;">メニューから他のページに移動できます。</p>
+    <div class="error-container">
+        <h1>404</h1>
+        <h2>ページが見つかりません</h2>
+        <p style="margin-bottom: 20px;">お探しのページは、削除されたか、名前が変更されたか、一時的に利用できなくなっている可能性があります。</p>
+        <a href="index.html" class="button" style="padding: 10px 20px; background-color: var(--accent); color: white; border-radius: 5px; display: inline-block;">トップページに戻る</a>
     </div>
 </div>
 
-<div class="bottom-ad-footer" style="height: 50px;">
-    <div id="ad-area-bottom-sp">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+<div class="bottom-ad-footer">
+    <div id="ad-area-bottom">
         </div>
 </div>
 
-<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Version <span id="appVersionDisplay"></span></p>
-</footer>
+<script src="ads.js"></script>
+
 </body>
 </html>

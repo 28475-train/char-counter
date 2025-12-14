@@ -3,12 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>文字数カウント & 保存ツール</title>
-
+<title>文字数カウント 保存ツール</title>
 <link rel="stylesheet" href="style.css">
-
 <style>
-/* index.html専用のスタイル */
 body{font-family:"Noto Sans JP",system-ui,sans-serif;
 max-width:720px;margin:30px auto;padding:20px; text-align:center;}
 .agreement-card{
@@ -43,76 +40,31 @@ max-width:720px;margin:30px auto;padding:20px; text-align:center;}
 }
 </style>
 </head>
-
-<body data-theme="light_green"> <h1>文字数カウント & 保存ツールへようこそ</h1>
-
+<body data-theme="light_green">
+<h1>文字数カウント 保存ツールへようこそ</h1>
 <div class="agreement-card">
     <h2>ご利用にあたっての同意</h2>
     <p>本ツールは、利用規約およびプライバシーポリシーに同意の上、ご利用いただけます。</p>
-
     <ul style="font-size: 0.9em; padding-left: 20px;">
-        <li>データの処理・保存はすべてお使いの**端末内**で行われます。</li>
-        <li>アクセス状況の把握のため、**アクセスカウンター**を設置しています。</li>
-        <li>収益化のため、**広告**が表示されます（設定で非表示にできます）。</li>
+        <li>データの処理 保存はすべてお使いの端末内で行われます。</li>
+        <li>アクセス状況の把握のため、アクセスカウンターを設置しています。</li>
+        <li>収益化のため、広告が表示されます（設定で非表示にできます）。</li>
     </ul>
-
-    <p style="margin-top: 15px;">詳細については、<a href="terms.html" style="color: var(--link); text-decoration: none; font-weight: bold;">利用規約・プライバシーポリシー</a>をご確認ください。</p>
-
+    <p style="margin-top: 15px;">詳細については、<a href="terms.html" style="color: var(--link); text-decoration: none; font-weight: bold;">利用規約 プライバシーポリシー</a>をご確認ください。</p>
     <button class="agree-btn" onclick="agreeAndRedirect()">同意してツールを使う</button>
 </div>
-
 <script>
-/* ===== テーマ設定の適用 (全ページ共通) ===== */
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme) {
     document.body.setAttribute('data-theme', savedTheme);
 }
-
-// 制限アクセス数 (例: 10000アクセス/日以上で制限)
-const ACCESS_LIMIT = 10000;
-const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP3bBp_wdlo-5k_Wuag1dH0D3cuUg5pYqLf6E2cf2L1NcIY476DqyHw/exec"; 
-
-
-// 1. アクセス数チェック
-async function checkAccessAndRedirect() {
-    try {
-        const response = await fetch(ACCESS_GAS_URL);
-        if (!response.ok) {
-            console.error("GASアクセスエラー。待機ページチェックをスキップします。");
-            return; 
-        }
-        const data = await response.json();
-        const accessCount = data.count || 0;
-
-        // アクセス数が制限を超えていたら待機ページへ
-        if (accessCount > ACCESS_LIMIT) {
-            location.href = 'pages/waiting.html';
-        }
-    } catch (error) {
-        console.error('アクセス数チェック中にエラーが発生しました:', error);
-    }
-}
-
-
 function agreeAndRedirect() {
-    // 2. 同意フラグをローカルストレージに保存
     localStorage.setItem('agreed', 'true');
-    // 3. ツール画面へ移動
     location.href = 'counter.html';
 }
-
-
-// ページロード時にアクセスチェックを実行
-window.addEventListener('load', checkAccessAndRedirect);
-
-
-// 既に同意済みの場合は自動でcounter.htmlへリダイレクト
 if (localStorage.getItem('agreed') === 'true') {
-    checkAccessAndRedirect().then(() => {
-        location.href = 'counter.html';
-    });
+    location.href = 'counter.html';
 }
 </script>
-
 </body>
 </html>

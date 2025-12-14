@@ -1,109 +1,144 @@
-body {
-  font-family: sans-serif;
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+/* 色調整：全体的にコントラストを上げ、視認性を高めました */
+:root{
+  --bg:#ffffff;
+  --card:#f3f4f6;    /* 明るい灰色に変更 (視認性向上) */
+  --accent:#10b981;  /* 深い緑に変更 (目立つように) */
+  --accent-soft:#d1fae5; /* 明るすぎない緑に変更 */
+  --text:#1f2937;
+  --border:#d1d5db;  /* ボーダーを濃くしました */
 }
-h1 {
-  text-align: center;
-  font-size: 1.6em;
-  margin-bottom: 20px;
+
+body{
+  font-family:"Noto Sans JP",system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  max-width:720px;
+  margin:30px auto;
+  padding:20px;
 }
-textarea {
-  width: 100%;
-  min-height: 150px;
-  padding: 10px;
-  font-size: 1em;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  resize: none;
-  overflow: hidden;
+
+h1{margin-top:0}
+
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:16px;
+  border:1px solid var(--border);
 }
-.counter {
-  margin-top: 15px;
-  font-size: 1.1em;
-  line-height: 1.6;
-  text-align: right;
+
+.notice{
+  background:var(--accent-soft);
+  border-left:6px solid var(--accent);
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:16px;
+  font-size:.95em;
 }
-.counter span {
+
+.notice-item{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px dashed #6ee7b7; /* 区切り線を濃くしました */
+}
+.notice-date{
+  font-size:.8em;
+  color:#065f46; /* 日付の色を濃くしました */
+}
+.notice-title{
+  font-weight:bold;
+}
+
+textarea{
+  width:100%;
+  min-height:160px;
+  padding:12px;
+  font-size:1em;
+  border-radius:10px;
+  border:1px solid var(--border);
+}
+
+.controls button, select, input[type=number]{
+  padding:6px 10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+}
+
+.controls button:hover{
+  background:var(--accent-soft);
+}
+
+.info p{margin:4px 0}
+
+/* 保存ボタンのデザインをより目立たせる */
+.save-btn{
+  background:var(--accent);
+  color:#fff;
+  border:none;
   font-weight: bold;
-  color: #333;
+  padding: 8px 16px; /* サイズを大きく */
 }
-.warning {
-  color: red;
-  font-weight: bold;
+
+.save-btn:hover{
+  filter: brightness(1.1); /* ホバーで明るく */
+  background:var(--accent);
 }
-.settings {
-  margin-bottom: 15px;
-  text-align: right;
-}
-input[type="number"] {
-  width: 100px;
-  padding: 5px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1em;
-}
-button {
-  margin-top: 5px;
-  margin-right: 5px;
-  padding: 8px 15px;
-  font-size: 0.9em;
+
+/* すべてクリアボタンのスタイルを追加 */
+.clear-btn {
+  background: #f87171; /* 赤色系 */
+  color: #fff;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s;
+  font-weight: bold;
+  padding: 8px 16px;
+  margin-left: 8px; /* 保存ボタンとの間隔 */
 }
-button.primary {
-  background: #2196F3;
-  color: white;
+
+.clear-btn:hover {
+  background: #ef4444; /* ホバーで濃い赤 */
 }
-button.danger {
-  background: #f44336;
-  color: white;
+
+
+.settings-btn{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  padding:10px 14px;
+  border:none;
+  border-radius:50px;
+  background:var(--accent);
+  color:#fff;
 }
-button:hover {
-  filter: brightness(0.9);
+
+/* 広告表示の制御 */
+.ad-sp{display:none}
+.ad-pc{display:block}
+html[data-view="sp"] .ad-sp{display:block}
+html[data-view="sp"] .ad-pc{display:none}
+
+/* 設定で広告をOFFにした場合、広告ブロックを完全に非表示にする */
+html[data-ads="false"] .ad-sp,
+html[data-ads="false"] .ad-pc {
+  display: none !important;
 }
-#recentButtons {
-  margin-top: 10px;
-  text-align: right;
+
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-footer {
-  margin-top: 30px;
-  padding-top: 15px;
-  border-top: 1px solid #ccc;
-  font-size: 0.85em;
-  color: #555;
-  text-align: center;
-}
-footer a {
-  color: #0077cc;
-  text-decoration: none;
-  margin: 0 5px;
-}
-footer a:hover {
-  text-decoration: underline;
-}
-.credit-section {
-  margin-top: 20px;
-  padding: 10px;
-  background: #fff;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 0.9em;
-  color: #333;
-}
-.credit-section h2 {
-  font-size: 1.1em;
-  margin-bottom: 10px;
-  text-align: center;
-}
-.note {
-  font-size:0.85em;
-  color:#555;
+.modal.hidden{display:none}
+
+.modal-box{
+  background:#fff;
+  border-radius:14px;
+  padding:20px;
+  max-width:420px;
+  width:100%;
 }

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 Not Found | 文字数カウントツール</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* 404ページ専用のスタイル調整 */
+body {
+    text-align: center;
+    padding: 50px 20px;
+}
+.error-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 500px;
+    border: 1px solid var(--border);
+}
+.error-code {
+    font-size: 5em;
+    color: var(--danger); /* テーマの危険色を使用 */
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.error-message {
+    font-size: 1.5em;
+    color: var(--text);
+    margin-bottom: 20px;
+}
+.go-home-btn {
+    margin-top: 30px;
+    padding: 12px 25px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-decoration: none; /* aタグの場合 */
+    display: inline-block;
+}
+.go-home-btn:hover {
+    filter: brightness(1.1);
+}
+</style>
+</head>
+
+<body data-theme="light_green"> <div class="error-card">
+    <div class="error-code">404</div>
+    <div class="error-message">ページが見つかりません</div>
+    
+    <p>お探しのページは、移動されたか、削除されたか、またはURLが間違っている可能性があります。</p>
+    
+    <p style="margin-top: 20px;">以下のボタンからトップページへお戻りください。</p>
+    
+    <a href="index.html" class="go-home-btn">トップページに戻る</a>
+</div>
+
+<script>
+// テーマ設定の適用 (ローカルストレージから読み込み)
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.body.setAttribute('data-theme', savedTheme);
+}
+</script>
+
+</body>
+</html>

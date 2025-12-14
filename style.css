@@ -65,7 +65,7 @@
 }
 
 
-/* --- 共通スタイル（変更なし） --- */
+/* --- 共通スタイル --- */
 
 body{
   font-family:"Noto Sans JP",system-ui,sans-serif;
@@ -98,11 +98,11 @@ h1{margin-top:0}
 .notice-item{
   margin-top:10px;
   padding-top:10px;
-  border-top:1px dashed var(--border); /* ボーダー色もテーマに合わせる */
+  border-top:1px dashed var(--border); 
 }
 .notice-date{
   font-size:.8em;
-  color:var(--text); /* 濃いテキスト色に合わせる */
+  color:var(--text); 
 }
 .notice-title{
   font-weight:bold;
@@ -116,8 +116,8 @@ textarea{
   border-radius:10px;
   border:1px solid var(--border);
   box-sizing: border-box;
-  background: var(--card); /* 背景色もテーマに合わせる */
-  color: var(--text); /* テキスト色もテーマに合わせる */
+  background: var(--card); 
+  color: var(--text); 
 }
 
 /* コントロールエリアのレスポンシブ対応を強化 */
@@ -132,7 +132,7 @@ textarea{
   padding:6px 10px;
   border-radius:8px;
   border:1px solid var(--border);
-  background:var(--bg); /* テーマの背景色を使用 */
+  background:var(--bg); 
   cursor:pointer;
   color:var(--text);
   flex-shrink: 0;
@@ -226,8 +226,8 @@ html[data-ads="false"] #ad-area {
     margin-right: 8px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: var(--bg); /* テーマの背景色を使用 */
-    color: var(--text); /* テーマの文字色を使用 */
+    background: var(--bg); 
+    color: var(--text); 
     cursor: pointer;
     margin-bottom: 5px;
 }
@@ -236,7 +236,7 @@ html[data-ads="false"] #ad-area {
 }
 .active-btn {
     background: var(--accent) !important;
-    color: #fff !important; /* アクティブボタンは常に白文字 */
+    color: #fff !important; 
     border: none !important;
 }
 .back-btn {
@@ -257,7 +257,7 @@ html[data-ads="false"] #ad-area {
     padding: 0;
 }
 .link-list a {
-    color: var(--link); /* リンク色もテーマに合わせる */
+    color: var(--link); 
     text-decoration: none;
     display: block;
     padding: 8px 0;

@@ -6,14 +6,30 @@
 <title>リアルタイム 文字数カウント 行数計測ツール ファイル保存機能付き</title>
 <meta name="description" content="リアルタイムで文字数と行数を即座に計測する無料の文字数カウントツール。Twitter/SNS向けに文字数制限も設定可能。TXT, Markdown, CSV形式でのファイル保存に対応。">
 <link rel="stylesheet" href="style.css">
+<link rel="canonical" href="https://28475-train.github.io/char-counter/counter.html">
+<meta property="og:title" content="【リアルタイム】文字数カウント・保存ツール">
+<meta property="og:description" content="リアルタイムで文字数と行数を即座に計測する無料ツール。ファイル保存機能付き。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://28475-train.github.io/char-counter/counter.html">
+<meta property="og:image" content="https://28475-train.github.io/char-counter/images/tool_image.png">
+<meta property="og:site_name" content="文字数カウントツール">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body data-theme="light_green">
 <script>
+// アクセスカウンターのGAS URL (前回のURLのまま)
 const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP3bBp_wdlo-5k_Wuag1dH0D3cuUg5pYqLf6E2cf2L1NcIY476DqyHw/exec"; 
+
+// ページロード時の初期設定の適用
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme) {
     document.body.setAttribute('data-theme', savedTheme);
 }
+const savedFontSize = localStorage.getItem('fontSize');
+if (savedFontSize) {
+    document.body.setAttribute('data-font', savedFontSize);
+}
+// 同意チェック
 if(localStorage.getItem('agreed')!=='true'){
   location.href='index.html';
 }
@@ -41,6 +57,14 @@ if(localStorage.getItem('agreed')!=='true'){
   <p>文字数: <span id="char">0</span></p>
   <p>行数: <span id="line">1</span></p>
   <p>残り文字数: <span id="remain">280</span></p>
+
+  <hr style="margin: 10px 0; border: none; border-top: 1px dashed var(--border);">
+  <p style="font-size: 0.9em;">
+      詳細:
+      全角 <span id="fullWidthCount">0</span>字 / 
+      半角 <span id="halfWidthCount">0</span>字 / 
+      <span style="font-weight: bold;">推定バイト数 <span id="byteCount">0</span> bytes</span>
+  </p>
 </div>
 <div class="controls">
   保存形式：
@@ -58,6 +82,7 @@ if(localStorage.getItem('agreed')!=='true'){
 </div>
 <a href="settings.html" class="settings-btn">⚙</a>
 <script>
+// === アクセスカウンターの読み込み ===
 const accessCounterElement = document.getElementById('accessCounter');
 function fetchAccessCount() {
   fetch(ACCESS_GAS_URL)
@@ -80,51 +105,140 @@ function fetchAccessCount() {
     });
 }
 window.addEventListener('load', fetchAccessCount);
-fetch("https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec")
-  .then(r=>r.json())
-  .then(list=>{
-    const box=document.getElementById('noticeList');
-    if(!list.length){
-      box.textContent='現在お知らせはありません';
+
+// === お知らせの読み込みとNEWマーク表示 ===
+// ★ お知らせ用GAS URLを設定
+const NOTICE_GAS_URL = "https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec"; 
+
+fetch(NOTICE_GAS_URL)
+  .then(r => {
+    if (!r.ok) {
+        throw new Error('お知らせデータの取得に失敗しました。');
+    }
+    return r.json();
+  })
+  .then(list => {
+    const box = document.getElementById('noticeList');
+    if (!list || list.length === 0) {
+      box.textContent = '現在お知らせはありません';
       return;
     }
-    box.innerHTML='';
-    list.forEach(n=>{
-      const d=document.createElement('div');
-      d.className='notice-item';
-      d.innerHTML=`
-        <div class="notice-date">${n.date}</div>
+    
+    // NEWマーク表示の基準日を設定（現在時刻から7日前）
+    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+    const sevenDaysAgo = Date.now() - SEVEN_DAYS_MS;
+    
+    box.innerHTML = '';
+    list.forEach(n => {
+      // 日付がYYYY/MM/DD形式であることを想定
+      const noticeDate = new Date(n.date).getTime();
+      const isNew = noticeDate > sevenDaysAgo; // 7日以内ならtrue
+      
+      const newMark = isNew ? '<span style="color: red; font-weight: bold; margin-left: 8px;">[NEW]</span>' : '';
+
+      const d = document.createElement('div');
+      d.className = 'notice-item';
+      const noticeBody = n.body ? n.body.replace(/\n/g,'<br>') : '';
+      
+      d.innerHTML = `
+        <div class="notice-date">${n.date}${newMark}</div>
         <div class="notice-title">${n.title}</div>
-        <div>${n.body.replace(/\n/g,'<br>')}</div>
+        <div>${noticeBody}</div>
       `;
       box.appendChild(d);
     });
   })
-  .catch(()=>{
-    document.getElementById('noticeList').textContent='お知らせを取得できませんでした';
+  .catch(error => {
+    console.error('お知らせ取得エラー:', error);
+    document.getElementById('noticeList').textContent = 'お知らせの読み込みに失敗しました。';
   });
+
+
+// === 主要な変数定義 ===
 let LIMIT = 280;
 const text = document.getElementById('text');
 const char = document.getElementById('char');
 const line = document.getElementById('line');
 const remain = document.getElementById('remain');
 const customLimitInput = document.getElementById('customLimit');
-function update() {
-  const v = text.value;
-  const currentLength = v.length;
-  const currentLines = v.split('\n').length;
-  const remainingCount = LIMIT - currentLength;
-  char.textContent = currentLength;
-  line.textContent = currentLines;
-  remain.textContent = remainingCount;
-  if (remainingCount < 0) {
-    remain.style.color = 'red';
-    remain.style.fontWeight = 'bold';
-  } else {
-    remain.style.color = '';
-    remain.style.fontWeight = '';
-  }
+
+// === 自動保存機能の追加 ===
+const STORAGE_KEY = 'autosavedText';
+const AUTOSAVE_INTERVAL = 3000; // 3秒
+
+function autoSave() {
+    localStorage.setItem(STORAGE_KEY, text.value);
 }
+
+function restoreText() {
+    const savedText = localStorage.getItem(STORAGE_KEY);
+    if (savedText) {
+        if (confirm("前回入力した内容が残っています。復元しますか？\n（キャンセルした場合、内容は消去されます）")) {
+            text.value = savedText;
+        } else {
+            localStorage.removeItem(STORAGE_KEY);
+            text.value = '';
+        }
+    }
+}
+
+// === カウントロジック (スペース除外と詳細カウントに対応) ===
+function update() {
+    const v = text.value;
+    let countedText = v;
+
+    // 1. スペース除外オプションの適用
+    const IGNORE_SPACES = localStorage.getItem('ignoreSpaces') === 'true'; 
+    if (IGNORE_SPACES) {
+        countedText = v.replace(/[ 　]/g, '');
+    }
+
+    // 2. 基本的な文字数の計算
+    let currentLength = countedText.length;
+    const currentLines = v.split('\n').length;
+    
+    // 3. 詳細な文字種別とバイト数の計算
+    let fullWidth = 0;
+    let halfWidth = 0;
+    let byteCount = 0;
+    
+    for (let i = 0; i < v.length; i++) {
+        const char = v.charCodeAt(i);
+        
+        // 全角文字
+        if ((char >= 0x3000 && char <= 0x9FFF) || (char >= 0xFF01 && char <= 0xFFEF)) {
+            fullWidth++;
+            byteCount += 3;
+        } else {
+            // 半角文字
+            halfWidth++;
+            byteCount += 1;
+        }
+    }
+
+    // 4. 残り文字数と制限チェック
+    const remainingCount = LIMIT - currentLength;
+
+    // 5. 画面への表示更新
+    document.getElementById('char').textContent = currentLength;
+    document.getElementById('line').textContent = currentLines;
+    document.getElementById('remain').textContent = remainingCount;
+    
+    document.getElementById('fullWidthCount').textContent = fullWidth;
+    document.getElementById('halfWidthCount').textContent = halfWidth;
+    document.getElementById('byteCount').textContent = byteCount.toLocaleString();
+
+    // 6. 制限超過時のスタイル変更
+    if (remainingCount < 0) {
+        document.getElementById('remain').style.color = 'red';
+        document.getElementById('remain').style.fontWeight = 'bold';
+    } else {
+        document.getElementById('remain').style.color = '';
+        document.getElementById('remain').style.fontWeight = '';
+    }
+}
+
+// === 初期化関数 (自動保存と復元を含む) ===
 function initializeCounter() {
   const storedLimit = localStorage.getItem('charLimit');
   if (storedLimit && !isNaN(storedLimit) && Number(storedLimit) > 0) {
@@ -133,15 +247,25 @@ function initializeCounter() {
   } else {
      customLimitInput.value = LIMIT;
   }
+  
+  // ページ読み込み時に復元処理を実行
+  restoreText(); 
+  
   update();
   text.addEventListener('input', update);
+  
+  // 3秒ごとに自動保存を開始
+  setInterval(autoSave, AUTOSAVE_INTERVAL); 
 }
+
+// === 制限設定機能 ===
 function setLimit(n) {
   LIMIT = n;
   localStorage.setItem('charLimit', n);
   customLimitInput.value = n;
   update();
 }
+
 function setCustom() {
   const n = Number(customLimitInput.value);
   if (n > 0) {
@@ -150,13 +274,19 @@ function setCustom() {
     alert('上限文字数には1以上の数字を入力してください。');
   }
 }
+
 window.addEventListener('load', initializeCounter);
+
+// === すべてクリア機能 (自動保存データ削除を含む) ===
 function clearText() {
   if (confirm('入力内容をすべて消去してもよろしいですか？この操作は元に戻せません。')) {
     text.value = '';
+    localStorage.removeItem(STORAGE_KEY); 
     update();
   }
 }
+
+// === その他の設定適用 ===
 const view = localStorage.getItem('viewMode');
 if (view) {
   document.documentElement.setAttribute('data-view', view);
@@ -169,6 +299,8 @@ if (ads === 'false') {
     }
 }
 document.documentElement.setAttribute('data-ads', ads === 'false' ? 'false' : 'true');
+
+// === ファイルダウンロード機能 ===
 function download(){
   const f = document.getElementById('format').value;
   const d = new Date();
@@ -176,9 +308,11 @@ function download(){
   const timeStr = `${String(d.getHours()).padStart(2, '0')}${String(d.getMinutes()).padStart(2, '0')}`;
   const name = `text_${dateStr}_${timeStr}.${f}`;
   let c = text.value;
+  // CSV形式の際にダブルクォーテーションをエスケープ
   if (f === 'csv') {
       c = `"${c.replace(/"/g, '""')}"`; 
   }
+  // 文字化け防止のBOM
   const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
   const textBlob = new Blob([c], {type: 'text/plain;charset=utf-8;'});
   const b = new Blob([bom, textBlob], {type: 'text/plain;charset=utf-8'});
@@ -190,5 +324,4 @@ function download(){
 }
 </script>
 </body>
-    </html>
-    
+</html>

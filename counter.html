@@ -11,6 +11,32 @@
 </head>
 
 <body data-theme="light_green"> <script>
+// 制限アクセス数 (index.htmlと一致させる)
+const ACCESS_LIMIT = 10000;
+const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP3bBp_wdlo-5k_Wuag1dH0D3cuUg5pYqLf6E2cf2L1NcIY476DqyHw/exec"; 
+
+
+/* ===== 待機ページへのリダイレクトチェック ===== */
+async function checkAccessForWaiting() {
+    try {
+        const response = await fetch(ACCESS_GAS_URL);
+        if (!response.ok) {
+            console.error("GASアクセスエラー。待機ページチェックをスキップします。");
+            return; 
+        }
+        const data = await response.json();
+        const accessCount = data.count || 0;
+
+        // アクセス数が制限を超えていたら待機ページへリダイレクト
+        if (accessCount > ACCESS_LIMIT) {
+            location.href = 'pages/waiting.html';
+        }
+    } catch (error) {
+        console.error('アクセス数チェック中にエラーが発生しました:', error);
+    }
+}
+
+
 /* ===== テーマ設定の適用 (CSS変数切り替え) ===== */
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme) {
@@ -22,6 +48,12 @@ if(localStorage.getItem('agreed')!=='true'){
   location.href='index.html';
 }
 </script>
+
+<script>
+// ページロード時に待機チェックを実行
+window.addEventListener('load', checkAccessForWaiting);
+</script>
+
 
 <h1>文字数カウント & 保存ツール</h1>
 
@@ -77,8 +109,6 @@ if(localStorage.getItem('agreed')!=='true'){
 
 <script>
 /* ===== アクセスカウンター (GAS連携) ===== */
-const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP3bBp_wdlo-5k_Wuag1dH0D3cuUg5pYqLf6E2cf2L1NcIY476DqyHw/exec"; 
-
 const accessCounterElement = document.getElementById('accessCounter');
 
 function fetchAccessCount() {
@@ -240,7 +270,7 @@ function download(){
       c = `"${c.replace(/"/g, '""')}"`; 
   }
   
-  // 1. BOM (Byte Order Mark) の追加
+  // 1. BOM (Byte Omark Mark) の追加
   // Windows環境での文字化けを防ぐため、UTF-8 BOM付きにする
   const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
   

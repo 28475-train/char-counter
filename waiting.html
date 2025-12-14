@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アクセス制限中 | 文字数カウントツール</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* 待機ページ専用のスタイル調整 */
+body {
+    text-align: center;
+    padding: 50px 20px;
+}
+.wait-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 400px;
+    border: 1px solid var(--border);
+}
+.wait-card h1 {
+    color: var(--danger);
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+.wait-card p {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+.refresh-btn {
+    margin-top: 30px;
+    padding: 12px 25px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+.refresh-btn:hover {
+    filter: brightness(1.1);
+}
+</style>
+</head>
+
+<body data-theme="light_green">
+
+<div class="wait-card">
+    <h1>🚨 アクセス制限のお知らせ 🚨</h1>
+    
+    <p>現在、サーバーへのアクセスが集中しているため、ツールの利用を一時的に制限しています。</p>
+    
+    <p>ご迷惑をおかけしますが、しばらく待ってから再度お試しください。</p>
+    
+    <button class="refresh-btn" onclick="window.location.reload()">再試行する</button>
+
+    <p style="font-size: 0.9em; margin-top: 30px;">※このページは自動では更新されません。</p>
+</div>
+
+<script>
+// テーマ設定の適用
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.body.setAttribute('data-theme', savedTheme);
+}
+</script>
+
+</body>
+</html>

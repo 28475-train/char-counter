@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" data-view="">
+<html lang="ja" data-view="" data-ads="true">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -79,11 +79,34 @@ textarea{
 
 .info p{margin:4px 0}
 
+/* 保存ボタンのデザインをより目立たせる */
 .save-btn{
   background:var(--accent);
   color:#fff;
   border:none;
+  font-weight: bold;
+  padding: 8px 16px; /* サイズを大きく */
 }
+
+.save-btn:hover{
+  filter: brightness(1.1); /* ホバーで明るく */
+  background:var(--accent);
+}
+
+/* すべてクリアボタンのスタイルを追加 */
+.clear-btn {
+  background: #f87171; /* 赤色系 */
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  padding: 8px 16px;
+  margin-left: 8px; /* 保存ボタンとの間隔 */
+}
+
+.clear-btn:hover {
+  background: #ef4444; /* ホバーで濃い赤 */
+}
+
 
 .settings-btn{
   position:fixed;
@@ -96,10 +119,18 @@ textarea{
   color:#fff;
 }
 
+/* 広告表示の制御 */
 .ad-sp{display:none}
 .ad-pc{display:block}
 html[data-view="sp"] .ad-sp{display:block}
 html[data-view="sp"] .ad-pc{display:none}
+
+/* 設定で広告をOFFにした場合、広告ブロックを完全に非表示にする */
+html[data-ads="false"] .ad-sp,
+html[data-ads="false"] .ad-pc {
+  display: none !important;
+}
+
 
 .modal{
   position:fixed;
@@ -132,7 +163,10 @@ if(localStorage.getItem('agreed')!=='true'){
 
 <h1>文字数カウント & 保存ツール</h1>
 
-<!-- お知らせ -->
+<div style="text-align:right; font-size:0.9em; margin-bottom:16px;">
+  訪問回数: <span id="accessCounter" style="font-weight:bold;">読み込み中...</span>
+</div>
+
 <div class="notice">
   <strong>お知らせ</strong>
   <div id="noticeList">読み込み中...</div>
@@ -166,11 +200,11 @@ if(localStorage.getItem('agreed')!=='true'){
     <option value="csv">CSV</option>
   </select>
   <button class="save-btn" onclick="download()">保存</button>
+  <button class="clear-btn" onclick="clearText()">すべてクリア</button>
 </div>
 
 </div>
 
-<!-- 広告 -->
 <div class="ad-sp">
 <script src="https://adm.shinobi.jp/s/727078061892c6b6db2f17ceaf739873"></script>
 </div>
@@ -181,7 +215,6 @@ if(localStorage.getItem('agreed')!=='true'){
 
 <button class="settings-btn" onclick="openSettings()">⚙</button>
 
-<!-- 設定モーダル -->
 <div id="settings" class="modal hidden">
   <div class="modal-box">
     <h2>ユーザー設定</h2>
@@ -207,6 +240,38 @@ if(localStorage.getItem('agreed')!=='true'){
 </div>
 
 <script>
+/* ===== アクセスカウンター (GAS連携) ===== */
+// ★提供いただいたGASのURLを設定済み
+const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP3bBp_wdlo-5k_Wuag1dH0D3cuUg5pYqLf6E2cf2L1NcIY476DqyHw/exec"; 
+
+const accessCounterElement = document.getElementById('accessCounter');
+
+function fetchAccessCount() {
+  fetch(ACCESS_GAS_URL)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`GASアクセスエラー: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data && data.count !== undefined) {
+        // カウントを3桁区切りで表示
+        accessCounterElement.textContent = data.count.toLocaleString();
+      } else {
+        accessCounterElement.textContent = 'エラー';
+      }
+    })
+    .catch(error => {
+      console.error('アクセスカウンター取得中にエラーが発生しました:', error);
+      accessCounterElement.textContent = '取得失敗';
+    });
+}
+
+// ページロード時にカウンターを読み込む
+window.addEventListener('load', fetchAccessCount);
+
+
 /* ===== お知らせ取得（GAS） ===== */
 fetch("https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec")
   .then(r=>r.json())
@@ -233,35 +298,87 @@ fetch("https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5
   });
 
 /* ===== カウント ===== */
-let LIMIT=280;
-const text=document.getElementById('text');
-const char=document.getElementById('char');
-const line=document.getElementById('line');
-const remain=document.getElementById('remain');
+let LIMIT = 280; // 初期値を280に設定
+const text = document.getElementById('text');
+const char = document.getElementById('char');
+const line = document.getElementById('line');
+const remain = document.getElementById('remain');
+const customLimitInput = document.getElementById('customLimit');
 
-function update(){
-  let v=text.value;
-  if(v.length>LIMIT){
-    v=v.slice(0,LIMIT);
-    text.value=v;
+function update() {
+  const v = text.value;
+  const currentLength = v.length;
+  const currentLines = v.split('\n').length;
+  const remainingCount = LIMIT - currentLength;
+
+  char.textContent = currentLength;
+  line.textContent = currentLines;
+  remain.textContent = remainingCount;
+
+  // 制限を超えた場合に色を変更（自動切り捨ては行わない）
+  if (remainingCount < 0) {
+    remain.style.color = 'red';
+    remain.style.fontWeight = 'bold';
+  } else {
+    remain.style.color = '';
+    remain.style.fontWeight = '';
   }
-  char.textContent=v.length;
-  line.textContent=v.split('\n').length;
-  remain.textContent=LIMIT-v.length;
-}
-text.addEventListener('input',update);
-
-function setLimit(n){LIMIT=n;update();}
-function setCustom(){
-  const n=Number(customLimit.value);
-  if(n>0){LIMIT=n;update();}
 }
 
-/* ===== 表示モード ===== */
-const view=localStorage.getItem('viewMode');
-if(view){
-  document.documentElement.setAttribute('data-view',view);
+// 初期設定とイベントリスナーの設定
+function initializeCounter() {
+  // 保存されたカスタム制限値があれば読み込む
+  const storedLimit = localStorage.getItem('charLimit');
+  if (storedLimit && !isNaN(storedLimit) && Number(storedLimit) > 0) {
+    LIMIT = Number(storedLimit);
+    customLimitInput.value = LIMIT;
+  } else {
+     customLimitInput.value = LIMIT;
+  }
+  update(); // ページロード時に一度カウントを更新
+  text.addEventListener('input', update);
 }
+
+function setLimit(n) {
+  LIMIT = n;
+  localStorage.setItem('charLimit', n); // 制限値を保存
+  customLimitInput.value = n; // カスタム入力欄を更新
+  update();
+}
+
+function setCustom() {
+  const n = Number(customLimitInput.value);
+  if (n > 0) {
+    setLimit(n);
+  } else {
+    alert('上限文字数には1以上の数字を入力してください。');
+  }
+}
+
+// ページロード時に初期化関数を呼び出す
+window.addEventListener('load', initializeCounter);
+
+
+/* ===== すべてクリア機能 ===== */
+function clearText() {
+  if (confirm('入力内容をすべて消去してもよろしいですか？この操作は元に戻せません。')) {
+    text.value = '';
+    update(); // カウントをリセット
+  }
+}
+
+
+/* ===== 表示モード / 広告設定の初期読み込み ===== */
+const view = localStorage.getItem('viewMode');
+if (view) {
+  document.documentElement.setAttribute('data-view', view);
+}
+
+const ads = localStorage.getItem('showAds');
+// localStorageに設定がなければデフォルトは'true'（表示）
+// 'false'が設定されていれば、data-ads="false"を付与し、CSSで非表示にする
+document.documentElement.setAttribute('data-ads', ads === 'false' ? 'false' : 'true');
+
 
 /* ===== 設定 ===== */
 const modal=document.getElementById('settings');
@@ -284,21 +401,43 @@ document.querySelectorAll('input[name=view]').forEach(r=>{
 });
 
 adsToggle.onchange=()=>{
-  localStorage.setItem('showAds',adsToggle.checked?'true':'false');
-  location.reload();
+  const isChecked = adsToggle.checked;
+  localStorage.setItem('showAds', isChecked ? 'true' : 'false');
+  // 広告表示設定を即座に<html>タグに反映
+  document.documentElement.setAttribute('data-ads', isChecked ? 'true' : 'false');
 };
 
-/* ===== 保存 ===== */
+/* ===== 保存（文字化け対策済み） ===== */
 function download(){
-  const f=format.value;
-  const d=new Date();
-  const name=`text_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}_${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}.${f}`;
-  let c=text.value;
-  if(f==='csv'){c=`"${c.replace(/"/g,'""')}"`;}
-  const b=new Blob([c],{type:'text/plain;charset=utf-8;'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(b);
-  a.download=name;
+  const f = document.getElementById('format').value;
+  const d = new Date();
+  
+  // ファイル名の生成
+  const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const timeStr = `${String(d.getHours()).padStart(2, '0')}${String(d.getMinutes()).padStart(2, '0')}`;
+  const name = `text_${dateStr}_${timeStr}.${f}`;
+  
+  let c = text.value;
+  
+  // CSV形式の処理
+  if (f === 'csv') {
+      // 引用符を二重化し、全体を引用符で囲む
+      c = `"${c.replace(/"/g, '""')}"`; 
+  }
+  
+  // 1. BOM (Byte Order Mark) の追加
+  // Windows環境での文字化けを防ぐため、UTF-8 BOM付きにする
+  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+  
+  // 2. テキストコンテンツの生成
+  const textBlob = new Blob([c], {type: 'text/plain;charset=utf-8;'});
+  
+  // 3. BOMとテキストコンテンツを結合
+  const b = new Blob([bom, textBlob], {type: 'text/plain;charset=utf-8'});
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = name;
   a.click();
   URL.revokeObjectURL(a.href);
 }

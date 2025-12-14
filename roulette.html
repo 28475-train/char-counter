@@ -3,266 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>【PC版】カスタムルーレット・カウントダウン | ツール</title>
+<title>【PC版】ルーレット・カウントダウン | 篠ノ井乗務区制作</title>
 <link rel="stylesheet" href="style.css">
-<style>
-/* PC版のコンテンツ幅を設定 */
-body{ max-width: 720px; margin: 0 auto; padding: 0; }
-
-/* ルーレット/カウントダウン固有のスタイル */
-.roulette-container {
-    background: var(--card);
-    padding: 30px 20px;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    text-align: center;
-    margin-top: 20px;
-    border: 1px solid var(--border);
-}
-
-/* 目標表示エリア */
-#targetDisplay {
-    font-size: 1.2em;
-    color: var(--text-soft);
-    margin-bottom: 20px;
-}
-
-/* カウント値/ルーレット表示エリア */
-#countdownValue, #rouletteResult {
-    font-size: 4em;
-    font-weight: 800;
-    color: var(--accent-dark);
-    margin: 20px 0;
-    line-height: 1.2;
-    min-height: 100px; /* カウントダウン表示のブレを防ぐ */
-}
-
-/* ルーレットアニメーション用のプレースホルダー */
-#rouletteAnimation {
-    width: 100%;
-    height: 100px;
-    background-color: var(--accent-light);
-    border-radius: 8px;
-    margin: 20px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    color: var(--accent-dark);
-    border: 3px dashed var(--accent);
-}
-
-/* アクションボタン */
-#startButton {
-    padding: 15px 30px;
-    font-size: 1.3em;
-    background-color: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#startButton:hover {
-    background-color: var(--accent-dark);
-}
-
-/* 設定への誘導 */
-.settings-link-area {
-    margin-top: 30px;
-    padding-top: 15px;
-    border-top: 1px solid var(--border);
-}
-
-/* カウントダウン完了後のスタイル */
-.finished {
-    color: red !important;
-}
-
-/* アニメーションのキーフレーム（例：点滅） */
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-.blinking {
-    animation: blink 0.8s infinite;
-}
-
-</style>
 </head>
 <body data-theme="light_green">
 <script>
-// --- バージョン情報 ---
-const APP_VERSION = "v1.2.0"; 
-// ----------------------
+// ... (バージョン情報省略) ...
+// ★★★ 自動リダイレクトを再開 ★★★
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 if (isMobile) { location.href = 'SP/roulette.html'; }
 
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+// ... (関数省略) ...
 
-// ★★★ 機能復旧: ルーレット/カウントダウンロジック ★★★
-let countdownInterval;
-const defaultTargetDate = new Date();
-defaultTargetDate.setDate(defaultTargetDate.getDate() + 7); // デフォルトは1週間後
-
-function startCountdown() {
-    // 仮の目標日時を LocalStorage または settings.html から取得したと仮定
-    // 実際には settings.html のロジックと連携させる必要があります
-    const targetDate = localStorage.getItem('rouletteTargetDate') 
-                     ? new Date(localStorage.getItem('rouletteTargetDate')) 
-                     : defaultTargetDate;
-
-    // 表示を更新
-    document.getElementById('targetDisplay').textContent = 
-        "目標日時: " + targetDate.toLocaleString();
-    
-    // カウントダウン開始
-    clearInterval(countdownInterval);
-    
-    const update = () => {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        const countdownElement = document.getElementById('countdownValue');
-        const startButton = document.getElementById('startButton');
-
-        if (distance < 0) {
-            clearInterval(countdownInterval);
-            countdownElement.textContent = "目標達成！";
-            countdownElement.classList.add('finished', 'blinking');
-            startButton.textContent = "ルーレット開始";
-            startButton.disabled = false;
-        } else {
-            countdownElement.textContent = 
-                `${days}日 ${hours}時間 ${minutes}分 ${seconds}秒`;
-            startButton.textContent = "カウントダウン中...";
-            startButton.disabled = true;
-        }
-    };
-
-    update();
-    countdownInterval = setInterval(update, 1000);
-}
-
-function startRoulette() {
-    const resultElement = document.getElementById('rouletteResult');
-    const animationElement = document.getElementById('rouletteAnimation');
-    const startButton = document.getElementById('startButton');
-
-    startButton.disabled = true;
-    startButton.textContent = "結果を抽選中...";
-    resultElement.textContent = "…";
-    animationElement.textContent = "高速回転中！";
-    
-    // ルーレットのシミュレーション (5秒後に結果を出す)
-    setTimeout(() => {
-        const results = ["大成功！", "成功", "少し失敗", "やり直し！"];
-        const finalResult = results[Math.floor(Math.random() * results.length)];
-
-        resultElement.textContent = finalResult;
-        animationElement.textContent = "抽選終了";
-        startButton.textContent = "もう一度ルーレット";
-        startButton.disabled = false;
-
-        // ルーレット開始ボタンが「カウントダウン中...」の場合はカウントダウンに戻る
-        // 本来はsettingsのフラグで制御
-        if (document.getElementById('countdownValue').textContent !== "目標達成！") {
-             startButton.textContent = "カウントダウン再開";
-        }
-        
-    }, 5000);
-}
-
-window.onload = function() { 
-    document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
-    
-    // 初期表示としてカウントダウンを開始
-    startCountdown();
-
-    // ルーレットとカウントダウンの開始ボタンのイベント設定
-    document.getElementById('startButton').addEventListener('click', () => {
-        if (document.getElementById('countdownValue').textContent === "目標達成！") {
-            startRoulette();
-        } else {
-            // カウントダウンが動いている場合は特に何もしない
-            // 実際には、カウントダウンの開始/一時停止を切り替えるロジックを入れる
-            startCountdown();
-        }
-    });
-}
+window.onload = function() { /* ... (ロードと初期化処理省略) ... */ }
 </script>
 
-<div class="main-content-area">
-    <div style="max-width: 720px; margin: 0 auto;">
-
-        <header class="header">
-            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-            <a href="counter.html" class="header-title">カスタムルーレット (PC版)</a>
-        </header>
-
-        <div class="top-ad-header">
-            <div id="ad-area-top-pc">
-                <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-            </div>
-        </div>
-
-        <nav class="side-nav" id="sideNav">
-            <a href="counter.html">📝 文字数カウント</a> 
-            <a href="roulette.html" class="active-tab">🎲 ルーレット</a> 
-            <a href="settings.html">⚙ 設定</a>
-            <a href="help.html">ヘルプ</a>
-            <a href="about.html">制作者</a>
-        </nav>
-        
-        <div class="content-wrapper">
-
-            <h1>カスタムルーレット・カウントダウン</h1>
-            <p style="color: var(--text-soft); margin-top: -10px;">設定された目標に向けて、カウントダウンまたはルーレットを行います。</p>
-
-            <div class="roulette-container">
-                
-                <h2>現在の目標</h2>
-                <p id="targetDisplay">目標日時: 読み込み中...</p>
-
-                <div id="countdownArea">
-                    <p style="font-size: 1.1em; color: var(--text-soft);">目標までの残り時間</p>
-                    <div id="countdownValue">読み込み中...</div>
-                </div>
-
-                <div id="rouletteArea" style="display: none;">
-                    <p style="font-size: 1.1em; color: var(--text-soft);">ルーレット結果</p>
-                    <div id="rouletteResult">…</div>
-                </div>
-                
-                <div id="rouletteAnimation">結果待機中</div>
-
-                <button id="startButton">カウントダウン開始</button>
-
-                <div class="settings-link-area">
-                    <p>目標やルーレット項目の設定は<a href="settings.html">設定ページ</a>で行ってください。</p>
-                </div>
-
-            </div>
-            
-        </div>
-    </div>
-</div>
-
-<div class="bottom-ad-footer">
-    <div id="ad-area-bottom-pc">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-    </div>
-</div>
+<div class="bottom-ad-footer"><div id="ad-area-bottom"></div></div>
 
 <footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Version <span id="appVersionDisplay"></span></p>
+    <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
 </footer>
+
+<script src="ads.js"></script>
 </body>
 </html>

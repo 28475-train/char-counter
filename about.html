@@ -28,15 +28,13 @@ body{
     margin-top: 0;
 }
 .back-link a {
-    color: var(--accent);
+    color: var(--link);
     text-decoration: none;
     font-weight: bold;
 }
 </style>
 </head>
-<body>
-
-<h1>制作者紹介</h1>
+<body data-theme="light_green"> <h1>制作者紹介</h1>
 
 <div class="profile-card">
     <h2>制作者情報</h2>
@@ -66,6 +64,14 @@ body{
 </div>
 
 <p class="back-link"><a href="counter.html">ツール画面に戻る</a></p>
+
+<script>
+// テーマ設定の適用
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.body.setAttribute('data-theme', savedTheme);
+}
+</script>
 
 </body>
 </html>

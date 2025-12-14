@@ -4,10 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>利用規約・プライバシーポリシー</title>
+
+<link rel="stylesheet" href="style.css">
+
 <style>
+/* style.cssの読み込みに合わせてデザインを微調整 */
 body{font-family:"Noto Sans JP",system-ui,sans-serif;
 max-width:900px;margin:30px auto;padding:20px}
-section{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px}
+section{background:var(--card);border-radius:12px;padding:20px;margin-bottom:20px; border:1px solid var(--border);}
+section h2 {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent-soft);
+    padding-bottom: 5px;
+}
+.back-link a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -16,24 +30,104 @@ section{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px}
 
 <section>
 <h2>利用規約</h2>
-<p>本ツールは非商用・個人利用に限り使用できます。</p>
+<h3>1. 適用範囲と同意</h3>
+<p>本文字数カウント&保存ツール（以下、本ツール）の利用に関わる一切に、本規約が適用されます。ユーザーは、**本ツールを利用した時点をもって本規約の全ての内容に同意したものとみなします。**</p>
+
+<h3>2. 利用目的と制限</h3>
+<p>本ツールは非商用・個人利用に限り使用できます。法令または公序良俗に反する行為、ツールの運営を妨げる行為、その他本ツールが不適切と判断する行為を禁止します。</p>
+
+<h3>3. 免責事項</h3>
+<p>本ツールの利用によってユーザーに生じた損害や、ツールの提供の中断・中止、または仕様の変更によって生じた損害について、当方は一切の責任を負いません。ご利用はユーザー自身の判断と責任において行ってください。</p>
 </section>
 
 <section id="privacy">
 <h2>プライバシーポリシー</h2>
-<p>入力内容は端末内でのみ処理され、サーバーへ送信されません。</p>
+
+<h3>1. 入力データの取り扱い</h3>
+<p>ユーザーが本ツールに入力したテキストデータは、**すべて端末内（ブラウザ）でのみ処理・保存されます。** 当方のサーバーへ送信されることは一切ありません。</p>
+
+<h3>2. アクセス情報の収集</h3>
+<p>本ツールでは、アクセス状況の把握のため、Google Apps Script (GAS) を利用した**アクセスカウンターを設置しています。** このカウンターが記録するのはアクセス日時のみであり、ユーザーの個人を特定できる情報は一切収集しません。</p>
+
+<h3>3. 広告配信について</h3>
+<p>本ツールでは、収益化のため外部広告配信サービスを利用しています。これにより、広告サービス事業者がCookieなどの情報を収集する場合があります。情報収集の詳細は、各広告サービスのプライバシーポリシーをご確認ください。</p>
+
+<h3>4. 設定の保存（ローカルストレージ）</h3>
+<p>表示モード（スマホ/PC）、広告の表示/非表示設定、カスタム文字数制限は、お客様のブラウザの**ローカルストレージに保存されます。** これらの設定はいつでも**設定画面（settings.html）で変更**することが可能です。</p>
 </section>
 
 <section>
-<h2>表示モードについて</h2>
-<p>ユーザー設定によりレイアウトと広告表示形式を切り替えます。</p>
+<h2>本規約・ポリシーへの同意</h2>
+<p>本ツールの利用を開始した時点で、本ページに記載された全ての利用規約およびプライバシーポリシーに同意したものとします。</p>
+<p>なお、これらの規約やポリシーは、ユーザーの承諾を得ることなく改定されることがあります。改定後の規約は、本ページに掲載された時点から効力を生じるものとします。</p>
+</section>
+
+<p class="back-link"><a href="index.html">トップへ戻る</a></p>
+</body>
+</html><!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>利用規約・プライバシーポリシー</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* style.cssの読み込みに合わせてデザインを微調整 */
+body{font-family:"Noto Sans JP",system-ui,sans-serif;
+max-width:900px;margin:30px auto;padding:20px}
+section{background:var(--card);border-radius:12px;padding:20px;margin-bottom:20px; border:1px solid var(--border);}
+section h2 {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent-soft);
+    padding-bottom: 5px;
+}
+.back-link a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<h1>利用規約・プライバシーポリシー</h1>
+
+<section>
+<h2>利用規約</h2>
+<h3>1. 適用範囲と同意</h3>
+<p>本文字数カウント&保存ツール（以下、本ツール）の利用に関わる一切に、本規約が適用されます。ユーザーは、**本ツールを利用した時点をもって本規約の全ての内容に同意したものとみなします。**</p>
+
+<h3>2. 利用目的と制限</h3>
+<p>本ツールは非商用・個人利用に限り使用できます。法令または公序良俗に反する行為、ツールの運営を妨げる行為、その他本ツールが不適切と判断する行為を禁止します。</p>
+
+<h3>3. 免責事項</h3>
+<p>本ツールの利用によってユーザーに生じた損害や、ツールの提供の中断・中止、または仕様の変更によって生じた損害について、当方は一切の責任を負いません。ご利用はユーザー自身の判断と責任において行ってください。</p>
+</section>
+
+<section id="privacy">
+<h2>プライバシーポリシー</h2>
+
+<h3>1. 入力データの取り扱い</h3>
+<p>ユーザーが本ツールに入力したテキストデータは、**すべて端末内（ブラウザ）でのみ処理・保存されます。** 当方のサーバーへ送信されることは一切ありません。</p>
+
+<h3>2. アクセス情報の収集</h3>
+<p>本ツールでは、アクセス状況の把握のため、Google Apps Script (GAS) を利用した**アクセスカウンターを設置しています。** このカウンターが記録するのはアクセス日時のみであり、ユーザーの個人を特定できる情報は一切収集しません。</p>
+
+<h3>3. 広告配信について</h3>
+<p>本ツールでは、収益化のため外部広告配信サービスを利用しています。これにより、広告サービス事業者がCookieなどの情報を収集する場合があります。情報収集の詳細は、各広告サービスのプライバシーポリシーをご確認ください。</p>
+
+<h3>4. 設定の保存（ローカルストレージ）</h3>
+<p>表示モード（スマホ/PC）、広告の表示/非表示設定、カスタム文字数制限は、お客様のブラウザの**ローカルストレージに保存されます。** これらの設定はいつでも**設定画面（settings.html）で変更**することが可能です。</p>
 </section>
 
 <section>
-<h2>同意ログについて</h2>
-<p>同意日時のみを記録し、個人情報は取得しません。</p>
+<h2>本規約・ポリシーへの同意</h2>
+<p>本ツールの利用を開始した時点で、本ページに記載された全ての利用規約およびプライバシーポリシーに同意したものとします。</p>
+<p>なお、これらの規約やポリシーは、ユーザーの承諾を得ることなく改定されることがあります。改定後の規約は、本ページに掲載された時点から効力を生じるものとします。</p>
 </section>
 
-<p><a href="index.html">トップへ戻る</a></p>
+<p class="back-link"><a href="index.html">トップへ戻る</a></p>
 </body>
 </html>

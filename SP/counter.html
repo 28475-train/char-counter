@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja" data-view="" data-ads="true">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>【SP版】リアルタイム 文字数カウント</title>
+<meta name="description" content="リアルタイムで文字数と行数を即座に計測する無料の文字数カウントツール。">
+<link rel="stylesheet" href="../style.css"> </head>
+<body data-theme="light_green">
+<script>
+// --- バージョン情報 ---
+const APP_VERSION = "v1.2.0"; 
+// ----------------------
+
+// SP/PC振り分け判定
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+if (!isMobile) {
+    // PCから誤ってアクセスされた場合は PC版カウンターへリダイレクト
+    location.href = '../counter.html';
+} else {
+    // SPユーザーは SP/index.html 経由でアクセスさせる
+    // ページを直接開いた場合は SP/index.html へ戻す
+    if (!document.referrer.includes('SP/index.html')) {
+        location.href = 'index.html'; 
+    }
+}
+
+// 既存の設定ロード (テーマ、広告、フォントサイズなど) - 簡略化
+// ...
+</script>
+
+<div class="top-ad-header" style="height: 50px;">
+    <div id="ad-area-top-sp">
+        AD: SP Top Banner 320x50
+    </div>
+</div>
+
+<div class="main-content-area">
+
+    <header class="header">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <a href="counter.html" class="header-title" style="font-size: 1.2em;">📝 カウンター (SP版)</a>
+    </header>
+
+    <nav class="side-nav" id="sideNav">
+        <a href="counter.html" class="active-tab">📝 文字数カウント</a> 
+        <a href="roulette.html">🎲 ルーレット</a> 
+        <a href="settings.html">⚙ 設定</a>
+        <a href="help.html">ヘルプ</a>
+        <a href="about.html">制作者</a>
+    </nav>
+    
+    <div class="content-wrapper">
+        <h1>文字数カウント 保存ツール (SP)</h1>
+        </div>
+</div>
+
+<div class="bottom-ad-footer" style="height: 50px;">
+    <div id="ad-area-bottom-sp">
+        AD: SP Bottom Banner 320x50
+    </div>
+</div>
+
+<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
+    <p>Version <span id="appVersionDisplay"></span></p>
+</footer>
+
+<script>
+// ナビゲーションメニューの開閉
+function toggleMenu() {
+    document.getElementById('sideNav').classList.toggle('open');
+}
+// バージョン情報をフッターに表示
+document.getElementById('appVersionDisplay').textContent = APP_VERSION;
+</script>
+</body>
+</html>

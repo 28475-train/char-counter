@@ -1,106 +1,120 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-ads="true">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>制作者紹介 | 文字数カウントツール</title>
+<title>【PC版】制作者情報 | ツール</title>
 <link rel="stylesheet" href="style.css">
 <style>
 /* about.html専用のスタイル */
-body{max-width:720px;margin:30px auto;padding:20px;}
-section{
-  background:var(--card);
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:30px;
-  border:1px solid var(--border);
-}
-section h2{
-  color: var(--accent);
-  border-bottom: 2px solid var(--accent-soft);
-  padding-bottom: 5px;
-  margin-top: 0;
-}
-.update-item {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    background: var(--card-light);
-}
-.update-item h3 {
-    color: var(--accent);
-    margin-top: 0;
-    margin-bottom: 10px;
-    border-bottom: 1px dotted var(--border);
+body{ max-width: 720px; margin: 0 auto; padding: 0; }
+.content-wrapper h2 {
+    margin-top: 25px;
+    border-bottom: 2px solid var(--accent-light);
     padding-bottom: 5px;
-    font-size: 1.2em;
 }
-.update-item ul {
-    list-style-type: disc;
-    padding-left: 20px;
-    font-size: 0.95em;
+.content-wrapper p {
+    margin-bottom: 10px;
+}
+/* Googleフォームのコンテナ */
+.google-form-container {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid var(--border);
+}
+/* Googleフォームの iframe にレスポンシブなスタイルを適用 */
+.google-form-container iframe {
+    width: 100%;
+    min-height: 800px; 
+    border: none;
 }
 </style>
 </head>
 <body data-theme="light_green">
-<h1>制作者紹介・アップデート履歴</h1>
-
-<section>
-    <h2>制作者について</h2>
-    <p>このツールは、**篠ノ井乗務区**が、日々の業務や文章作成の際に文字数やバイト数を手軽に確認したいという思いから、開発・公開したものです。</p>
-    <p>不具合の報告や機能改善の提案がありましたら、ぜひご連絡ください。（連絡先情報やSNSリンクなどを記載）</p>
-</section>
-
-<section>
-    <h2>アップデート履歴 (リリースノート)</h2>
-    <div id="releaseNotes">リリースノートを読み込み中...</div>
-</section>
-
-<p style="text-align: center; margin-top: 30px;"><a href="counter.html">ツール画面に戻る</a></p>
-
 <script>
-// テーマ設定の適用 (ローカルストレージから読み込み)
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-    document.body.setAttribute('data-theme', savedTheme);
+// --- バージョン情報 ---
+const APP_VERSION = "v1.2.0"; 
+// ----------------------
+
+// SP/PC振り分けとリファラーチェック
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (isMobile) {
+    location.href = 'SP/index.html';
+} else {
+    // ページを直接開いた場合は index.html へ戻す (index.htmlがランディングページを想定)
+    if (!document.referrer.includes('index.html')) {
+        // location.href = 'index.html'; 
+    }
 }
 
-// === リリースノートの外部読み込み ===
-// ★ リリースノート用GAS URLを設定 (修正済み)
-const RELEASE_NOTES_GAS_URL = "https://script.google.com/macros/s/AKfycbzHWLSZ5PsrQs2SyFY9hVclq7UI8on6R67d8IkxDMS_XZB_d9PWTis_8xiMIYG5NHlENQ/exec"; 
-
-fetch(RELEASE_NOTES_GAS_URL)
-  .then(r => {
-    if (!r.ok) {
-        throw new Error('リリースノートデータの取得に失敗しました。');
-    }
-    return r.json();
-  })
-  .then(list => {
-    const container = document.getElementById('releaseNotes');
-    if (!list || list.length === 0) {
-      container.textContent = '現在、アップデート履歴はありません。';
-      return;
-    }
-    
-    container.innerHTML = '';
-    list.forEach(item => {
-      // notesが配列であることを想定
-      const ulItems = item.notes.map(note => `<li>${note}</li>`).join('');
-      const d = document.createElement('div');
-      d.className = 'update-item';
-      d.innerHTML = `
-        <h3>Version ${item.version} (${item.date})</h3>
-        <ul>${ulItems}</ul>
-      `;
-      container.appendChild(d);
-    });
-  })
-  .catch(error => {
-    console.error('リリースノート取得エラー:', error);
-    document.getElementById('releaseNotes').textContent = 'アップデート履歴の読み込みに失敗しました。';
-  });
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+window.onload = function() { 
+    document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
+    document.getElementById('versionDisplay').textContent = APP_VERSION;
+}
 </script>
+
+<div class="main-content-area">
+    <div style="max-width: 720px; margin: 0 auto;">
+
+        <header class="header">
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <a href="counter.html" class="header-title">制作者 (PC版)</a>
+        </header>
+
+        <div class="top-ad-header">
+            <div id="ad-area-top-pc">
+                <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+                </div>
+        </div>
+
+        <nav class="side-nav" id="sideNav">
+            <a href="counter.html">📝 文字数カウント</a> 
+            <a href="roulette.html">🎲 ルーレット</a> 
+            <a href="settings.html">⚙ 設定</a>
+            <a href="help.html">ヘルプ</a>
+            <a href="about.html" class="active-tab">制作者</a>
+        </nav>
+        
+        <div class="content-wrapper">
+            <h1>制作者情報 (PC)</h1>
+            
+            <h2>ツールについて</h2>
+            <p>このツールは、28475-trainによって開発・公開されています。</p>
+            <p>バージョン: <span id="versionDisplay"></span></p>
+
+            <h2>免責事項</h2>
+            <p>本ツールの利用により生じた損害について、制作者は一切責任を負いません。ご利用は自己責任でお願いします。</p>
+            
+            <h2>フィードバック・お問い合わせ</h2>
+            <div class="google-form-container">
+                <p style="margin-bottom: 15px;">バグ報告や機能改善の要望はこちらのフォームからお送りください。</p>
+                
+                <iframe 
+                    src="https://docs.google.com/forms/d/e/[ここにフォームIDを挿入]/viewform?embedded=true" 
+                    width="100%" 
+                    height="800" 
+                    frameborder="0" 
+                    marginheight="0" 
+                    marginwidth="0"
+                    loading="lazy"
+                >読み込み中…</iframe>
+
+            </div>
+            </div>
+    </div>
+</div>
+
+<div class="bottom-ad-footer">
+    <div id="ad-area-bottom-pc">
+        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+        </div>
+</div>
+
+<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
+    <p>Version <span id="appVersionDisplay"></span></p>
+</footer>
 </body>
 </html>

@@ -6,10 +6,67 @@
 <title>カスタム ルーレット・カウントダウン ツール</title>
 <meta name="description" content="目標回数、開始時刻、ルーレットモードを自由に設定できるカスタムカウンターツールです。">
 <link rel="stylesheet" href="style.css">
+<style>
+/* ルーレット専用CSS */
+.roulette-wrapper {
+    display: none; /* 初期状態では非表示 */
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    height: 300px;
+}
+.roulette-circle {
+    width: 250px;
+    height: 250px;
+    border: 5px solid var(--accent);
+    border-radius: 50%;
+    position: relative;
+    background-color: var(--background);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.roulette-needle {
+    width: 50%;
+    height: 4px;
+    background-color: red;
+    position: absolute;
+    top: calc(50% - 2px); 
+    left: 50%;
+    transform-origin: 0% 50%; 
+    transform: rotate(0deg);
+    transition: transform 0.1s linear; 
+}
+.roulette-center {
+    width: 20px;
+    height: 20px;
+    background-color: var(--accent-dark);
+    border-radius: 50%;
+    position: absolute;
+    top: calc(50% - 10px);
+    left: calc(50% - 10px);
+    z-index: 10;
+}
+.roulette-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--text-highlight);
+    z-index: 5;
+}
+/* アニメーション用クラス */
+.roulette-needle.animating {
+    animation: spin 0.1s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+</style>
 </head>
 <body data-theme="light_green">
 <script>
-// ページロード時のテーマ適用 (共通)
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme) {
     document.body.setAttribute('data-theme', savedTheme);
@@ -29,28 +86,38 @@ if (savedTheme) {
 
 <h1>カスタム ルーレット・カウントダウン</h1>
 
-<div id="customCounterContainer" class="card" style="margin-top: 20px; padding: 30px; border: 2px solid var(--accent); text-align: center;">
-  <h2 style="margin-top: 0; font-size: 1.4em;">現在のカスタム目標</h2>
+<div id="customCounterContainer" class="card" style="margin-top: 20px; padding: 30px; text-align: center;">
+  <h2 id="customCounterTitle" style="margin-top: 0; font-size: 1.4em;">現在のカスタム目標</h2>
   
-  <div id="customCounterDisplay" style="font-size: 4em; font-weight: bold; color: var(--text-highlight); min-height: 1.2em;">
-    ---
+  <div class="roulette-wrapper" id="rouletteWrapper">
+    <div id="rouletteCircle" class="roulette-circle">
+        <div id="rouletteNeedle" class="roulette-needle"></div>
+        <div class="roulette-center"></div>
+        <div id="customCounterDisplay" class="roulette-text">---</div>
+    </div>
   </div>
   
+  <div id="simpleDisplay" style="font-size: 4em; font-weight: bold; color: var(--text-highlight); min-height: 1.2em;">
+    ---
+  </div>
+
   <p id="customCounterLabel" style="font-size: 1.1em; margin-top: 10px;">設定画面で目標を設定してください。</p>
 
   <div style="margin-top: 20px;">
       <a href="settings.html" style="text-decoration: none; padding: 8px 15px; background-color: var(--accent); color: white; border-radius: 6px;">設定画面へ</a>
   </div>
 </div>
+
 <div id="ad-area" style="margin-top: 30px;">
 <script src="https://adm.shinobi.jp/o/908d65c8b7bcdd909305dd25f407426f"></script>
 </div>
 </div>
 
 <script>
-// === ★★★ カスタムカウンター機能のロジック (コア) ★★★
 const customContainer = document.getElementById('customCounterContainer');
-const customDisplay = document.getElementById('customCounterDisplay');
+const rouletteWrapper = document.getElementById('rouletteWrapper');
+const simpleDisplay = document.getElementById('simpleDisplay'); // 新設の数字表示エリア
+const customDisplay = document.getElementById('customCounterDisplay'); // ルーレット内の数字
 const customLabel = document.getElementById('customCounterLabel');
 let customSettings = {};
 let counterInterval = null; 
@@ -60,46 +127,42 @@ function loadCustomCounterSettings() {
     if (savedSettings) {
         customSettings = JSON.parse(savedSettings);
     } else {
-        customSettings = { show: true, target: 1000, start: null, mode: 'none' };
+        customSettings = { target: 1000, start: null, mode: 'none' };
     }
 
     if (customSettings.mode !== 'none') {
         startCustomCounter();
     } else {
-        customDisplay.textContent = '---';
+        simpleDisplay.textContent = '---';
         customLabel.textContent = 'カスタムカウンターは現在「無効」です。設定を変更してください。';
+        rouletteWrapper.style.display = 'none';
+        simpleDisplay.style.display = 'block';
     }
 }
 
-// ルーレットアニメーション関数
+// ルーレットアニメーション関数 (針回転版)
 function runRouletteAnimation(targetCount) {
     const ROULETTE_DURATION = 3000; 
-    let startTime = null;
-    let frameId;
+    const needle = document.getElementById('rouletteNeedle');
+    const label = document.getElementById('customCounterLabel');
+    
+    // 表示切替
+    rouletteWrapper.style.display = 'flex';
+    simpleDisplay.style.display = 'none';
+    customDisplay.textContent = '?'; 
 
-    function step(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const progress = timestamp - startTime;
-        const ratio = Math.min(progress / ROULETTE_DURATION, 1);
+    needle.classList.add('animating');
+    
+    setTimeout(() => {
+        needle.classList.remove('animating');
+        
+        // 最終的な角度を設定 (例: 10周 + ランダムな角度)
+        const finalAngle = 360 * 10 + Math.floor(Math.random() * 360);
+        needle.style.transform = `rotate(${finalAngle}deg)`;
 
-        if (ratio < 1) {
-            // アニメーション中: ランダムな数字を表示
-            const countLength = String(targetCount).length > 3 ? String(targetCount).length : 4;
-            let randomNum = '';
-            for (let i = 0; i < countLength; i++) {
-                randomNum += Math.floor(Math.random() * 10);
-            }
-            customDisplay.textContent = randomNum;
-            frameId = window.requestAnimationFrame(step);
-        } else {
-            // アニメーション終了: 最終的な数字を表示
-            customDisplay.textContent = targetCount.toLocaleString();
-            customLabel.textContent = `ルーレット完了！目標値 ${targetCount.toLocaleString()} で停止しました。`;
-            window.cancelAnimationFrame(frameId);
-        }
-    }
-
-    frameId = window.requestAnimationFrame(step);
+        customDisplay.textContent = targetCount.toLocaleString();
+        label.textContent = `ルーレット完了！目標値 ${targetCount.toLocaleString()} で決定しました。`;
+    }, ROULETTE_DURATION);
 }
 
 // カウンターの開始関数
@@ -115,22 +178,26 @@ function startCustomCounter() {
         return;
     }
 
+    // ルーレット以外の表示設定
+    rouletteWrapper.style.display = 'none';
+    simpleDisplay.style.display = 'block';
+
     if (mode === 'countdown') {
         customLabel.textContent = `目標値 ${targetVal.toLocaleString()} 回からのカウントダウン中...`;
         let currentValue = targetVal;
         
-        customDisplay.textContent = currentValue.toLocaleString();
+        simpleDisplay.textContent = currentValue.toLocaleString();
         
         counterInterval = setInterval(() => {
             currentValue--;
-            customDisplay.textContent = currentValue.toLocaleString();
+            simpleDisplay.textContent = currentValue.toLocaleString();
 
             if (currentValue <= 0) {
                 clearInterval(counterInterval);
-                customDisplay.textContent = "0";
+                simpleDisplay.textContent = "0";
                 customLabel.textContent = "カウントダウン完了！";
             }
-        }, 1000); 
+        }, 1000); // 1秒間隔
 
     } else if (mode === 'countup' && start) {
         const startDate = new Date(start).getTime();
@@ -139,7 +206,7 @@ function startCustomCounter() {
         counterInterval = setInterval(() => {
             const now = Date.now();
             if (isNaN(startDate)) {
-                 customDisplay.textContent = '開始時刻が無効です';
+                 simpleDisplay.textContent = '開始時刻が無効です';
                  clearInterval(counterInterval);
                  return;
             }
@@ -147,20 +214,17 @@ function startCustomCounter() {
             const elapsedMs = now - startDate;
             const totalSeconds = Math.floor(elapsedMs / 1000);
 
-            // 時刻表示形式 (HH:MM:SS)
             const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
             const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
             const seconds = String(totalSeconds % 60).padStart(2, '0');
             
-            customDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+            simpleDisplay.textContent = `${hours}:${minutes}:${seconds}`;
             
-        }, 1000); 
+        }, 1000); // 1秒間隔
     }
 }
 
-// ページロード時にカスタムカウンターの設定を読み込む
 window.addEventListener('load', loadCustomCounterSettings);
-// ★★★ ここまでカスタムカウンター ★★★
 </script>
 </body>
 </html>

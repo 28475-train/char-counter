@@ -6,7 +6,6 @@
 <title>【PC版】制作者情報 | ツール</title>
 <link rel="stylesheet" href="style.css">
 <style>
-/* about.html専用のスタイル */
 body{ max-width: 720px; margin: 0 auto; padding: 0; }
 .content-wrapper h2 {
     margin-top: 25px;
@@ -26,8 +25,10 @@ body{ max-width: 720px; margin: 0 auto; padding: 0; }
 }
 /* Googleフォームの iframe にレスポンシブなスタイルを適用 */
 .google-form-container iframe {
+    /* フォームの幅を100%に設定し、レスポンシブに対応 */
     width: 100%;
-    min-height: 800px; 
+    /* 高さはお客様のフォームの高さ (1269px) を参考に設定 */
+    min-height: 1280px; 
     border: none;
 }
 </style>
@@ -37,17 +38,8 @@ body{ max-width: 720px; margin: 0 auto; padding: 0; }
 // --- バージョン情報 ---
 const APP_VERSION = "v1.2.0"; 
 // ----------------------
-
-// SP/PC振り分けとリファラーチェック
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (isMobile) {
-    location.href = 'SP/index.html';
-} else {
-    // ページを直接開いた場合は index.html へ戻す (index.htmlがランディングページを想定)
-    if (!document.referrer.includes('index.html')) {
-        // location.href = 'index.html'; 
-    }
-}
+if (isMobile) { location.href = 'SP/about.html'; }
 
 function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
 window.onload = function() { 
@@ -67,7 +59,7 @@ window.onload = function() {
         <div class="top-ad-header">
             <div id="ad-area-top-pc">
                 <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-                </div>
+            </div>
         </div>
 
         <nav class="side-nav" id="sideNav">
@@ -79,7 +71,7 @@ window.onload = function() {
         </nav>
         
         <div class="content-wrapper">
-            <h1>制作者情報 (PC)</h1>
+            <h1>制作者情報</h1>
             
             <h2>ツールについて</h2>
             <p>このツールは、28475-trainによって開発・公開されています。</p>
@@ -92,15 +84,7 @@ window.onload = function() {
             <div class="google-form-container">
                 <p style="margin-bottom: 15px;">バグ報告や機能改善の要望はこちらのフォームからお送りください。</p>
                 
-                <iframe 
-                    src="https://docs.google.com/forms/d/e/[ここにフォームIDを挿入]/viewform?embedded=true" 
-                    width="100%" 
-                    height="800" 
-                    frameborder="0" 
-                    marginheight="0" 
-                    marginwidth="0"
-                    loading="lazy"
-                >読み込み中…</iframe>
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScFVI6vJbrB7MRcI8Fjxh1rCTOuvu-ncsN4oo6S5PfPfyJpPQ/viewform?embedded=true" width="100%" height="1280" frameborder="0" marginheight="0" marginwidth="0" loading="lazy">読み込んでいます…</iframe>
 
             </div>
             </div>
@@ -110,7 +94,7 @@ window.onload = function() {
 <div class="bottom-ad-footer">
     <div id="ad-area-bottom-pc">
         <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-        </div>
+    </div>
 </div>
 
 <footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">

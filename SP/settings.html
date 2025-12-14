@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja" data-ads="true">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>【SP版】設定 | ツール</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+/* settings.html専用のスタイル (前回の回答と同じ。SP版では幅が狭いため、max-widthは無視される) */
+body{
+  max-width: 720px;
+  margin: 0 auto; 
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.setting-group{
+  /* ... スタイル省略 ... */
+}
+</style>
+</head>
+<body data-theme="light_green">
+<script>
+// --- バージョン情報 ---
+const APP_VERSION = "v1.2.0"; 
+// ----------------------
+
+// SP/PC振り分け判定
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+if (!isMobile) {
+    location.href = '../counter.html'; // PC版カウンターへリダイレクト
+} else {
+    // ページを直接開いた場合は SP/index.html へ戻す
+    if (!document.referrer.includes('SP/index.html')) {
+        location.href = 'index.html'; 
+    }
+}
+
+// 既存の設定ロード (テーマ、広告など) - 簡略化
+// ...
+</script>
+
+<div class="top-ad-header" style="height: 50px;">
+    <div id="ad-area-top-sp">
+        AD: SP Top Banner 320x50
+    </div>
+</div>
+
+<div class="main-content-area">
+
+    <header class="header">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <a href="counter.html" class="header-title" style="font-size: 1.2em;">⚙ 設定 (SP版)</a>
+    </header>
+
+    <nav class="side-nav" id="sideNav">
+        <a href="counter.html">📝 文字数カウント</a> 
+        <a href="roulette.html">🎲 ルーレット</a> 
+        <a href="settings.html" class="active-tab">⚙ 設定</a>
+        <a href="help.html">ヘルプ</a>
+        <a href="about.html">制作者</a>
+    </nav>
+    
+    <div class="content-wrapper">
+        <h1>設定 (SP)</h1>
+        <div class="setting-group">
+            <h2>デザインテーマ</h2>
+            </div>
+        </div>
+</div>
+
+<div class="bottom-ad-footer" style="height: 50px;">
+    <div id="ad-area-bottom-sp">
+        AD: SP Bottom Banner 320x50
+    </div>
+</div>
+
+<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
+    <p>Version <span id="appVersionDisplay"></span></p>
+</footer>
+
+<script>
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+document.getElementById('appVersionDisplay').textContent = APP_VERSION;
+// (設定画面のロード/保存ロジックは省略)
+</script>
+</body>
+</html>

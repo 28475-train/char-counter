@@ -2,19 +2,17 @@
 <html lang="ja" data-ads="true">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>【PC版】設定 | ツール</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>【SP版】設定 | ツール</title>
+<link rel="stylesheet" href="../style.css">
 <style>
 /* settings.html専用のスタイル */
-body{ max-width: 720px; margin: 0 auto; padding: 0; }
 .setting-group{
   background: var(--card);
   border-radius: 12px;
-  padding: 25px;
-  margin-bottom: 25px;
+  padding: 15px; 
+  margin-bottom: 20px;
   border: 1px solid var(--border);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 .setting-item{
   display: flex;
@@ -22,16 +20,27 @@ body{ max-width: 720px; margin: 0 auto; padding: 0; }
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid var(--border-soft);
-  gap: 20px;
+  gap: 10px; 
+  flex-wrap: wrap; /* SP向けに折り返しを許可 */
 }
 .setting-item:last-child { border-bottom: none; }
-.setting-item input[type="number"],
-.setting-item input[type="datetime-local"] { width: 150px; text-align: right; }
+.setting-item label {
+    flex-grow: 1;
+    min-width: 100px;
+}
+.setting-item input[type="number"] {
+    width: 100px; 
+    text-align: right;
+}
+.theme-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end; /* SPでは右寄せにする */
+}
 .theme-options button{
-    padding: 8px 15px; margin-right: 5px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer;
+    padding: 8px 10px; margin-left: 5px; margin-top: 5px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer;
     background-color: var(--background); color: var(--text-color);
 }
-.theme-options button:hover { opacity: 0.8; }
 .theme-options button.active { border-color: var(--accent); font-weight: bold; background-color: var(--accent-light); }
 </style>
 </head>
@@ -43,15 +52,15 @@ const APP_VERSION = "v1.2.0";
 
 // SP/PC振り分けとリファラーチェック (毎回同意)
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (isMobile) {
-    location.href = 'SP/index.html';
+if (!isMobile) {
+    location.href = '../counter.html';
 } else {
-    if (!document.referrer.includes('index.html')) {
-        location.href = 'index.html';
+    if (!document.referrer.includes('SP/index.html')) {
+        location.href = 'index.html'; 
     }
 }
 
-// === 設定処理関数 ===
+// === 設定処理関数 (PC版と共通ロジック) ===
 
 function applyTheme(theme) {
     document.body.setAttribute('data-theme', theme);
@@ -92,7 +101,6 @@ function saveCustomCounterSettings() {
 
 function clearHistory() {
     if (confirm('自動保存された履歴データをすべて削除してもよろしいですか？')) {
-        // 例: 'autoSavedText' などのキーを削除
         localStorage.removeItem('autoSavedText');
         alert('履歴データを削除しました。');
     }
@@ -117,81 +125,80 @@ window.onload = function() {
 function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
 </script>
 
-<div class="top-ad-header">
-    <div id="ad-area-top-pc">
+<div class="top-ad-header" style="height: 50px;">
+    <div id="ad-area-top-sp">
         <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
         </div>
 </div>
 
 <div class="main-content-area">
-    <div style="max-width: 720px; margin: 0 auto;">
 
-        <header class="header">
-            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-            <a href="counter.html" class="header-title">⚙ 設定 (PC版)</a>
-        </header>
+    <header class="header">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <a href="counter.html" class="header-title" style="font-size: 1.2em;">⚙ 設定 (SP版)</a>
+    </header>
 
-        <nav class="side-nav" id="sideNav">
-            <a href="counter.html">📝 文字数カウント</a> 
-            <a href="roulette.html">🎲 ルーレット</a> 
-            <a href="settings.html" class="active-tab">⚙ 設定</a>
-            <a href="help.html">ヘルプ</a>
-            <a href="about.html">制作者</a>
-        </nav>
-        
-        <div class="content-wrapper">
-            <h1>設定</h1>
+    <nav class="side-nav" id="sideNav">
+        <a href="counter.html">📝 文字数カウント</a> 
+        <a href="roulette.html">🎲 ルーレット</a> 
+        <a href="settings.html" class="active-tab">⚙ 設定</a>
+        <a href="help.html">ヘルプ</a>
+        <a href="about.html">制作者</a>
+    </nav>
+    
+    <div class="content-wrapper">
+        <h1>設定 (SP)</h1>
 
-            <div class="setting-group">
-                <h2>デザインテーマ</h2>
-                <div class="setting-item">
-                    <label>テーマを選択</label>
-                    <div class="theme-options">
-                        <button onclick="setTheme('light_green')">Light Green</button>
-                        <button onclick="setTheme('dark_blue')">Dark Blue</button>
-                        <button onclick="setTheme('simple_white')">Simple White</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <h2>カスタム目標カウンター設定</h2>
-                <div class="setting-item">
-                    <label for="customTargetValue">目標回数/目標値</label>
-                    <input type="number" id="customTargetValue" min="1" value="1000">
-                </div>
-                <div style="text-align: right; padding-top: 15px;">
-                    <button onclick="saveCustomCounterSettings()">設定を保存</button>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <h2>入力・表示設定</h2>
-                <div class="setting-item">
-                    <label for="ignoreSpaces">スペース（空白）をカウントしない</label>
-                    <input type="checkbox" id="ignoreSpaces">
-                </div>
-                <div class="setting-item">
-                    <label for="hideAds">広告の表示を無効にする</label>
-                    <input type="checkbox" id="hideAds">
-                </div>
-                <div style="text-align: right; padding-top: 15px;">
-                    <button onclick="saveDisplaySettings()">表示設定を保存</button>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <h2>履歴管理</h2>
-                <div style="text-align: right; padding-top: 15px;">
-                    <button onclick="clearHistory()" style="background-color: #d9534f; color: white; padding: 10px 15px; border: none; border-radius: 4px;">履歴をすべてクリア</button>
+        <div class="setting-group">
+            <h2>デザインテーマ</h2>
+            <div class="setting-item">
+                <label>テーマを選択</label>
+                <div class="theme-options">
+                    <button onclick="setTheme('light_green')">Light Green</button>
+                    <button onclick="setTheme('dark_blue')">Dark Blue</button>
+                    <button onclick="setTheme('simple_white')">Simple White</button>
                 </div>
             </div>
         </div>
+
+        <div class="setting-group">
+            <h2>カスタム目標カウンター設定</h2>
+            <div class="setting-item">
+                <label for="customTargetValue">目標回数/目標値</label>
+                <input type="number" id="customTargetValue" min="1" value="1000">
+            </div>
+            <div style="text-align: right; padding-top: 15px;">
+                <button onclick="saveCustomCounterSettings()">設定を保存</button>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <h2>入力・表示設定</h2>
+            <div class="setting-item">
+                <label for="ignoreSpaces">スペース（空白）をカウントしない</label>
+                <input type="checkbox" id="ignoreSpaces">
+            </div>
+            <div class="setting-item">
+                <label for="hideAds">広告の表示を無効にする</label>
+                <input type="checkbox" id="hideAds">
+            </div>
+            <div style="text-align: right; padding-top: 15px;">
+                <button onclick="saveDisplaySettings()">表示設定を保存</button>
+            </div>
+        </div>
+        
+        <div class="setting-group">
+            <h2>履歴管理</h2>
+            <div style="text-align: right; padding-top: 15px;">
+                <button onclick="clearHistory()" style="background-color: #d9534f; color: white; padding: 10px 15px; border: none; border-radius: 4px;">履歴をすべてクリア</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<div class="bottom-ad-footer">
-    <div id="ad-area-bottom-pc">
+<div class="bottom-ad-footer" style="height: 50px;">
+    <div id="ad-area-bottom-sp">
         <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
         </div>
 </div>

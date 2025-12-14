@@ -6,15 +6,116 @@
 <title>設定 | ツール</title>
 <link rel="stylesheet" href="style.css">
 <style>
-/* settings.html専用のスタイル (省略) */
+/* settings.html専用のスタイル */
+body{
+  max-width: 720px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.setting-group{
+  background: var(--card);
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+.setting-group h2{
+  color: var(--accent);
+  font-size: 1.3em;
+  border-bottom: 2px solid var(--accent-light);
+  padding-bottom: 12px;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.setting-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-soft);
+  gap: 15px; 
+}
+.setting-item:last-child{
+  border-bottom: none;
+}
+.setting-item label {
+    flex-grow: 1;
+    cursor: pointer;
+}
+.setting-item input[type="number"],
+.setting-item input[type="datetime-local"],
+.setting-item select {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--background);
+    color: var(--text);
+    box-sizing: border-box;
+}
+
+.theme-options button{
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 8px;
+  font-size: 0.9em;
+  background-color: var(--background); 
+  color: var(--text); 
+  transition: all 0.2s ease;
+}
+.theme-options button:hover {
+    border-color: var(--accent);
+    background-color: var(--accent-light);
+}
+.theme-options button:active {
+    transform: translateY(1px);
+}
+
+.clear-btn, button[onclick="saveCustomCounterSettings()"] {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.clear-btn:hover, button[onclick="saveCustomCounterSettings()"]:hover {
+    background-color: var(--accent-dark);
+}
+
+.link-list{
+  list-style: none;
+  padding: 0;
+}
+.link-list li a{
+  display: block;
+  padding: 10px 0;
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--border-soft);
+  transition: color 0.2s;
+}
+.link-list li a:hover {
+    color: var(--accent);
+}
 </style>
 </head>
 <body data-theme="light_green">
 <script>
-// ページロード時のテーマ適用 (共通)
 const body = document.body;
 const savedTheme = localStorage.getItem('theme') || 'light_green';
 body.setAttribute('data-theme', savedTheme);
+function setTheme(theme) {
+    body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+}
+// (他の共通関数は省略)
 </script>
 
 <header class="header">
@@ -73,20 +174,39 @@ body.setAttribute('data-theme', savedTheme);
             <option value="roulette">目標値でのルーレットアニメーション</option>
         </select>
     </div>
-    <div style="text-align: right; padding-top: 10px;">
+    <div style="text-align: right; padding-top: 15px;">
         <button onclick="saveCustomCounterSettings()">設定を保存</button>
     </div>
 </div>
+
+<div class="setting-group">
+    <h2>入力エリア表示設定 (counter.html)</h2>
+    </div>
+
+
 </div>
 
 <script>
-/* ===== 共通機能 ===== */
-function setTheme(theme) { /* 既存の setTheme 関数 */ }
+// === 訪問回数カウンター設定の処理 ===
+const ignoreAnimationCheckbox = document.getElementById('ignoreAnimation');
+const hideAccessCounterCheckbox = document.getElementById('hideAccessCounter');
 
-// (既存の訪問回数カウンター設定の処理は省略)
+// ロード
+if (localStorage.getItem('ignoreAnimation') === 'true') ignoreAnimationCheckbox.checked = true;
+if (localStorage.getItem('hideAccessCounter') === 'true') hideAccessCounterCheckbox.checked = true;
+
+// 保存
+ignoreAnimationCheckbox.addEventListener('change', function() {
+    localStorage.setItem('ignoreAnimation', this.checked);
+    alert('アニメーション設定を保存しました。ツール画面に戻ると反映されます。');
+});
+hideAccessCounterCheckbox.addEventListener('change', function() {
+    localStorage.setItem('hideAccessCounter', this.checked);
+    alert('カウンター表示設定を保存しました。ツール画面に戻ると反映されます。');
+});
 
 
-/* ===== ★★★ カスタムカウンター設定の処理 (コア) ★★★ */
+// === カスタムカウンター設定の処理 (roulette.html用) ===
 const customTargetValueInput = document.getElementById('customTargetValue');
 const customStartDateInput = document.getElementById('customStartDate');
 const customModeSelect = document.getElementById('customModeSelect');
@@ -101,7 +221,6 @@ function loadCustomCounterUISettings() {
         customTargetValueInput.value = settings.target || 1000;
         customModeSelect.value = settings.mode || 'none';
         
-        // 日時フィールドへの値の設定
         if (settings.start) {
             try {
                 const date = new Date(settings.start);
@@ -111,11 +230,9 @@ function loadCustomCounterUISettings() {
                 console.error("日時設定の読み込みエラー:", e);
                 customStartDateInput.value = '';
             }
-
         }
     } 
     
-    // 設定がロードされていないか、日時がない場合のデフォルト値
     if (!customStartDateInput.value) {
         const now = new Date();
         const year = now.getFullYear();
@@ -139,7 +256,6 @@ function saveCustomCounterSettings() {
     const selectedDateTime = customStartDateInput.value;
     
     const newSettings = {
-        // roulette.htmlは常に表示されるため、showフラグは不要
         target: targetValue,
         start: selectedDateTime ? new Date(selectedDateTime).toISOString() : null, 
         mode: mode
@@ -151,7 +267,6 @@ function saveCustomCounterSettings() {
 }
 
 window.addEventListener('load', loadCustomCounterUISettings);
-/* ★★★ ここまでカスタム設定 ★★★ */
 </script>
 </body>
 </html>

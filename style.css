@@ -1,14 +1,71 @@
-/* 色調整：全体的に緑色基調にし、視認性を高めるコントラスト調整 */
-:root{
-  --bg:#f8fff8;        /* 非常に薄い緑の背景 (メイン) */
-  --card:#eefbe7;      /* 薄い緑のカード背景 */
-  --accent:#059669;    /* 深い緑（保存ボタン、設定ボタン、ハイライト） */
-  --accent-soft:#d1fae5; /* 薄いアクセント（ホバー、お知らせ背景） */
-  --text:#1f2937;      /* 濃いテキスト色 */
-  --border:#34d399;    /* 明確な境界線用の緑 */
-  --danger:#84cc16;    /* クリアボタン用（オリーブグリーン） */
-  --danger-hover:#65a30d; /* クリアボタンのホバー色 */
+/* --- テーマ色 定義 --- */
+/* (1) デフォルト: LIGHT_GREEN (以前の緑基調) */
+:root, [data-theme="light_green"] {
+  --bg: #f8fff8;
+  --card: #eefbe7;
+  --accent: #059669;
+  --accent-soft: #d1fae5;
+  --text: #1f2937;
+  --border: #34d399;
+  --danger: #84cc16;
+  --danger-hover: #65a30d;
+  --link: var(--accent);
 }
+
+/* (2) ダークモード: DARK_BLUE */
+[data-theme="dark_blue"] {
+  --bg: #1f2937;
+  --card: #374151;
+  --accent: #60a5fa;
+  --accent-soft: #1e3a8a;
+  --text: #f3f4f6;
+  --border: #4b5563;
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --link: var(--accent);
+}
+
+/* (3) 英語モード風: MODERN_BLUE (明るい青基調) */
+[data-theme="modern_blue"] {
+  --bg: #e0f2f1;
+  --card: #ffffff;
+  --accent: #06b6d4;
+  --accent-soft: #a5f3fc;
+  --text: #0f172a;
+  --border: #22d3ee;
+  --danger: #f97316;
+  --danger-hover: #ea580c;
+  --link: var(--accent);
+}
+
+/* (4) シンプル: MONOCHROME (白黒グレー基調) */
+[data-theme="monochrome"] {
+  --bg: #f3f4f6;
+  --card: #ffffff;
+  --accent: #4b5563;
+  --accent-soft: #d1d5db;
+  --text: #1f2937;
+  --border: #9ca3af;
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --link: var(--accent);
+}
+
+/* (5) 和風/アースカラー: EARTH_TONE (茶色系) */
+[data-theme="earth_tone"] {
+  --bg: #fcfcf4;
+  --card: #fffdf5;
+  --accent: #78350f;
+  --accent-soft: #fef3c7;
+  --text: #44403c;
+  --border: #d97706;
+  --danger: #b91c1c;
+  --danger-hover: #991b1b;
+  --link: var(--accent);
+}
+
+
+/* --- 共通スタイル（変更なし） --- */
 
 body{
   font-family:"Noto Sans JP",system-ui,sans-serif;
@@ -41,11 +98,11 @@ h1{margin-top:0}
 .notice-item{
   margin-top:10px;
   padding-top:10px;
-  border-top:1px dashed #6ee7b7;
+  border-top:1px dashed var(--border); /* ボーダー色もテーマに合わせる */
 }
 .notice-date{
   font-size:.8em;
-  color:#065f46;
+  color:var(--text); /* 濃いテキスト色に合わせる */
 }
 .notice-title{
   font-weight:bold;
@@ -59,6 +116,8 @@ textarea{
   border-radius:10px;
   border:1px solid var(--border);
   box-sizing: border-box;
+  background: var(--card); /* 背景色もテーマに合わせる */
+  color: var(--text); /* テキスト色もテーマに合わせる */
 }
 
 /* コントロールエリアのレスポンシブ対応を強化 */
@@ -73,7 +132,7 @@ textarea{
   padding:6px 10px;
   border-radius:8px;
   border:1px solid var(--border);
-  background:#fff;
+  background:var(--bg); /* テーマの背景色を使用 */
   cursor:pointer;
   color:var(--text);
   flex-shrink: 0;
@@ -167,7 +226,8 @@ html[data-ads="false"] #ad-area {
     margin-right: 8px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: #fff;
+    background: var(--bg); /* テーマの背景色を使用 */
+    color: var(--text); /* テーマの文字色を使用 */
     cursor: pointer;
     margin-bottom: 5px;
 }
@@ -176,7 +236,7 @@ html[data-ads="false"] #ad-area {
 }
 .active-btn {
     background: var(--accent) !important;
-    color: #fff;
+    color: #fff !important; /* アクティブボタンは常に白文字 */
     border: none !important;
 }
 .back-btn {
@@ -197,7 +257,7 @@ html[data-ads="false"] #ad-area {
     padding: 0;
 }
 .link-list a {
-    color: var(--accent);
+    color: var(--link); /* リンク色もテーマに合わせる */
     text-decoration: none;
     display: block;
     padding: 8px 0;

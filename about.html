@@ -6,30 +6,38 @@
 <title>【PC版】制作者情報 | ツール</title>
 <link rel="stylesheet" href="style.css">
 <style>
+/* PC版のコンテンツ幅を設定 */
 body{ max-width: 720px; margin: 0 auto; padding: 0; }
-.content-wrapper h2 {
-    margin-top: 25px;
-    border-bottom: 2px solid var(--accent-light);
-    padding-bottom: 5px;
-}
-.content-wrapper p {
-    margin-bottom: 10px;
-}
-/* Googleフォームのコンテナ */
-.google-form-container {
+
+.info-section {
     background: var(--card);
     padding: 20px;
     border-radius: 8px;
-    margin-top: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
     border: 1px solid var(--border);
 }
-/* Googleフォームの iframe にレスポンシブなスタイルを適用 */
-.google-form-container iframe {
-    /* フォームの幅を100%に設定し、レスポンシブに対応 */
-    width: 100%;
-    /* 高さはお客様のフォームの高さ (1269px) を参考に設定 */
-    min-height: 1280px; 
-    border: none;
+
+.info-section h2 {
+    margin-top: 0;
+    color: var(--accent-dark);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.info-section p {
+    margin-bottom: 10px;
+    line-height: 1.8;
+}
+
+.contact-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.contact-list li {
+    margin-bottom: 8px;
 }
 </style>
 </head>
@@ -42,9 +50,16 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 if (isMobile) { location.href = 'SP/about.html'; }
 
 function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+
+function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+}
+
 window.onload = function() { 
     document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
-    document.getElementById('versionDisplay').textContent = APP_VERSION;
+    
+    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
+    applyTheme(savedTheme);
 }
 </script>
 
@@ -53,13 +68,12 @@ window.onload = function() {
 
         <header class="header">
             <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-            <a href="counter.html" class="header-title">制作者 (PC版)</a>
+            <a href="counter.html" class="header-title">制作者情報 (PC版)</a>
         </header>
 
         <div class="top-ad-header">
-            <div id="ad-area-top-pc">
-                <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-            </div>
+            <div id="ad-area-top">
+                </div>
         </div>
 
         <nav class="side-nav" id="sideNav">
@@ -71,34 +85,49 @@ window.onload = function() {
         </nav>
         
         <div class="content-wrapper">
-            <h1>制作者情報</h1>
-            
-            <h2>ツールについて</h2>
-            p>このツールは、篠ノ井乗務区によって開発・公開されています。このツー
-            <p>バージョン: <span id="versionDisplay"></span></p>
 
-            <h2>免責事項</h2>
-            <p>本ツールの利用により生じた損害について、制作者は一切責任を負いません。ご利用は自己責任でお願いします。</p>
+            <h1>制作者情報と著作権</h1>
             
-            <h2>フィードバック・お問い合わせ</h2>
-            <div class="google-form-container">
-                <p style="margin-bottom: 15px;">バグ報告や機能改善の要望はこちらのフォームからお送りください。</p>
-                
-                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScFVI6vJbrB7MRcI8Fjxh1rCTOuvu-ncsN4oo6S5PfPfyJpPQ/viewform?embedded=true" width="100%" height="1280" frameborder="0" marginheight="0" marginwidth="0" loading="lazy">読み込んでいます…</iframe>
+            <div class="info-section">
+                <h2>制作者について</h2>
+                <p>この多機能ツールボックスは、ユーザーの皆様の執筆活動や目標管理をサポートするために開発されました。</p>
+                <p>シンプルで使いやすいインターフェースと、ローカルデータ保存によるプライバシーの確保を重視しています。</p>
+            </div>
 
+            <div class="info-section">
+                <h2>お問い合わせ先</h2>
+                <p>ツールのバグ報告、機能改善の要望、その他お問い合わせは、以下の連絡先へお願いいたします。</p>
+                <ul class="contact-list">
+                    <li>📧 メール: [メールアドレスを記載]</li>
+                    <li>🐦 X (旧Twitter): @[ユーザー名を記載]</li>
+                </ul>
             </div>
+
+            <div class="info-section">
+                <h2>著作権・利用規約</h2>
+                <p>Copyright © 2024 Tool Creator. All Rights Reserved.</p>
+                <p>本ツールは無料でご利用いただけますが、ツールの二次配布やコードの無断利用はご遠慮ください。</p>
+                <p>詳細な利用規約は<a href="terms.html">利用規約ページ</a>をご確認ください。</p>
             </div>
+
+            <div style="text-align: center; margin-top: 30px; font-size: 0.8em; color: var(--text-soft);">
+                <p>Version <span id="appVersionDisplay"></span></p>
+            </div>
+            
+        </div>
     </div>
 </div>
 
 <div class="bottom-ad-footer">
-    <div id="ad-area-bottom-pc">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-    </div>
+    <div id="ad-area-bottom">
+        </div>
 </div>
 
 <footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
     <p>Version <span id="appVersionDisplay"></span></p>
 </footer>
+
+<script src="ads.js"></script>
+
 </body>
 </html>

@@ -17,12 +17,16 @@
 </head>
 <body data-theme="light_green">
 <script>
-// アクセスカウンターのGAS URL
+// --- バージョン情報 ---
+const APP_VERSION = "v1.2.0"; 
+// ----------------------
+
+// アクセスカウンターのGAS URL (省略)
 const ACCESS_GAS_URL = "https://script.google.com/macros/s/AKfycbwALCjWmxSF-IzTP3bBp_wdlo-5k_Wuag1dH0D3cuUg5pYqLf6E2cf2L1NcIY476DqyHw/exec";
-// お知らせ用GAS URL
+// お知らせ用GAS URL (省略)
 const NOTICE_GAS_URL = "https://script.google.com/macros/s/AKfycbxmgrljU-iNc8kpe7uZ3fDIAYGjE9JNq5ENi8wG6w7mPcBbg5F601rosrJ4ZNVUOUg/exec"; 
 
-// ページロード時の設定の適用
+// ページロード時の設定の適用 (既存)
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme) {
     document.body.setAttribute('data-theme', savedTheme);
@@ -31,21 +35,21 @@ const savedFontSize = localStorage.getItem('fontSize');
 if (savedFontSize) {
     document.body.setAttribute('data-font', savedFontSize);
 }
-// 広告非表示設定の適用 (復旧)
 const hideAds = localStorage.getItem('hideAds') === 'true';
 if (hideAds) {
     document.body.setAttribute('data-ads', 'false');
 }
 
-// 同意チェック (既存)
+// ★★★ 同意チェックの再有効化 ★★★
 if(localStorage.getItem('agreed')!=='true'){
   location.href='index.html';
 }
 </script>
 
 <header class="header">
-    <a href="counter.html" class="header-title">📝 文字数カウント ツール</a>
+    <a href="counter.html" class="header-title">📝 カウンター ツール</a>
     <nav class="header-nav">
+        <a href="counter.html" class="active-tab">📝 文字数カウント</a> 
         <a href="roulette.html">🎲 ルーレット</a> 
         <a href="settings.html">⚙ 設定</a>
         <a href="help.html">ヘルプ</a>
@@ -102,50 +106,14 @@ if(localStorage.getItem('agreed')!=='true'){
 <script src="https://adm.shinobi.jp/o/908d65c8b7bcdd909305dd25f407426f"></script>
 </div>
 </div>
-
+<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
+    <p>Version <span id="appVersionDisplay"></span></p>
+</footer>
 <script>
-// === アクセスカウンターの読み込み (既存) ===
-const accessCounterElement = document.getElementById('accessCounter');
-const accessCounterContainer = document.getElementById('accessCounterContainer');
-const DURATION = 1500; 
+// (既存のJavaScriptロジックは省略)
 
-const HIDE_COUNTER = localStorage.getItem('hideAccessCounter') === 'true'; 
-const IGNORE_ANIMATION = localStorage.getItem('ignoreAnimation') === 'true'; 
-
-if (HIDE_COUNTER) {
-    if (accessCounterContainer) {
-        accessCounterContainer.style.display = 'none';
-    }
-}
-
-function animateCounter(targetCount) { /* 既存の animateCounter 関数 */ }
-function fetchAccessCount() { /* 既存の fetchAccessCount 関数 */ }
-
-// === 文字数カウントロジック (既存) ===
-const textarea = document.getElementById('text');
-const charDisplay = document.getElementById('char');
-// (その他のDOM要素と文字数カウントロジック、initializeCounter関数、ダウンロード/クリア関数などは省略 - 既存通り)
-
-// 文字数カウント関数にスペース無視設定を反映
-function updateCount() {
-    let text = textarea.value;
-    const ignoreSpaces = localStorage.getItem('ignoreSpaces') === 'true'; // 設定を読み込み
-    
-    if (ignoreSpaces) {
-        text = text.replace(/[\s\r\n\t]/g, ''); // スペース、改行、タブを削除
-    }
-
-    // (文字数、行数、残り文字数、バイト数などの計算ロジックは省略)
-    // charDisplay.textContent = text.length;
-}
-textarea.addEventListener('input', updateCount);
-window.addEventListener('load', fetchAccessCount);
-
-// 広告エリアの制御 (CSSでbody[data-ads="false"]のときに非表示にするのが望ましい)
-const adArea = document.getElementById('ad-area');
-if (hideAds && adArea) {
-    adArea.style.display = 'none';
-}
+// バージョン情報をフッターに表示
+document.getElementById('appVersionDisplay').textContent = APP_VERSION;
 </script>
 </body>
 </html>

@@ -1,65 +1,59 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-ads="true">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404 Not Found | 文字数カウントツール</title>
+<title>404 Not Found | ツール</title>
 <link rel="stylesheet" href="style.css">
-<style>
-body {
-    text-align: center;
-    padding: 50px 20px;
-}
-.error-card {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 30px;
-    margin: 20px auto;
-    max-width: 500px;
-    border: 1px solid var(--border);
-}
-.error-code {
-    font-size: 5em;
-    color: var(--danger);
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-.error-message {
-    font-size: 1.5em;
-    color: var(--text);
-    margin-bottom: 20px;
-}
-.go-home-btn {
-    margin-top: 30px;
-    padding: 12px 25px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1em;
-    font-weight: bold;
-    text-decoration: none;
-    display: inline-block;
-}
-.go-home-btn:hover {
-    filter: brightness(1.1);
-}
-</style>
 </head>
 <body data-theme="light_green">
-<div class="error-card">
-    <div class="error-code">404</div>
-    <div class="error-message">ページが見つかりません</div>
-    <p>お探しのページは、移動されたか、削除されたか、またはURLが間違っている可能性があります。</p>
-    <p style="margin-top: 20px;">以下のボタンからトップページへお戻りください。</p>
-    <a href="index.html" class="go-home-btn">トップページに戻る</a>
-</div>
 <script>
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-    document.body.setAttribute('data-theme', savedTheme);
-}
+// --- バージョン情報 ---
+const APP_VERSION = "v1.2.0"; 
+// ----------------------
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+window.onload = function() { document.getElementById('appVersionDisplay').textContent = APP_VERSION; }
 </script>
+
+<div class="main-content-area">
+
+    <header class="header">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <a href="counter.html" class="header-title" style="color: red;">❌ エラー (404 PC版)</a>
+    </header>
+
+    <div class="top-ad-header">
+        <div id="ad-area-top-pc">
+            <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+            </div>
+    </div>
+
+    <nav class="side-nav" id="sideNav">
+        <a href="counter.html">📝 文字数カウント</a> 
+        <a href="roulette.html">🎲 ルーレット</a> 
+        <a href="settings.html">⚙ 設定</a>
+        <a href="help.html">ヘルプ</a>
+        <a href="about.html">制作者</a>
+    </nav>
+    
+    <div class="content-wrapper" style="text-align: center; padding: 50px 20px;">
+        <h1 style="font-size: 3em; color: #d9534f;">404 Not Found</h1>
+        <p style="font-size: 1.2em; margin-bottom: 30px;">お探しのページは見つかりませんでした。</p>
+        <a href="index.html" style="text-decoration: none; padding: 12px 25px; background-color: var(--accent); color: white; border-radius: 8px; font-weight: bold; display: inline-block;">
+            トップページに戻る
+        </a>
+        <p style="margin-top: 30px; font-size: 0.9em;">メニューから他のページに移動できます。</p>
+    </div>
+</div>
+
+<div class="bottom-ad-footer">
+    <div id="ad-area-bottom-pc">
+        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+        </div>
+</div>
+
+<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
+    <p>Version <span id="appVersionDisplay"></span></p>
+</footer>
 </body>
 </html>

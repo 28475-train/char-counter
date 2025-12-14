@@ -1,255 +1,257 @@
 /*
- * style.css
- * 文字数カウントツール用 デザイン定義
+ * ----------------------------------------
+ * サイト共通 スタイルシート (style.css)
+ * ----------------------------------------
  */
 
+/* 1. 変数定義とリセット */
 :root {
-    /* デフォルトカラーテーマ (Light Green) */
-    --background: #f0fdf4; /* 非常に明るいグリーン */
-    --card: #ffffff; /* カード背景 */
-    --card-light: #e0f2fe; /* お知らせ背景 */
-    --text: #1f2937; /* 基本テキスト */
-    --text-soft: #4b5563; /* 薄いテキスト */
-    --border: #d1d5db; /* 境界線 */
-    --border-soft: #e5e7eb; /* 薄い境界線 */
-    --accent: #10b981; /* 強調色 (エメラルドグリーン) */
-    --accent-soft: #a7f3d0; /* 強調色の薄い版 */
-    --link: #06b6d4; /* リンク色 (シアン) */
-    --danger: #ef4444; /* 危険色 (赤) */
+    /* デフォルトのライトグリーンテーマ */
+    --accent: #4CAF50; /* メインカラー (緑) */
+    --accent-dark: #388E3C;
+    --accent-light: #C8E6C9;
+    --background: #f4f4f4; /* ページ全体の背景 */
+    --card: #ffffff; /* カードやコンテナの背景 */
+    --border: #ddd; /* 線の色 */
+    --text-color: #333; /* 標準テキスト */
+    --text-soft: #666; /* ソフトなテキスト */
+    --text-highlight: #4CAF50; /* 強調テキスト */
+    --shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* === Dark Blue Theme === */
-[data-theme="dark_blue"] {
-    --background: #0f172a;
-    --card: #1e293b;
-    --card-light: #334155;
-    --text: #f1f5f9;
-    --text-soft: #94a3b8;
-    --border: #334155;
-    --border-soft: #475569;
-    --accent: #3b82f6; /* 青 */
-    --accent-soft: #93c5fd;
-    --link: #60a5fa;
-    --danger: #f87171;
+/* 他のテーマ (例: dark_blue) は data-theme 属性に応じてここで定義可能 */
+/* 例:
+body[data-theme="dark_blue"] {
+    --accent: #2196F3;
+    --background: #121212;
+    --card: #1E1E1E;
+    --text-color: #E0E0E0;
+    --text-soft: #B0B0B0;
 }
+*/
 
-/* === Simple White Theme === */
-[data-theme="simple_white"] {
-    --background: #ffffff;
-    --card: #f9fafb;
-    --card-light: #f3f4f6;
-    --text: #111827;
-    --text-soft: #6b7280;
-    --border: #e5e7eb;
-    --border-soft: #f3f4f6;
-    --accent: #1c64f2; /* 濃い青 */
-    --accent-soft: #bfdbfe;
-    --link: #059669;
-    --danger: #dc2626;
-}
-
-
-/* === グローバルスタイル === */
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    font-family: "Noto Sans JP", system-ui, sans-serif;
-    /* CSS変数が反映されやすいよう、transitionにbackground-colorを追加 */
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 body {
     background-color: var(--background);
-    color: var(--text);
-    margin: 0;
-    padding: 20px;
+    color: var(--text-color);
     line-height: 1.6;
-}
-
-h1 {
-    color: var(--accent);
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 1.8em;
+    /* フォント設定: 日本語と英語に対応したフォントスタック */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, 
+                 "Hiragino Kaku Gothic ProN", "Meiryo", "Osaka", "MS PGothic", "sans-serif";
+    padding-top: 50px; /* 固定ヘッダーの高さ分を開ける */
 }
 
 a {
-    color: var(--link);
     text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
+    color: var(--text-highlight);
 }
 
-/* === メインコンポーネント === */
-.card {
-    background-color: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-    margin-bottom: 25px;
-}
-
-/* === テキストエリア === */
-#text {
+/* 2. ヘッダーとメニュー (共通) */
+.header {
     width: 100%;
-    min-height: 250px;
-    padding: 15px;
-    margin: 15px 0;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background-color: var(--background);
-    color: var(--text);
-    resize: vertical;
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-/* フォントサイズ設定の適用 */
-[data-font="small"] #text {
-    font-size: 14px;
-}
-[data-font="medium"] #text {
-    font-size: 16px;
-}
-[data-font="large"] #text {
-    font-size: 18px;
-}
-
-
-/* === コントロールとボタン === */
-.controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-
-.controls button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 6px;
-    background-color: var(--accent);
-    color: var(--card); /* ボタン内のテキストもCSS変数で制御 */
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.controls button:hover {
-    filter: brightness(1.1);
-}
-
-.controls input[type="number"],
-.controls select {
-    padding: 8px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background-color: var(--card);
-    color: var(--text);
-    text-align: center;
-}
-
-.save-btn {
-    background-color: var(--link) !important;
-}
-.clear-btn {
-    background-color: var(--danger) !important;
-}
-
-/* === 情報表示エリア === */
-.info p {
-    margin: 6px 0;
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.1em;
-}
-.info span {
-    font-weight: bold;
-    color: var(--accent);
-}
-
-/* === お知らせエリア === */
-.notice {
-    background-color: var(--card-light);
-    border: 1px solid var(--accent-soft);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    font-size: 0.9em;
-}
-.notice strong {
-    color: var(--accent);
-    display: block;
-    margin-bottom: 8px;
-    font-size: 1.1em;
-    border-bottom: 1px dotted var(--border);
-    padding-bottom: 5px;
-}
-.notice-item {
-    padding: 5px 0;
-    border-bottom: 1px dotted var(--border-soft);
-}
-.notice-item:last-child {
-    border-bottom: none;
-}
-.notice-date {
-    font-size: 0.85em;
-    color: var(--text-soft);
-    margin-bottom: 3px;
-}
-.notice-title {
-    font-weight: bold;
-    color: var(--text);
-}
-
-/* === 設定ボタン (右下固定) === */
-.settings-btn {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
+    top: 0;
+    left: 0;
+    background-color: var(--card);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
     height: 50px;
-    background-color: var(--accent);
-    color: var(--card); /* ボタン内のテキストもCSS変数で制御 */
-    border-radius: 50%;
-    text-align: center;
-    line-height: 50px;
-    font-size: 1.5em;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     z-index: 1000;
 }
-.settings-btn:hover {
-    text-decoration: none;
-    filter: brightness(1.1);
-}
 
-/* === 広告エリア (見出し用) === */
-#ad-area {
+.header-title {
+    flex-grow: 1;
     text-align: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    /* 広告が表示されないときのために高さを設定 */
-    min-height: 50px;
-    border: 1px solid var(--border-soft);
-    background-color: var(--card);
-    border-radius: 8px;
-    padding: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--text-color);
 }
 
-/* === 簡素化表示モード (data-view="minimal") === */
-[data-view="minimal"] .controls:first-child,
-[data-view="minimal"] .controls:last-child,
-[data-view="minimal"] .info hr,
-[data-view="minimal"] .info p:last-of-type,
-[data-view="minimal"] .notice,
-[data-view="minimal"] #ad-area {
-    display: none !important;
+/* メニューボタン */
+.menu-toggle {
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--accent);
+    padding: 5px;
+    line-height: 1;
 }
-[data-view="minimal"] h1 {
-    font-size: 1.5em;
+
+/* 垂直メニュー (サイドナビゲーション) */
+.side-nav {
+    position: fixed;
+    top: 50px; /* ヘッダーの真下 */
+    left: -200px; /* 普段は画面外 */
+    width: 200px;
+    height: calc(100% - 50px);
+    background-color: var(--card);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    padding-top: 10px;
+    transition: left 0.3s ease;
+    z-index: 999;
+    overflow-y: auto;
 }
-[data-view="minimal"] .info p {
-    font-size: 1.0em;
+
+.side-nav.open {
+    left: 0; /* メニューが開いた状態 */
+}
+
+.side-nav a {
+    display: block;
+    padding: 12px 20px;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border);
+    transition: background-color 0.2s;
+    font-size: 1em;
+}
+
+.side-nav a:hover,
+.side-nav a.active-tab {
+    background-color: var(--accent-light);
+    color: var(--accent-dark);
+    font-weight: bold;
+}
+
+/* 3. 広告エリア */
+.top-ad-header {
+    width: 100%;
+    text-align: center;
+    background-color: var(--background);
+    padding: 5px 0;
+}
+
+/* 4. メインコンテンツとフッター */
+.main-content-area {
+    padding-bottom: 70px; /* フッターと広告エリアの高さ分 */
+}
+
+.content-wrapper {
+    padding: 20px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.content-wrapper h1 {
+    font-size: 1.8em;
+    color: var(--accent-dark);
+    margin-bottom: 15px;
+    border-left: 5px solid var(--accent);
+    padding-left: 10px;
+}
+
+.content-wrapper h2 {
+    font-size: 1.4em;
+    color: var(--text-color);
+    margin-top: 25px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 5px;
+}
+
+.bottom-ad-footer {
+    width: 100%;
+    text-align: center;
+    background-color: var(--background);
+    padding: 5px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 990;
+}
+
+.footer {
+    width: 100%;
+    background-color: var(--card);
+    color: var(--text-soft);
+    padding: 10px 0;
+    text-align: center;
+    font-size: 0.8em;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    bottom: 50px; /* 下部広告の直上 */
+    left: 0;
+    z-index: 995;
+    height: 40px; /* フッターの高さを設定 */
+    line-height: 20px;
+}
+
+/* 5. レスポンシブ調整（SP版の見た目） */
+
+/* SP版の広告ヘッダー（通常は header のすぐ下） */
+@media (max-width: 768px) {
+    body {
+        padding-top: 50px; /* SPも固定ヘッダーで調整 */
+    }
+
+    .content-wrapper {
+        padding: 15px;
+    }
+
+    .header-title {
+        font-size: 1.2em;
+    }
+    
+    .bottom-ad-footer {
+        height: 50px; /* SP版の広告エリアを50pxで固定 */
+        bottom: 0;
+    }
+
+    .footer {
+        display: none; /* SP版ではフッターを非表示にするか、広告の下に配置 */
+        /* もし表示するなら: bottom: 50px; height: 30px; */
+    }
+    
+    .main-content-area {
+        padding-bottom: 50px; /* SP版は下部広告の高さ分のみ */
+    }
+}
+
+
+/* 6. その他 (カウンター、フォームなどの汎用要素) */
+
+/* カードコンポーネント (HTML側で .count-display や .google-form-container がこれに相当) */
+.card-container {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+}
+
+/* 入力フィールド */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+textarea {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--background);
+    color: var(--text-color);
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+/* ボタン (HTML側で個別に色を当てることを推奨) */
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
 }

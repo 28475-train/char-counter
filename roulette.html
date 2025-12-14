@@ -6,94 +6,23 @@
 <title>【PC版】カスタム ルーレット・カウントダウン ツール</title>
 <meta name="description" content="目標回数、開始時刻、ルーレットモードを自由に設定できるカスタムカウンターツールです。">
 <link rel="stylesheet" href="style.css">
-<style>
-/* ルーレット専用CSS (前回の回答と同じ) */
-.roulette-wrapper {
-    display: none; 
-    justify-content: center;
-    align-items: center;
-    margin-top: 30px;
-    height: 300px;
-}
-.roulette-circle {
-    width: 250px;
-    height: 250px;
-    border: 5px solid var(--accent);
-    border-radius: 50%;
-    position: relative;
-    background-color: var(--background);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-.roulette-needle {
-    width: 50%;
-    height: 4px;
-    background-color: red;
-    position: absolute;
-    top: calc(50% - 2px); 
-    left: 50%;
-    transform-origin: 0% 50%; 
-    transform: rotate(0deg);
-    transition: transform 0.1s linear; 
-}
-.roulette-center {
-    width: 20px;
-    height: 20px;
-    background-color: var(--accent-dark);
-    border-radius: 50%;
-    position: absolute;
-    top: calc(50% - 10px);
-    left: calc(50% - 10px);
-    z-index: 10;
-}
-.roulette-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.5em;
-    font-weight: bold;
-    color: var(--text-highlight);
-    z-index: 5;
-}
-.roulette-needle.animating {
-    animation: spin 0.1s linear infinite;
-}
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-</style>
 </head>
 <body data-theme="light_green">
 <script>
 // --- バージョン情報 ---
 const APP_VERSION = "v1.2.0"; 
 // ----------------------
-
-// SP/PC振り分け判定
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
 if (isMobile) {
     location.href = 'SP/index.html';
 } else {
-    // ページを直接開いた場合は index.html へ戻す (毎回同意のため)
     if (!document.referrer.includes('index.html')) {
         location.href = 'index.html';
     }
 }
-
-// 既存の設定ロード (テーマ、広告など) - 簡略化
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) { document.body.setAttribute('data-theme', savedTheme); }
-const hideAds = localStorage.getItem('hideAds') === 'true';
-if (hideAds) { document.body.setAttribute('data-ads', 'false'); }
+function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+window.onload = function() { document.getElementById('appVersionDisplay').textContent = APP_VERSION; }
 </script>
-
-<div class="top-ad-header">
-    <div id="ad-area-top-pc">
-        AD: PC Top Banner 728x90
-    </div>
-</div>
 
 <div class="main-content-area">
 
@@ -101,6 +30,12 @@ if (hideAds) { document.body.setAttribute('data-ads', 'false'); }
         <div class="menu-toggle" onclick="toggleMenu()">☰</div>
         <a href="counter.html" class="header-title">🎲 ルーレット・カウントダウン (PC版)</a>
     </header>
+
+    <div class="top-ad-header">
+        <div id="ad-area-top-pc">
+            <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+            </div>
+    </div>
 
     <nav class="side-nav" id="sideNav">
         <a href="counter.html">📝 文字数カウント</a> 
@@ -111,47 +46,18 @@ if (hideAds) { document.body.setAttribute('data-ads', 'false'); }
     </nav>
     
     <div class="content-wrapper">
-
         <h1>カスタム ルーレット・カウントダウン</h1>
-
-        <div id="customCounterContainer" class="card" style="margin-top: 20px; padding: 30px; text-align: center;">
-          <h2 id="customCounterTitle" style="margin-top: 0; font-size: 1.4em;">現在のカスタム目標</h2>
-          
-          <div class="roulette-wrapper" id="rouletteWrapper">
-            <div id="rouletteCircle" class="roulette-circle">
-                <div id="rouletteNeedle" class="roulette-needle"></div>
-                <div class="roulette-center"></div>
-                <div id="customCounterDisplay" class="roulette-text">---</div>
-            </div>
-          </div>
-          
-          <div id="simpleDisplay" style="font-size: 4em; font-weight: bold; color: var(--text-highlight); min-height: 1.2em;">
-            ---
-          </div>
-
-          <p id="customCounterLabel" style="font-size: 1.1em; margin-top: 10px;">設定画面で目標を設定してください。</p>
-
-          <div style="margin-top: 20px;">
-              <a href="settings.html" style="text-decoration: none; padding: 8px 15px; background-color: var(--accent); color: white; border-radius: 6px;">設定画面へ</a>
-          </div>
         </div>
-    </div>
 </div>
 
 <div class="bottom-ad-footer">
     <div id="ad-area-bottom-pc">
-        AD: PC Bottom Banner 468x60
-    </div>
+        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+        </div>
 </div>
 
 <footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
     <p>Version <span id="appVersionDisplay"></span></p>
 </footer>
-
-<script>
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
-document.getElementById('appVersionDisplay').textContent = APP_VERSION;
-// (ルーレット/カウントダウンロジックは省略)
-</script>
 </body>
 </html>

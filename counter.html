@@ -9,9 +9,13 @@
 
 </head>
 
-<body>
+<body data-theme="light_green"> <script>
+/* ===== テーマ設定の適用 (CSS変数切り替え) ===== */
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.body.setAttribute('data-theme', savedTheme);
+}
 
-<script>
 /* 初回同意チェック */
 if(localStorage.getItem('agreed')!=='true'){
   location.href='index.html';
@@ -254,4 +258,4 @@ function download(){
 </script>
 
 </body>
-</html>
+              </html>

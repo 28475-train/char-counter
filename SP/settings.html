@@ -1,276 +1,51 @@
 <!DOCTYPE html>
-<html lang="ja" data-ads="true">
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>【SP版】設定 | ツール</title>
-<link rel="stylesheet" href="../style.css">
-<style>
-/* 設定固有のスタイル (SP版調整) */
-.settings-group {
-    background: var(--card);
-    padding: 15px; /* SP版に合わせてパディング調整 */
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    border: 1px solid var(--border);
-}
-
-.settings-group h2 {
-    margin-top: 0;
-    font-size: 1.3em;
-    border-bottom: 2px solid var(--accent-light);
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-}
-
-.setting-item {
-    display: flex;
-    flex-direction: column; /* SP版では縦に並べる */
-    align-items: flex-start;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-}
-.setting-item:last-child {
-    border-bottom: none;
-}
-
-.setting-label {
-    font-weight: bold;
-    color: var(--text-color);
-    margin-bottom: 5px;
-    font-size: 1em;
-}
-
-.setting-control {
-    width: 100%; /* コントロールを幅いっぱいにする */
-    display: flex;
-    justify-content: flex-end; /* 右寄せ */
-    align-items: center;
-}
-
-.setting-control select, 
-.setting-control input[type="date"],
-.setting-control input[type="time"] {
-    padding: 8px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background-color: var(--background);
-    color: var(--text-color);
-    flex-grow: 1; /* 入力フィールドを広げる */
-}
-
-.setting-control button {
-    padding: 10px 15px;
-    background-color: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-.message {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #e6ffe6;
-    color: #388E3C;
-    font-weight: bold;
-    display: none;
-    font-size: 0.9em;
-}
-
-#targetTime {
-    width: 100%; /* 目標時刻も幅いっぱいに */
-}
-
-#targetDate {
-    width: 100%; /* 目標日付も幅いっぱいに */
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>設定 | 多機能ツールボックス (SP)</title>
+    <link rel="stylesheet" href="../style.css"> 
 </head>
-<body data-theme="light_green">
-<script>
-// --- バージョン情報 ---
-const APP_VERSION = "v1.2.0"; 
-// ----------------------
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (!isMobile) { location.href = '../settings.html'; }
+<body data-theme="light_green"> 
 
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
-
-// ★★★ 機能復旧: テーマ切り替えロジック ★★★
-function applyTheme(theme) {
-    document.body.setAttribute('data-theme', theme);
-    localStorage.setItem('selectedTheme', theme);
-}
-
-// ★★★ 機能復旧: ルーレット目標設定ロジック ★★★
-function saveRouletteSettings() {
-    const targetDate = document.getElementById('targetDate').value;
-    const targetTime = document.getElementById('targetTime').value;
-    const rouletteItems = document.getElementById('rouletteItems').value;
-
-    if (!targetDate || !targetTime) {
-        showSuccessMessage("エラー: 目標日時を設定してください。", true);
-        return;
+    <script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) { 
+        location.replace('../settings.html'); 
     }
+    </script>
 
-    // 日付と時間を結合してDateオブジェクトを作成
-    const targetDateTimeString = targetDate + "T" + targetTime + ":00";
-    const targetDateTime = new Date(targetDateTimeString);
-
-    // LocalStorageに保存
-    localStorage.setItem('rouletteTargetDate', targetDateTime.toISOString());
-    localStorage.setItem('rouletteItems', rouletteItems);
-    
-    showSuccessMessage("ルーレットの設定を保存しました。", false);
-}
-
-function showSuccessMessage(message, isError) {
-    const msgElement = document.getElementById('successMessage');
-    msgElement.textContent = message;
-    
-    if (isError) {
-        msgElement.style.backgroundColor = '#ffe6e6';
-        msgElement.style.color = '#CC0000';
-    } else {
-        msgElement.style.backgroundColor = '#e6ffe6';
-        msgElement.style.color = '#388E3C';
-    }
-
-    msgElement.style.display = 'block';
-    setTimeout(() => {
-        msgElement.style.display = 'none';
-    }, 3000);
-}
-
-window.onload = function() { 
-    document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
-
-    // テーマのロードとイベントリスナー設定
-    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
-    document.getElementById('themeSelector').value = savedTheme;
-    applyTheme(savedTheme);
-
-    document.getElementById('themeSelector').addEventListener('change', (e) => {
-        applyTheme(e.target.value);
-    });
-
-    // ルーレット設定のロードとイベントリスナー設定
-    document.getElementById('saveRouletteButton').addEventListener('click', saveRouletteSettings);
-
-    // 既存のルーレット設定をロード
-    const savedDate = localStorage.getItem('rouletteTargetDate');
-    if (savedDate) {
-        const dateObj = new Date(savedDate);
-        document.getElementById('targetDate').value = dateObj.toISOString().slice(0, 10);
-        document.getElementById('targetTime').value = dateObj.toTimeString().slice(0, 5); 
-    }
-    const savedItems = localStorage.getItem('rouletteItems') || "成功,失敗,大成功,やり直し";
-    document.getElementById('rouletteItems').value = savedItems;
-}
-</script>
-
-<div class="main-content-area">
-
-    <header class="header">
-        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-        <a href="counter.html" class="header-title" style="font-size: 1.2em;">設定 (SP版)</a>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">多機能ツールボックス (SP版)</a></li>
+                <li><a href="counter.html">📝 文字数カウント</a></li>
+                <li><a href="roulette.html">🎲 ルーレット</a></li>
+                <li><a href="settings.html">⚙ 設定</a></li>
+                <li><a href="help.html">ヘルプ</a></li>
+                <li><a href="about.html">制作者</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <div class="top-ad-header" style="height: 50px;">
-        <div id="ad-area-top-sp">
-            <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-        </div>
-    </div>
+    <main>
+        <h1>設定 (SP)</h1>
+        <section>
+            <h2>テーマ設定</h2>
+            <select id="theme-selector">
+                <option value="light_green">ライトグリーン</option>
+            </select>
+        </section>
+    </main>
 
-    <nav class="side-nav" id="sideNav">
-        <a href="counter.html">📝 文字数カウント</a> 
-        <a href="roulette.html">🎲 ルーレット</a> 
-        <a href="settings.html" class="active-tab">⚙ 設定</a>
-        <a href="help.html">ヘルプ</a>
-        <a href="about.html">制作者</a>
-    </nav>
+    <footer>
+        <p>
+            <a href="../privacy.html">プライバシーポリシー</a> | 
+            <a href="../terms.html">利用規約</a>
+        </p>
+        <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
     
-    <div class="content-wrapper">
-
-        <h1>設定</h1>
-        
-        <div id="successMessage" class="message"></div>
-
-        <div class="settings-group">
-            <h2>デザイン設定</h2>
-            
-            <div class="setting-item">
-                <span class="setting-label">テーマカラー</span>
-                <div class="setting-control">
-                    <select id="themeSelector">
-                        <option value="light_green">ライトグリーン (標準)</option>
-                        </select>
-                </div>
-            </div>
-
-            <div class="setting-item">
-                <span class="setting-label">フォント設定</span>
-                <div class="setting-control">
-                    <p style="font-size: 0.8em; color: var(--text-soft); text-align: right;">日本語・英語に最適なフォントを自動適用中</p>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="settings-group">
-            <h2>ルーレット・カウントダウン目標設定</h2>
-            
-            <div class="setting-item">
-                <span class="setting-label">目標日付</span>
-                <div class="setting-control">
-                    <input type="date" id="targetDate">
-                </div>
-            </div>
-
-            <div class="setting-item">
-                <span class="setting-label">目標時刻</span>
-                <div class="setting-control">
-                    <input type="time" id="targetTime">
-                </div>
-            </div>
-
-            <div class="setting-item">
-                <span class="setting-label">ルーレット項目 (カンマ区切り)</span>
-                <textarea id="rouletteItems" style="width: 100%; min-height: 60px; font-size: 14px;"></textarea>
-                <p style="font-size: 0.8em; color: var(--text-soft); margin-top: 5px;">例: 大成功,成功,失敗</p>
-            </div>
-
-            <div style="text-align: right; margin-top: 15px;">
-                <button id="saveRouletteButton">設定を保存</button>
-            </div>
-        </div>
-
-        <div class="settings-group">
-            <h2>データ管理</h2>
-            <div class="setting-item">
-                <span class="setting-label">ローカルデータのクリア</span>
-                <div class="setting-control">
-                    <button onclick="if(confirm('全てのローカル設定と保存データを削除してもよろしいですか？')) { localStorage.clear(); window.location.reload(); }">データ削除</button>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-</div>
-
-<div class="bottom-ad-footer" style="height: 50px;">
-    <div id="ad-area-bottom-sp">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-    </div>
-</div>
-
-<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Version <span id="appVersionDisplay"></span></p>
-</footer>
+    <script src="../script.js"></script>
 </body>
 </html>

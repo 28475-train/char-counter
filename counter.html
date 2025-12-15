@@ -1,72 +1,59 @@
 <!DOCTYPE html>
 <html lang="ja" data-ads="true">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>【PC版】文字数カウント | 篠ノ井乗務区制作</title>
-<link rel="stylesheet" href="style.css">
-<style>
-/* PC版のコンテンツ幅を設定 */
-body{ max-width: 720px; margin: 0 auto; padding: 0; }
-.main-container {
-    padding: 20px;
-}
-/* ... (カウンター用スタイル省略) ... */
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>文字数カウント | 多機能ツールボックス</title>
+    <link rel="stylesheet" href="style.css"> 
+    <script src="ads.js"></script>
 </head>
-<body data-theme="light_green">
-<script>
-// --- バージョン情報 ---
-const APP_VERSION = "v1.2.0"; 
-// ----------------------
-// ★★★ 自動リダイレクトを再開 ★★★
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (isMobile) { location.href = 'SP/counter.html'; }
-
-// ... (関数省略) ...
-
-// ★★★ 機能修正: カウントロジック (再掲) ★★★
-function updateCounts() { /* ... (カウントロジックの内容省略) ... */ }
-function downloadText() { /* ... (ダウンロードロジックの内容省略) ... */ }
-
-window.onload = function() { 
-    // ... (ロードと初期化処理省略) ...
-    // ... (イベントリスナー設定処理省略) ...
-    updateCounts();
-}
-</script>
-
-<div class="main-content-area">
-    <div style="max-width: 720px; margin: 0 auto;">
-
-        <header class="header">
-            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-            <a href="counter.html" class="header-title">文字数カウント (PC版)</a>
-        </header>
-
-        <div class="top-ad-header"><div id="ad-area-top"></div></div>
-
-        <nav class="side-nav" id="sideNav">
-            <a href="counter.html" class="active-tab">📝 文字数カウント</a> 
-            <a href="roulette.html">🎲 ルーレット</a> 
-            <a href="settings.html">⚙ 設定</a>
-            <a href="help.html">ヘルプ</a>
-            <a href="about.html">制作者</a>
+<body data-theme="light_green"> 
+    <script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) { location.replace('SP/counter.html'); }
+    </script>
+    <div id="ad-area-top"></div>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">多機能ツールボックス (PC版)</a></li>
+                <li><a href="counter.html">📝 文字数カウント</a></li>
+                <li><a href="roulette.html">🎲 ルーレット</a></li>
+                <li><a href="settings.html">⚙ 設定</a></li>
+                <li><a href="help.html">ヘルプ</a></li>
+                <li><a href="about.html">制作者</a></li>
+            </ul>
         </nav>
-        
-        <div class="content-wrapper">
-            <h1>📝 文字数カウント</h1>
-            
-            </div>
-    </div>
-</div>
-
-<div class="bottom-ad-footer"><div id="ad-area-bottom"></div></div>
-
-<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
-</footer>
-
-<script src="ads.js"></script>
+    </header>
+    <main>
+        <h1>文字数カウントツール</h1>
+        <section>
+            <h2>📝 テキスト設定</h2>
+            <label for="font-size-selector">文字サイズ:</label>
+            <select id="font-size-selector">
+                <option value="14px">小 (14px)</option>
+                <option value="16px" selected>標準 (16px)</option>
+                <option value="18px">中 (18px)</option>
+                <option value="20px">大 (20px)</option>
+            </select>
+            <label for="font-color-selector" style="margin-left: 20px;">文字色:</label>
+            <input type="color" id="font-color-selector" value="#333333">
+        </section>
+        <textarea id="text-input" placeholder="ここに文字を入力してください"></textarea>
+        <section>
+            <h2>📊 結果と操作</h2>
+            <p>現在の文字数: <span id="char-count">0</span></p>
+            <button id="download-button">📄 テキストをダウンロード</button>
+        </section>
+    </main>
+    <div id="ad-area-bottom"></div>
+    <footer>
+        <p>
+            <a href="privacy.html">プライバシーポリシー</a> | 
+            <a href="terms.html">利用規約</a>
+        </p>
+        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -2,180 +2,90 @@
    グローバルリセットと基本設定
    ==================================== */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* 日本語フォントスタックの最適化 */
+    font-family: 'Segoe UI', 
+                 'Helvetica Neue', 
+                 Arial, 
+                 'Hiragino Kaku Gothic ProN', 
+                 'Hiragino Sans', 
+                 Meiryo, 
+                 'Yu Gothic', 
+                 sans-serif;
     margin: 0;
     padding: 0;
     line-height: 1.6;
-    transition: 
-        background-color 0.5s, 
-        color 0.5s;
-    opacity: 0; /* JSでロード後に1にする */
+    transition: background-color 0.5s, color 0.5s;
+    opacity: 0; 
 }
-
-/* リンクの基本スタイル */
-a {
-    text-decoration: none;
-    transition: color 0.2s;
-}
+a { text-decoration: none; transition: color 0.2s; }
+header, footer, main, section { opacity: 0; } /* アニメーション制御用 */
 
 /* ====================================
    テーマカラーの定義 (5種類)
    ==================================== */
-
-/* -- デフォルト: Light Green -- */
-body[data-theme="light_green"] {
-    --primary-color: #4db6ac;     
-    --secondary-color: #80cbc4;   
-    --background-color: #f4f7f6;  
-    --text-color: #333333;        
-    --header-footer-bg: #e0f2f1;  
-    --button-bg: #009688;         
+body[data-theme="light_green"] { 
+    --primary-color: #4db6ac; --secondary-color: #80cbc4; --background-color: #f4f7f6; --text-color: #333333; --header-footer-bg: #e0f2f1; --button-bg: #009688; 
 }
-
-/* -- テーマ 2: Deep Blue -- */
-body[data-theme="deep_blue"] {
-    --primary-color: #42a5f5;     
-    --secondary-color: #90caf9;   
-    --background-color: #f0f4f8;  
-    --text-color: #1a237e;        
-    --header-footer-bg: #e3f2fd;  
-    --button-bg: #1e88e5;         
+body[data-theme="deep_blue"] { 
+    --primary-color: #42a5f5; --secondary-color: #90caf9; --background-color: #f0f4f8; --text-color: #1a237e; --header-footer-bg: #e3f2fd; --button-bg: #1e88e5; 
 }
-
-/* -- テーマ 3: Sunset Orange -- */
-body[data-theme="sunset_orange"] {
-    --primary-color: #ffb74d;     
-    --secondary-color: #ffcc80;   
-    --background-color: #fef8f4;  
-    --text-color: #d84315;        
-    --header-footer-bg: #fff3e0;  
-    --button-bg: #ff7043;         
+body[data-theme="sunset_orange"] { 
+    --primary-color: #ffb74d; --secondary-color: #ffcc80; --background-color: #fef8f4; --text-color: #d84315; --header-footer-bg: #fff3e0; --button-bg: #ff7043; 
 }
-
-/* -- テーマ 4: Modern Grey (Darkish) -- */
-body[data-theme="modern_grey"] {
-    --primary-color: #90a4ae;     
-    --secondary-color: #cfd8dc;   
-    --background-color: #263238;  
-    --text-color: #eceff1;        
-    --header-footer-bg: #37474f;  
-    --button-bg: #546e7a;         
+body[data-theme="modern_grey"] { 
+    --primary-color: #90a4ae; --secondary-color: #cfd8dc; --background-color: #263238; --text-color: #eceff1; --header-footer-bg: #37474f; --button-bg: #546e7a; 
 }
-
-/* -- テーマ 5: Classic Red -- */
-body[data-theme="classic_red"] {
-    --primary-color: #e57373;     
-    --secondary-color: #ef9a9a;   
-    --background-color: #fafafa;  
-    --text-color: #b71c1c;        
-    --header-footer-bg: #ffebee;  
-    --button-bg: #c62828;         
+body[data-theme="classic_red"] { 
+    --primary-color: #e57373; --secondary-color: #ef9a9a; --background-color: #fafafa; --text-color: #b71c1c; --header-footer-bg: #ffebee; --button-bg: #c62828; 
 }
 
 /* 全体の適用 */
-body {
-    color: var(--text-color);
-    background-color: var(--background-color);
-}
-header, footer {
-    background-color: var(--header-footer-bg);
-    color: var(--text-color);
-}
-main {
-    background-color: white;
-}
-body[data-theme="modern_grey"] main {
-    background-color: #455a64; /* ダークテーマのメインコンテンツ背景 */
-    color: #eceff1;
-}
-
-/* リンクとボタンの適用 */
-a {
-    color: var(--primary-color);
-}
-button, select {
-    background-color: var(--button-bg);
-    color: white;
-}
-button:hover {
-    background-color: var(--primary-color);
-}
-h1 {
-    color: var(--primary-color);
-    border-bottom: 3px solid var(--secondary-color);
-}
-h2 {
-    color: var(--primary-color);
-}
+body { color: var(--text-color); background-color: var(--background-color); }
+header, footer { background-color: var(--header-footer-bg); color: var(--text-color); }
+main { background-color: white; }
+body[data-theme="modern_grey"] main { background-color: #455a64; color: #eceff1; }
+a { color: var(--primary-color); }
+button, select { background-color: var(--button-bg); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; }
+button:hover { background-color: var(--primary-color); }
+h1 { color: var(--primary-color); border-bottom: 3px solid var(--secondary-color); }
+h2 { color: var(--primary-color); }
 
 /* ====================================
    アニメーション定義
    ==================================== */
 @keyframes slideInFromLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
 }
+.animate-slide { animation: slideInFromLeft 0.5s ease-out forwards; }
 
-.animate-slide {
-    animation: slideInFromLeft 0.5s ease-out forwards;
+/* ====================================
+   ローディング画面
+   ==================================== */
+#loading-overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--background-color); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease-out;
+}
+.loader { 
+    border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ====================================
+   広告エリアのスタイル
+   ==================================== */
+#ad-area-top, #ad-area-bottom {
+    text-align: center; padding: 5px 0; background-color: var(--header-footer-bg); border-bottom: 1px solid var(--secondary-color); min-height: 50px; 
 }
 
 /* ====================================
-   ローディング画面 (JSによって挿入される)
+   コンポーネント固有のスタイル
    ==================================== */
-#loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--background-color);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease-out;
+main { max-width: 900px; margin: 20px auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); }
+#text-input { width: 98%; height: 300px; padding: 10px; box-sizing: border-box; margin: 10px 0; border: 1px solid var(--secondary-color); border-radius: 4px; }
+.item-tag { 
+    display: inline-block; background-color: var(--secondary-color); color: var(--text-color); 
+    padding: 5px 10px; margin: 5px; border-radius: 15px; font-size: 0.9em;
 }
-
-.loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--primary-color);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
+.item-tag button {
+    background: none; border: none; color: var(--text-color); margin-left: 5px; padding: 0; font-weight: bold; cursor: pointer;
 }
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-#loading-text {
-    color: var(--primary-color);
-    font-size: 1.2em;
-}
-
-/* ====================================
-   その他レイアウト (既存の再定義)
-   ==================================== */
-main {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* コンテンツにアニメーションを適用 */
-header, footer, main, section {
-    opacity: 0; /* 初期状態で非表示 */
-        }

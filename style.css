@@ -1,12 +1,16 @@
 /*
  * style.css
- * バージョン 1.60 - バリエーション強化とレスポンシブデザインの改善
+ * バージョン 1.70 - アクセシビリティ対応
  * 制作: 篠ノ井乗務区制作
  */
 
 /* ====================================
    グローバルリセットと基本設定
    ==================================== */
+:root {
+    --global-zoom: 1.0; /* JSで動的に設定される文字サイズ倍率 */
+}
+
 body {
     /* ** 日本語・欧文の最適化フォントスタック (SP/PC対応) ** */
     font-family: 'Hiragino Kaku Gothic ProN', 
@@ -22,6 +26,9 @@ body {
     line-height: 1.6;
     transition: background-color 0.5s, color 0.5s;
     opacity: 0; 
+    
+    /* 文字サイズズームの適用 */
+    font-size: calc(16px * var(--global-zoom));
 }
 a { text-decoration: none; transition: color 0.2s; }
 header, footer, main, section { opacity: 0; } 
@@ -124,17 +131,17 @@ input[type="text"], input[type="color"], textarea, select {
     margin-right: 10px;
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: calc(16px * var(--global-zoom)); /* 文字サイズズームを適用 */
 }
 input[type="text"]:focus, textarea:focus, select:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 5px rgba(var(--primary-color), 0.5); /* Primaryカラーを使ったシャドウ */
+    box-shadow: 0 0 5px rgba(var(--primary-color), 0.5); 
     outline: none;
 }
 textarea { 
     width: 98%; 
     height: 300px; 
     margin: 10px 0; 
-    font-size: 16px; /* 文字数カウント用にフォントサイズを固定 */
     font-family: inherit;
 }
 
@@ -162,7 +169,7 @@ header nav li {
 
 header nav a {
     display: block;
-    padding: 12px 18px; /* パディングを少し増やして大きく見せる */
+    padding: 12px 18px; 
     background-color: var(--primary-color); 
     color: white; 
     font-weight: bold;
@@ -196,6 +203,7 @@ header nav a.active {
 .mt-20 { margin-top: 20px; }
 .mb-20 { margin-bottom: 20px; }
 .p-10 { padding: 10px; }
+hr { border-top: 1px solid var(--secondary-color); }
 
 /* ====================================
    コンポーネント固有のスタイル
@@ -256,6 +264,70 @@ table tr:nth-child(even) {
 }
 
 /* ====================================
+   アクセシビリティスタイル
+   ==================================== */
+
+/* 1. 色の反転（ハイコントラスト） */
+body.invert-colors {
+    filter: invert(100%);
+    background-color: white !important; 
+}
+
+/* 2. グレースケール */
+body.grayscale {
+    filter: grayscale(100%);
+}
+
+/* 3. アニメーション無効化 */
+body.no-animation, body.no-animation * {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* スイッチトグルボタンのスタイル */
+.switch-label {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-top: 5px;
+    vertical-align: middle;
+}
+.switch-label input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* ====================================
    アニメーション定義
    ==================================== */
 @keyframes slideInFromLeft {
@@ -295,7 +367,7 @@ table tr:nth-child(even) {
     main {
         margin: 10px;
         padding: 15px;
-        border-radius: 0; /* タブレットでは角丸をなくす */
+        border-radius: 0; 
     }
     header nav a {
         padding: 10px 14px; 
@@ -303,14 +375,15 @@ table tr:nth-child(even) {
     }
 }
 
-/* (2) スマートフォン向け (最大幅 600px) - ページボタンの強制適用 */
+/* (2) スマートフォン向け (最大幅 600px) */
 @media (max-width: 600px) {
     /* ページの基本設定 */
     body {
-        font-size: 15px; /* 全体のフォントを少し小さく */
+        /* font-sizeはvar(--global-zoom)で制御 */
+        line-height: 1.5;
     }
     main {
-        margin: 0; /* マージンを完全に削除 */
+        margin: 0; 
         padding: 10px;
         box-shadow: none;
     }
@@ -318,8 +391,8 @@ table tr:nth-child(even) {
     /* ページボタンの調整 */
     header nav ul {
         flex-direction: row; 
-        justify-content: flex-start; /* 左寄せ */
-        overflow-x: auto; /* 横スクロールを許可 */
+        justify-content: flex-start; 
+        overflow-x: auto; 
         -webkit-overflow-scrolling: touch; 
     }
     header nav li {
@@ -327,8 +400,8 @@ table tr:nth-child(even) {
     }
     header nav a {
         padding: 8px 10px; 
-        font-size: 0.85em; /* ボタンの文字をさらに小さく */
-        border-right: 1px solid rgba(255, 255, 255, 0.2); /* 区切り線の色を調整 */
+        font-size: 0.85em; 
+        border-right: 1px solid rgba(255, 255, 255, 0.2); 
     }
     
     /* フォームとボタンの調整 */
@@ -337,15 +410,20 @@ table tr:nth-child(even) {
         font-size: 0.9em;
     }
     input[type="text"], input[type="color"], textarea, select {
-        width: 100%; /* 全幅に広げる */
+        width: 100%; 
         margin-bottom: 10px;
     }
     #text-input { 
-        height: 200px; /* テキストエリアの高さを低く */
+        height: 200px; 
     }
 
     /* ルーレット表示の調整 */
     #roulette-display {
         font-size: 1.5em;
+    }
+    
+    /* アクセシビリティ調整 */
+    .setting-group h3 {
+        font-size: 1.1em;
     }
 }

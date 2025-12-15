@@ -1,4 +1,4 @@
-/* script.js - 共通機能（テーマ設定、文字数カウントロジック、アニメーション制御、ルーレット制御、アクセシビリティ制御） */
+/* script.js - 共通機能（テーマ設定、文字数カウントロジック、アニメーション制御、ルーレット制御、アクセシビリティ制御、お知らせ） */
 
 const THEME_OPTIONS = [
     { value: 'light_green', name: 'ライトグリーン (初期)' },
@@ -6,6 +6,17 @@ const THEME_OPTIONS = [
     { value: 'sunset_orange', name: 'サンセットオレンジ' },
     { value: 'modern_grey', name: 'モダングレイ (ダーク)' },
     { value: 'classic_red', name: 'クラシックレッド' }
+];
+
+// ====================================
+// お知らせデータ
+// ====================================
+const ANNOUNCEMENTS = [
+    { date: "2025-12-16", text: "📢 トップページに『お知らせ』エリアを追加しました。" },
+    { date: "2025-12-16", text: "⚙️ 設定ページにアクセシビリティ設定（文字サイズ、色の反転、アニメ無効化）を追加しました。" },
+    { date: "2025-12-15", text: "📝 文字数カウント機能のダウンロードボタンを追加しました。" },
+    { date: "2025-12-10", text: "🎨 新しいテーマ「モダングレイ（ダーク）」を追加しました。" },
+    { date: "2025-12-01", text: "🌐 サイト全体をレスポンシブデザインに最適化しました。" }
 ];
 
 // ====================================
@@ -76,14 +87,32 @@ function applyAccessibilitySettings() {
     const noAnimation = localStorage.getItem('accessibility_no_animation') === 'true';
     body.classList.toggle('no-animation', noAnimation);
     
-    // settings.html 以外でトグルとセレクタの要素は存在しないため、ここで終了
-    if (document.getElementById('text-zoom-selector') === null) return;
+    // settings.html のフォーム要素の状態を更新
+    const textZoomSelector = document.getElementById('text-zoom-selector');
+    const invertColorsToggle = document.getElementById('invert-colors-toggle');
+    const grayscaleToggle = document.getElementById('grayscale-toggle');
+    const noAnimationToggle = document.getElementById('no-animation-toggle');
+    
+    if (textZoomSelector) textZoomSelector.value = zoomLevel;
+    if (invertColorsToggle) invertColorsToggle.checked = invertColors;
+    if (grayscaleToggle) grayscaleToggle.checked = grayscale;
+    if (noAnimationToggle) noAnimationToggle.checked = noAnimation;
+}
 
-    // 設定ページの場合、フォーム要素の状態を更新
-    document.getElementById('text-zoom-selector').value = zoomLevel;
-    document.getElementById('invert-colors-toggle').checked = invertColors;
-    document.getElementById('grayscale-toggle').checked = grayscale;
-    document.getElementById('no-animation-toggle').checked = noAnimation;
+// ====================================
+// お知らせのレンダリング
+// ====================================
+function renderAnnouncements() {
+    const listContainer = document.getElementById('announcement-list');
+    if (!listContainer) return;
+
+    listContainer.innerHTML = ''; 
+    
+    ANNOUNCEMENTS.forEach(announcement => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="date">[${announcement.date}]</span> ${announcement.text}`;
+        listContainer.appendChild(li);
+    });
 }
 
 
@@ -102,7 +131,6 @@ const applyTextStyles = () => {
     const fontColorSelector = document.getElementById('font-color-selector');
     if (!textInput) return;
     
-    // 文字数カウントエリア専用のフォントスタイルをローカルストレージから適用
     const size = localStorage.getItem('textFontSize') || '16px';
     const color = localStorage.getItem('textFontColor') || '#333333';
     textInput.style.fontSize = size;
@@ -128,7 +156,7 @@ const renderItems = () => {
     
     rouletteItemsContainer.innerHTML = '';
     if (rouletteItems.length === 0) {
-        rouletteItemsContainer.innerHTML = '<p style="color: #777;">（項目を3つ以上追加してください）</p>';
+        rouletteItemsContainer.innerHTML = '<p style="color: #777;">（項目を2つ以上追加してください）</p>';
         return;
     }
     rouletteItems.forEach((item, index) => {
@@ -152,7 +180,8 @@ const updateRouletteStatus = () => {
     
     if (startButton) {
         const count = rouletteItems.length;
-        const statusStyle = count >= 2 ? 'none' : 'block';
+        // 2つ未満の場合は非表示
+        const statusStyle = count >= 2 ? 'none' : 'block'; 
         startButton.disabled = count < 2;
         if (itemCountStatus) itemCountStatus.style.display = statusStyle;
     }
@@ -162,10 +191,24 @@ const startRoulette = () => {
     const startButton = document.getElementById('start-button');
     const rouletteDisplay = document.getElementById('roulette-display');
     
-    if (rouletteItems.length < 2) return;
+    if (rouletteItems.length < 2 || startButton.disabled) return;
+    
     startButton.disabled = true;
     rouletteDisplay.textContent = '回転中...';
+    
+    // 2秒間のランダムな演出
+    let spinCount = 0;
+    const interval = setInterval(() => {
+        const spinningItem = rouletteItems[Math.floor(Math.random() * rouletteItems.length)];
+        rouletteDisplay.textContent = spinningItem;
+        spinCount++;
+        if (spinCount > 30) { 
+             clearInterval(interval);
+        }
+    }, 50);
+
     setTimeout(() => {
+        clearInterval(interval);
         const randomIndex = Math.floor(Math.random() * rouletteItems.length);
         const result = rouletteItems[randomIndex];
         rouletteDisplay.textContent = `結果: ${result} に決定しました！`;
@@ -181,6 +224,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingOverlay = showLoadingScreen();
     const body = document.body;
     
+    // 0. お知らせのレンダリング
+    renderAnnouncements(); 
+
     // 0. アクセシビリティ設定の初期適用
     applyAccessibilitySettings();
 

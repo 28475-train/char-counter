@@ -1,40 +1,34 @@
 <!DOCTYPE html>
-<html lang="ja" data-ads="true">
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>完了しました | ツール</title>
-<link rel="stylesheet" href="style.css">
-<style>
-.thankyou-container {
-    text-align: center;
-    padding: 50px 20px;
-    max-width: 600px;
-    margin: 50px auto;
-    background: var(--card);
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-}
-
-.thankyou-container h1 {
-    font-size: 2em;
-    color: var(--accent-dark);
-    margin-bottom: 20px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ありがとうございます | 多機能ツールボックス</title>
+    <link rel="stylesheet" href="style.css"> 
 </head>
-<body data-theme="light_green">
-<div class="main-content-area">
-    <div class="thankyou-container">
-        <h1>✅ ありがとうございます！</h1>
-        <p style="margin-bottom: 30px;">[フォーム送信、または何らかの操作]が完了しました。</p>
-        <a href="index.html" class="button" style="padding: 10px 20px; background-color: var(--accent); color: white; border-radius: 5px; display: inline-block;">ツールボックスに戻る</a>
-    </div>
-</div>
+<body data-theme="light_green"> 
+    
+    <script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) { 
+        location.replace('SP/thankyou.html'); 
+    }
+    </script>
+    
+    <main>
+        <h1>送信完了しました。ありがとうございます。</h1>
+        <p>内容を確認し、順次対応いたします。</p>
+        <p><a href="index.html">トップページに戻る</a></p>
+    </main>
 
-<div class="bottom-ad-footer"><div id="ad-area-bottom"></div></div>
-<script src="ads.js"></script>
-
+    <footer>
+        <p>
+            <a href="privacy.html">プライバシーポリシー</a> | 
+            <a href="terms.html">利用規約</a>
+        </p>
+        <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,126 +1,67 @@
 <!DOCTYPE html>
-<html lang="ja" data-ads="true">
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>【SP版】制作者情報 | ツール</title>
-<link rel="stylesheet" href="../style.css">
-<style>
-/* SP版固有のスタイル */
-.info-section {
-    background: var(--card);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    border: 1px solid var(--border);
-}
-
-.info-section h2 {
-    margin-top: 0;
-    font-size: 1.3em;
-    color: var(--accent-dark);
-    border-bottom: 2px solid var(--accent-light);
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-}
-
-.info-section p {
-    margin-bottom: 8px;
-    line-height: 1.6;
-    font-size: 0.9em;
-}
-
-.contact-list {
-    list-style: none;
-    padding-left: 0;
-    font-size: 0.9em;
-}
-
-.contact-list li {
-    margin-bottom: 6px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>このサイトについて | 多機能ツールボックス (SP)</title>
+    <link rel="stylesheet" href="../style.css"> 
 </head>
-<body data-theme="light_green">
-<script>
-// --- バージョン情報 ---
-const APP_VERSION = "v1.2.0"; 
-// ----------------------
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (!isMobile) { location.href = '../about.html'; }
+<body data-theme="light_green"> 
 
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+    <script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) { 
+        location.replace('../about.html'); 
+    }
+    </script>
 
-function applyTheme(theme) {
-    document.body.setAttribute('data-theme', theme);
-}
-
-window.onload = function() { 
-    document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
-    
-    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
-    applyTheme(savedTheme);
-}
-</script>
-
-<div class="main-content-area">
-
-    <header class="header">
-        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-        <a href="counter.html" class="header-title" style="font-size: 1.2em;">制作者情報 (SP版)</a>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">多機能ツールボックス (SP版)</a></li>
+                <li><a href="counter.html">📝 文字数カウント</a></li>
+                <li><a href="roulette.html">🎲 ルーレット</a></li>
+                <li><a href="settings.html">⚙ 設定</a></li>
+                <li><a href="help.html">ヘルプ</a></li>
+                <li><a href="about.html">制作者</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <div class="top-ad-header" style="height: 50px;">
-        <div id="ad-area-top">
-            </div>
-    </div>
+    <main>
+        <h1>このサイトについて (SP)</h1>
+        <p>このサイト「多機能ツールボックス」は、**篠ノ井乗務区制作**によって開発・運営されています。</p>
 
-    <nav class="side-nav" id="sideNav">
-        <a href="counter.html">📝 文字数カウント</a> 
-        <a href="roulette.html">🎲 ルーレット</a> 
-        <a href="settings.html">⚙ 設定</a>
-        <a href="help.html">ヘルプ</a>
-        <a href="about.html" class="active-tab">制作者</a>
-    </nav>
-    
-    <div class="content-wrapper">
+        <section>
+            <h2>開発の目的と理念</h2>
+            <p>本サービスの開発目的は、**「日常のちょっとした煩雑な作業を、手間なく、迅速にサポートすること」**にあります。特定の専門的なツールではなく、誰でもアクセスしやすく、直感的に利用できるシンプルなウェブツール群を提供することで、皆様の生産性向上とストレス軽減に貢献したいと考えています。</p>
+            <p>特に、文字数カウント機能は、ウェブ投稿やレポート作成時における文字数の確認をリアルタイムで可能にし、ルーレット機能は、意思決定や抽選のプロセスを楽しく、公正に行えるように設計されています。私たちは、ユーザーフレンドリーな設計を常に心がけています。</p>
+        </section>
 
-        <h1>制作者情報と著作権</h1>
-        
-        <div class="info-section">
-            <h2>制作者について</h2>
-            <p>このツールは、皆様の執筆活動や目標管理をサポートするために開発されました。</p>
-        </div>
-
-        <div class="info-section">
-            <h2>お問い合わせ先</h2>
-            <ul class="contact-list">
-                <li>📧 メール: [メールアドレスを記載]</li>
-                <li>🐦 X (旧Twitter): @[ユーザー名を記載]</li>
+        <section>
+            <h2>主な提供機能</h2>
+            <ul>
+                <li>**文字数カウント**: 入力テキストの文字数、行数、バイト数を即座に計測。</li>
+                <li>**ルーレット / カウントダウン**: ランダム選択および目標日時までの計測。</li>
+                <li>**設定**: テーマカラーの変更、その他ツールのカスタマイズ。</li>
             </ul>
-        </div>
+        </section>
 
-        <div class="info-section">
-            <h2>著作権・利用規約</h2>
-            <p>Copyright © 2024 Tool Creator. All Rights Reserved.</p>
-            <p>本ツールは無料でご利用いただけますが、二次配布やコードの無断利用はご遠慮ください。</p>
-            <p>詳細な利用規約は<a href="terms.html">利用規約ページ</a>をご確認ください。</p>
-        </div>
-        
-    </div>
-</div>
+        <section>
+            <h2>制作者情報</h2>
+            <p>制作者名: 篠ノ井乗務区制作</p>
+            <p>本サービスに関するお問い合わせは、ヘルプページまたは専用のフォームからお願いいたします。</p>
+        </section>
+    </main>
 
-<div class="bottom-ad-footer" style="height: 50px;">
-    <div id="ad-area-bottom">
-        </div>
-</div>
-
-<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Version <span id="appVersionDisplay"></span></p>
-</footer>
-
-<script src="../ads.js"></script>
-
+    <footer>
+        <p>
+            <a href="../privacy.html">プライバシーポリシー</a> | 
+            <a href="../terms.html">利用規約</a>
+        </p>
+        <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="../script.js"></script>
 </body>
 </html>

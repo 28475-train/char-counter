@@ -7,14 +7,10 @@
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body data-theme="light_green"> 
-    
     <script>
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) { 
-        location.replace('SP/settings.html'); 
-    }
+    if (isMobile) { location.replace('SP/settings.html'); }
     </script>
-    
     <header>
         <nav>
             <ul>
@@ -27,25 +23,21 @@
             </ul>
         </nav>
     </header>
-    
     <main>
         <h1>設定</h1>
         <section>
             <h2>テーマ設定</h2>
-            <select id="theme-selector">
-                <option value="light_green">ライトグリーン</option>
-            </select>
+            <p>サイト全体のデザインを5種類から選択できます。</p>
+            <select id="theme-selector"></select>
         </section>
     </main>
-
     <footer>
         <p>
             <a href="privacy.html">プライバシーポリシー</a> | 
             <a href="terms.html">利用規約</a>
         </p>
-        <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
+        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
     </footer>
-    
     <script src="script.js"></script>
 </body>
 </html>

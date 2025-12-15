@@ -1,134 +1,74 @@
 <!DOCTYPE html>
-<html lang="ja" data-ads="true">
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>【PC版】プライバシーポリシー | 篠ノ井乗務区制作</title>
-<link rel="stylesheet" href="style.css">
-<style>
-/* PC版のコンテンツ幅を設定 */
-body{ max-width: 720px; margin: 0 auto; padding: 0; }
-
-.policy-content {
-    background: var(--card);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-    margin-bottom: 30px;
-}
-
-.policy-content h2 {
-    color: var(--accent-dark);
-    border-bottom: 2px solid var(--accent-light);
-    padding-bottom: 5px;
-    margin-top: 30px;
-    margin-bottom: 15px;
-}
-
-.policy-content h3 {
-    color: var(--text-color);
-    margin-top: 20px;
-    font-size: 1.1em;
-}
-
-.policy-content p, .policy-content ul {
-    margin-bottom: 15px;
-    line-height: 1.7;
-}
-
-.policy-content ul {
-    margin-left: 20px;
-    list-style: disc;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>プライバシーポリシー</title>
+    <link rel="stylesheet" href="style.css"> 
 </head>
-<body data-theme="light_green">
-<script>
-// --- バージョン情報 ---
-const APP_VERSION = "v1.2.0"; 
-// ----------------------
-// ★★★ 自動リダイレクトを再開 ★★★
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (isMobile) { location.href = 'SP/privacy.html'; }
-
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
-function applyTheme(theme) { document.body.setAttribute('data-theme', theme); }
-
-window.onload = function() { 
-    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
-    applyTheme(savedTheme);
-}
-</script>
-
-<div class="main-content-area">
-    <div style="max-width: 720px; margin: 0 auto;">
-
-        <header class="header">
-            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-            <a href="counter.html" class="header-title">プライバシーポリシー (PC版)</a>
-        </header>
-
-        <div class="top-ad-header"><div id="ad-area-top"></div></div>
-
-        <nav class="side-nav" id="sideNav">
-            <a href="counter.html">📝 文字数カウント</a> 
-            <a href="roulette.html">🎲 ルーレット</a> 
-            <a href="settings.html">⚙ 設定</a>
-            <a href="help.html">ヘルプ</a>
-            <a href="about.html">制作者</a>
+<body data-theme="light_green"> 
+    
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">多機能ツールボックス (PC版)</a></li>
+                <li><a href="counter.html">📝 文字数カウント</a></li>
+                <li><a href="roulette.html">🎲 ルーレット</a></li>
+                <li><a href="settings.html">⚙ 設定</a></li>
+                <li><a href="help.html">ヘルプ</a></li>
+                <li><a href="about.html">制作者</a></li>
+            </ul>
         </nav>
-        
-        <div class="content-wrapper">
-            <h1>プライバシーポリシー</h1>
-            
-            <div class="policy-content">
-                <p>本ツールボックスは、以下の通りプライバシーポリシー（以下「本ポリシー」）を定めます。本ポリシーは、利用者が本サービスを利用する際に適用されます。</p>
+    </header>
+    
+    <main>
+        <h1>プライバシーポリシー</h1>
+        <p>「多機能ツールボックス」運営者（以下「当サービス提供者」といいます）は、ユーザーの皆様のプライバシーを尊重し、個人情報の保護に細心の注意を払います。本ポリシーは、本サービスにおける個人情報の取扱いについて定めるものです。</p>
 
-                <h2>第1条 (個人情報の定義と収集)</h2>
-                <p>本サービスは、氏名、住所、電話番号、メールアドレスなど、特定の個人を識別できる情報は収集していません。</p>
-                <p>ただし、本サービスの改善を目的として、アクセス情報や利用状況に関する非個人情報を収集します。</p>
+        <section>
+            <h2>第1条（個人情報の定義と収集）</h2>
+            <p>本ポリシーにおいて「個人情報」とは、生存する個人に関する情報であって、氏名、生年月日、住所、電話番号、連絡先その他の記述等により特定の個人を識別できる情報（個人識別情報）を指します。当サービス提供者は、ユーザーが問い合わせフォームを利用する際などに、氏名、メールアドレスなどの個人情報を収集する場合があります。</p>
+        </section>
 
-                <h2>第2条 (広告の配信について)</h2>
-                <p>本サービスでは、以下の広告配信サービスを利用しており、広告配信事業者がCookieを使用することがあります。</p>
-                <h3>利用広告サービス</h3>
-                <ul>
-                    <li>**shinobi.jp**：広告の表示には、Cookieを使用し、過去のアクセス情報に基づいて利用者に最適化された広告を表示する場合があります。</li>
-                    <li>Cookieを無効にする方法については、各広告配信事業者のウェブサイトをご確認ください。</li>
-                </ul>
+        <section>
+            <h2>第2条（情報の利用目的）</h2>
+            <p>当サービス提供者が個人情報を収集・利用する目的は、以下の通りです。</p>
+            <ul>
+                <li>ユーザーからのお問い合わせに回答するため。</li>
+                <li>本サービスに関する重要な通知等、必要に応じたご連絡のため。</li>
+                <li>本サービスの改善、新機能の開発、および利用状況の分析のため（匿名加工情報として）。</li>
+            </ul>
+        </section>
 
-                <h2>第3条 (アクセス解析ツールについて)</h2>
-                <p>本サービスでは、利用状況の分析のため、以下のアクセス解析ツールを使用しています。</p>
-                <h3>利用アクセス解析ツール</h3>
-                <ul>
-                    <li>**[アクセス解析ツール名]**：[ツールの詳細を記載]</li>
-                    <li>これらのツールは、トラフィックデータ収集のためにCookieを使用しますが、個人を特定するものではありません。</li>
-                </ul>
+        <section>
+            <h2>第3条（第三者への提供）</h2>
+            <p>当サービス提供者は、法令に基づく場合や、人の生命、身体または財産の保護のために必要がある場合を除き、事前にユーザーの同意を得ることなく、個人情報を第三者に提供することはありません。ただし、業務遂行上必要な範囲で、業務委託先に個人情報を提供する場合があります。その際は、委託先に対して適切な管理を義務付けます。</p>
+        </section>
 
-                <h2>第4条 (Cookieの使用について)</h2>
-                <p>本サービスでは、以下の目的でCookieを使用しています。</p>
-                <ul>
-                    <li>**データ保存機能 (文字数、設定):** 利用者が入力したテキストや設定（目標値、テーマなど）をブラウザ内のローカルストレージ（Cookieに類似する技術）に保存し、次回訪問時の利便性を向上させるため。</li>
-                    <li>**広告配信の最適化:** 第2条に定める通り、広告配信を最適化するため。</li>
-                </ul>
-                <p>利用者は、ブラウザの設定でCookieの利用を拒否することができますが、その場合、本サービスの一部の機能が正常に動作しない可能性があります。</p>
-                
-                <h2>第5条 (著作権情報)</h2>
-                <p>本ツールの著作権は、「篠ノ井乗務区制作」に帰属します。</p>
-                
-                <p style="text-align: right; margin-top: 40px; font-size: 0.9em; color: var(--text-soft);">2024年1月1日 制定</p>
-            </div>
-            
-        </div>
-    </div>
-</div>
+        <section>
+            <h2>第4条（Cookieの使用とアクセス解析ツールについて）</h2>
+            <p>本サービスでは、利用状況の把握およびサービス改善を目的としてCookieを使用しています。また、Googleによるアクセス解析ツール「Google Analytics」を使用しており、トラフィックデータの収集のためにCookieを使用しています。このトラフィックデータは匿名で収集されており、個人を特定するものではありません。この機能はCookieを無効にすることで収集を拒否することができます。</p>
+        </section>
 
-<div class="bottom-ad-footer"><div id="ad-area-bottom"></div></div>
+        <section>
+            <h2>第5条（個人情報の開示・訂正・削除）</h2>
+            <p>ユーザーご本人から個人情報の開示、訂正、追加、削除、利用停止を求められた場合は、ご本人であることを確認の上、法令に基づき速やかに対応します。</p>
+        </section>
 
-<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
-</footer>
+        <section>
+            <h2>第6条（本ポリシーの変更）</h2>
+            <p>本ポリシーの内容は、法令その他本ポリシーに別段の定めのある事項を除いて、ユーザーに通知することなく変更することができるものとします。変更後のプライバシーポリシーは、本ウェブサイトに掲載したときから効力を生じるものとします。</p>
+        </section>
+    </main>
 
-<script src="ads.js"></script>
+    <footer>
+        <p>
+            <a href="privacy.html">プライバシーポリシー</a> | 
+            <a href="terms.html">利用規約</a>
+        </p>
+        <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="script.js"></script>
 </body>
 </html>

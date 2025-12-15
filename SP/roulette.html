@@ -1,265 +1,52 @@
 <!DOCTYPE html>
 <html lang="ja" data-ads="true">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>【SP版】カスタムルーレット・カウントダウン | ツール</title>
-<link rel="stylesheet" href="../style.css">
-<style>
-/* ルーレット/カウントダウン固有のスタイル (SP版調整) */
-.roulette-container {
-    background: var(--card);
-    padding: 20px 15px; /* SP版に合わせてパディング調整 */
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    text-align: center;
-    margin-top: 15px;
-    border: 1px solid var(--border);
-}
-
-/* 目標表示エリア */
-#targetDisplay {
-    font-size: 1em; /* SP版に合わせてフォントサイズ調整 */
-    color: var(--text-soft);
-    margin-bottom: 15px;
-}
-
-/* カウント値/ルーレット表示エリア */
-#countdownValue, #rouletteResult {
-    font-size: 3em; /* SP版に合わせてフォントサイズ調整 */
-    font-weight: 800;
-    color: var(--accent-dark);
-    margin: 15px 0;
-    line-height: 1.2;
-    min-height: 80px; 
-}
-
-/* ルーレットアニメーション用のプレースホルダー */
-#rouletteAnimation {
-    width: 100%;
-    height: 80px; /* SP版に合わせて高さ調整 */
-    background-color: var(--accent-light);
-    border-radius: 8px;
-    margin: 15px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3em;
-    color: var(--accent-dark);
-    border: 3px dashed var(--accent);
-}
-
-/* アクションボタン */
-#startButton {
-    padding: 12px 20px;
-    font-size: 1.1em; /* SP版に合わせてフォントサイズ調整 */
-    background-color: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#startButton:hover {
-    background-color: var(--accent-dark);
-}
-
-/* 設定への誘導 */
-.settings-link-area {
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-}
-
-/* カウントダウン完了後のスタイル */
-.finished {
-    color: red !important;
-}
-
-/* アニメーションのキーフレーム（例：点滅） */
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-.blinking {
-    animation: blink 0.8s infinite;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ルーレットツール | 多機能ツールボックス (SP)</title>
+    <link rel="stylesheet" href="../style.css"> 
+    <script src="../ads.js"></script>
 </head>
-<body data-theme="light_green">
-<script>
-// --- バージョン情報 ---
-const APP_VERSION = "v1.2.0"; 
-// ----------------------
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (!isMobile) { location.href = '../roulette.html'; }
+<body data-theme="light_green"> 
 
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
+    <script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) { 
+        location.replace('../roulette.html'); 
+    }
+    </script>
 
-// ★★★ 機能復旧: ルーレット/カウントダウンロジック ★★★
-let countdownInterval;
-const defaultTargetDate = new Date();
-defaultTargetDate.setDate(defaultTargetDate.getDate() + 7); // デフォルトは1週間後
-
-function startCountdown() {
-    // 仮の目標日時を LocalStorage または settings.html から取得したと仮定
-    const targetDate = localStorage.getItem('rouletteTargetDate') 
-                     ? new Date(localStorage.getItem('rouletteTargetDate')) 
-                     : defaultTargetDate;
-
-    // 表示を更新
-    document.getElementById('targetDisplay').textContent = 
-        "目標日時: " + targetDate.toLocaleString();
+    <div id="ad-area-top"></div>
     
-    // カウントダウン開始
-    clearInterval(countdownInterval);
-    
-    const update = () => {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        const countdownElement = document.getElementById('countdownValue');
-        const startButton = document.getElementById('startButton');
-
-        if (distance < 0) {
-            clearInterval(countdownInterval);
-            countdownElement.textContent = "目標達成！";
-            countdownElement.classList.add('finished', 'blinking');
-            startButton.textContent = "ルーレット開始";
-            startButton.disabled = false;
-        } else {
-            countdownElement.textContent = 
-                `${days}日 ${hours}時間 ${minutes}分 ${seconds}秒`;
-            startButton.textContent = "カウントダウン中...";
-            startButton.disabled = true;
-        }
-    };
-
-    update();
-    countdownInterval = setInterval(update, 1000);
-}
-
-function startRoulette() {
-    const resultElement = document.getElementById('rouletteResult');
-    const animationElement = document.getElementById('rouletteAnimation');
-    const startButton = document.getElementById('startButton');
-
-    startButton.disabled = true;
-    startButton.textContent = "結果を抽選中...";
-    resultElement.textContent = "…";
-    animationElement.textContent = "高速回転中！";
-    
-    // ルーレットのシミュレーション (5秒後に結果を出す)
-    setTimeout(() => {
-        const results = ["大成功！", "成功", "少し失敗", "やり直し！"];
-        const finalResult = results[Math.floor(Math.random() * results.length)];
-
-        resultElement.textContent = finalResult;
-        animationElement.textContent = "抽選終了";
-        startButton.textContent = "もう一度ルーレット";
-        startButton.disabled = false;
-
-        if (document.getElementById('countdownValue').textContent !== "目標達成！") {
-             startButton.textContent = "カウントダウン再開";
-        }
-        
-    }, 5000);
-}
-
-window.onload = function() { 
-    document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
-    
-    // 初期表示としてカウントダウンを開始
-    startCountdown();
-
-    // ルーレットとカウントダウンの開始ボタンのイベント設定
-    document.getElementById('startButton').addEventListener('click', () => {
-        if (document.getElementById('countdownValue').textContent === "目標達成！") {
-            // カウントダウンが終わっている場合
-            startRoulette();
-            // カウントダウンエリアを非表示、ルーレットエリアを表示
-            document.getElementById('countdownArea').style.display = 'none';
-            document.getElementById('rouletteArea').style.display = 'block';
-        } else {
-            // カウントダウンが動いている場合 (SP版では再開ボタンとして機能させる)
-            startCountdown();
-            // カウントダウンエリアを表示、ルーレットエリアを非表示
-            document.getElementById('countdownArea').style.display = 'block';
-            document.getElementById('rouletteArea').style.display = 'none';
-        }
-    });
-}
-</script>
-
-<div class="main-content-area">
-
-    <header class="header">
-        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-        <a href="counter.html" class="header-title" style="font-size: 1.2em;">カスタムルーレット (SP版)</a>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">多機能ツールボックス (SP版)</a></li>
+                <li><a href="counter.html">📝 文字数カウント</a></li>
+                <li><a href="roulette.html">🎲 ルーレット</a></li>
+                <li><a href="settings.html">⚙ 設定</a></li>
+                <li><a href="help.html">ヘルプ</a></li>
+                <li><a href="about.html">制作者</a></li>
+            </ul>
+        </nav>
     </header>
-
-    <div class="top-ad-header" style="height: 50px;">
-        <div id="ad-area-top-sp">
-            <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-        </div>
-    </div>
-
-    <nav class="side-nav" id="sideNav">
-        <a href="counter.html">📝 文字数カウント</a> 
-        <a href="roulette.html" class="active-tab">🎲 ルーレット</a> 
-        <a href="settings.html">⚙ 設定</a>
-        <a href="help.html">ヘルプ</a>
-        <a href="about.html">制作者</a>
-    </nav>
     
-    <div class="content-wrapper">
+    <main>
+        <h1>ルーレット機能 (SP)</h1>
+        <div id="roulette-display">ルーレットが表示されるエリア</div>
+        <button id="start-button">スタート</button>
+    </main>
 
-        <h1>カスタムルーレット・カウントダウン</h1>
-        <p style="color: var(--text-soft); margin-top: -10px; font-size: 0.9em;">設定された目標に向けて、カウントダウンまたはルーレットを行います。</p>
+    <div id="ad-area-bottom"></div>
 
-        <div class="roulette-container">
-            
-            <h2>現在の目標</h2>
-            <p id="targetDisplay">目標日時: 読み込み中...</p>
-
-            <div id="countdownArea">
-                <p style="font-size: 1em; color: var(--text-soft);">目標までの残り時間</p>
-                <div id="countdownValue">読み込み中...</div>
-            </div>
-
-            <div id="rouletteArea" style="display: none;">
-                <p style="font-size: 1em; color: var(--text-soft);">ルーレット結果</p>
-                <div id="rouletteResult">…</div>
-            </div>
-            
-            <div id="rouletteAnimation">結果待機中</div>
-
-            <button id="startButton">カウントダウン開始</button>
-
-            <div class="settings-link-area">
-                <p>目標やルーレット項目の設定は<a href="settings.html">設定ページ</a>で行ってください。</p>
-            </div>
-
-        </div>
-        
-    </div>
-</div>
-
-<div class="bottom-ad-footer" style="height: 50px;">
-    <div id="ad-area-bottom-sp">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-    </div>
-</div>
-
-<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Version <span id="appVersionDisplay"></span></p>
-</footer>
+    <footer>
+        <p>
+            <a href="../privacy.html">プライバシーポリシー</a> | 
+            <a href="../terms.html">利用規約</a>
+        </p>
+        <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="../script.js"></script>
 </body>
 </html>

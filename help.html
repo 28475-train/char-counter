@@ -1,151 +1,47 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>使い方・ヘルプ | 文字数カウントツール</title>
-<link rel="stylesheet" href="style.css">
-<style>
-/* help.html専用のレイアウト調整 */
-body {
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 20px;
-}
-section {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 30px;
-    border: 1px solid var(--border);
-}
-section h2 {
-    color: var(--accent);
-    border-bottom: 2px solid var(--accent-soft);
-    padding-bottom: 5px;
-    margin-top: 0;
-}
-section h3 {
-    color: var(--text);
-    border-left: 5px solid var(--accent);
-    padding-left: 10px;
-    margin-top: 25px;
-}
-ul {
-    padding-left: 20px;
-}
-.key-feature {
-    font-weight: bold;
-    color: var(--danger);
-}
-.back-link a {
-    color: var(--link);
-    text-decoration: none;
-    font-weight: bold;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ヘルプ | 多機能ツールボックス</title>
+    <link rel="stylesheet" href="style.css"> 
 </head>
-<body data-theme="light_green">
-<h1>ツールの使い方・機能紹介</h1>
-
-<section>
-    <h2>1. 基本的な使い方</h2>
-    
-    <h3>リアルタイムカウント</h3>
-    <ul>
-        <li>中央にある大きな入力エリアにテキストを入力すると、文字数と行数が即座に計測され、画面下部にリアルタイムで表示されます。</li>
-        <li>計測対象は、改行やスペースも含めたすべての文字です。ただし、設定で**スペースのカウントを除外**できます。</li>
-    </ul>
-
-    <h3>文字数制限機能</h3>
-    <ul>
-        <li>入力エリアの上部にある「280」「500」などのボタンを押すと、上限文字数が設定されます。</li>
-        <li>カスタム入力欄に数字を入れて「設定」ボタンを押せば、任意の文字数制限を設定できます。</li>
-        <li>制限を超過すると、「残り文字数」が赤字で表示されます。</li>
-    </ul>
-    
-    <h3>クリア機能</h3>
-    <ul>
-        <li>「すべてクリア」ボタンを押すと、入力エリアのテキストがすべて消去されます。</li>
-        <li>クリア時、自動保存されたデータも同時に消去されます。</li>
-    </ul>
-</section>
-
-<section>
-    <h2>2. 詳細機能</h2>
-
-    <h3>自動保存と復元</h3>
-    <ul>
-        <li>入力内容は3秒ごとに自動的に保存されます。ページを離れても、次回アクセス時に「復元しますか？」と確認されます。</li>
-    </ul>
-
-    <h3>詳細カウント表示</h3>
-    <ul>
-        <li>計測結果の下部に、入力内容の**全角文字数**、**半角文字数**、および**推定バイト数**の内訳が表示されます。</li>
-        <li>推定バイト数は、主に日本語のウェブサービスやデータベースでの文字容量制限を確認する際に役立ちます（UTF-8 3バイト換算）。</li>
-    </ul>
-
-    <h3>ファイルの保存機能</h3>
-    <ul>
-        <li>「保存形式」ドロップダウンから、**TXT、Markdown、CSV**の形式を選択して保存できます。</li>
-        <li>保存されるファイル名には、自動で日付と時刻が組み込まれます。</li>
-    </ul>
-</section>
-
-<section>
-    <h2>3. その他の機能と設定</h2>
-    
-    <h3>デザインテーマの変更</h3>
-    <ul>
-        <li>右下にある⚙ボタンまたはメニューから「設定」画面に移動できます。</li>
-        <li>設定画面では、「Light Green」「Dark Blue」など、様々なデザインテーマを切り替えられます。</li>
-    </ul>
-
-    <h3>フォントサイズとカウント設定</h3>
-    <ul>
-        <li>設定画面で、入力エリアのフォントサイズを変更できます。</li>
-        <li>**スペース（空白文字）を文字数から除外する**かどうかを設定できます。</li>
-    </ul>
-
-    <h3>広告の表示設定</h3>
-    <ul>
-        <li>設定画面で、広告の表示/非表示を切り替えることができます。PCでは初期設定で広告は表示されません。</li>
-    </ul>
-    
-    <h3>アップデート履歴</h3>
-    <ul>
-        <li>「制作者紹介」ページに、スプレッドシートから読み込んだツールの更新履歴（リリースノート）を掲載しています。</li>
-    </ul>
-</section>
-
-<section>
-    <h2>4. 動作環境とアプリ内ブラウザの制限</h2>
-    
-    <h3>動作環境</h3>
-    <p>本ツールは、HTML/CSS/JavaScriptのみで動作するため、特別なソフトウェアのインストールは不要です。</p>
-    <ul>
-        <li>OS: Windows, macOS, iOS (iPhone/iPad), Android</li>
-        <li>推奨ブラウザ: Google Chrome, Safari, Firefox (最新バージョン)</li>
-    </ul>
-
-    <h3>アプリ内ブラウザでのダウンロード制限について</h3>
-    <p style="color: var(--danger); font-weight: bold;">【重要】InstagramなどのSNSアプリ内のブラウザ（アプリ内WebView）では、セキュリティ上の制限によりファイルダウンロード機能がブロックされ、保存できない場合があります。</p>
-    <p>ファイル保存を行う場合は、以下の手順で標準のブラウザに切り替えてご利用ください。</p>
-    <ol>
-        <li>アプリ内ブラウザの画面右下または右上にあるメニュー（... や 共有アイコン）をタップします。</li>
-        <li>表示されたメニューから「外部ブラウザで開く」または「Safariで開く」（iPhone）、「Chromeで開く」（Android）を選択します。</li>
-        <li>標準ブラウザでツールを開き直した後、ダウンロードをお試しください。</li>
-    </ol>
-</section>
-
-<p class="back-link" style="text-align: center;"><a href="counter.html">ツール画面に戻る</a></p>
-
-<script>
-// テーマ設定の適用 (ローカルストレージから読み込み)
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-    document.body.setAttribute('data-theme', savedTheme);
-}
-</script>
+<body data-theme="light_green"> 
+    <script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) { location.replace('SP/help.html'); }
+    </script>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">多機能ツールボックス (PC版)</a></li>
+                <li><a href="counter.html">📝 文字数カウント</a></li>
+                <li><a href="roulette.html">🎲 ルーレット</a></li>
+                <li><a href="settings.html">⚙ 設定</a></li>
+                <li><a href="help.html">ヘルプ</a></li>
+                <li><a href="about.html">制作者</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>ヘルプ</h1>
+        <section>
+            <h2>文字数カウントの使い方</h2>
+            <p>ページ内の大きなテキストエリアに入力すると、リアルタイムで文字数が更新されます。設定でフォントサイズや文字色を変更できます。完了したテキストはダウンロードボタンで保存できます。</p>
+        </section>
+        <section>
+            <h2>ルーレット機能</h2>
+            <p>「項目設定」エリアで、ルーレットに追加したい項目を一つずつ入力し「追加」ボタンを押してください。項目が2つ以上ある状態で「ルーレットをスタート」を押すと、ランダムに一つの結果が選ばれます。</p>
+        </section>
+        <p>バージョン 1.50</p>
+    </main>
+    <footer>
+        <p>
+            <a href="privacy.html">プライバシーポリシー</a> | 
+            <a href="terms.html">利用規約</a>
+        </p>
+        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
+    <script src="script.js"></script>
 </body>
 </html>

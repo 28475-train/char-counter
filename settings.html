@@ -8,7 +8,6 @@
 </head>
 <body data-theme="light_green"> 
     
-    <script src="ads.js"></script>
     <script>
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile) { 
@@ -33,11 +32,11 @@
         <h1>設定</h1>
         <section>
             <h2>テーマ設定</h2>
-            <p>サイト全体のデザインを5種類から選択できます。</p>
-            <select id="theme-selector"></select>
+            <select id="theme-selector">
+                <option value="light_green">ライトグリーン</option>
+            </select>
         </section>
-        
-        </main>
+    </main>
 
     <footer>
         <p>

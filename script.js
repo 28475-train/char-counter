@@ -1,4 +1,4 @@
-/* script.js - 共通機能（テーマ設定、文字数カウントロジック、アニメーション制御、ルーレット制御、アクセシビリティ制御、お知らせ） */
+/* script.js - 共通機能（テーマ設定、文字数カウント、ルーレット、アクセシビリティ、ローディング、お知らせ、広告制御） */
 
 const THEME_OPTIONS = [
     { value: 'light_green', name: 'ライトグリーン (初期)' },
@@ -12,11 +12,14 @@ const THEME_OPTIONS = [
 // お知らせデータ
 // ====================================
 const ANNOUNCEMENTS = [
-    { date: "2025-12-16", text: "📢 トップページに『お知らせ』エリアを追加しました。" },
-    { date: "2025-12-16", text: "⚙️ 設定ページにアクセシビリティ設定（文字サイズ、色の反転、アニメ無効化）を追加しました。" },
-    { date: "2025-12-15", text: "📝 文字数カウント機能のダウンロードボタンを追加しました。" },
-    { date: "2025-12-10", text: "🎨 新しいテーマ「モダングレイ（ダーク）」を追加しました。" },
-    { date: "2025-12-01", text: "🌐 サイト全体をレスポンシブデザインに最適化しました。" }
+    // V1.7.0 リリース詳細へのリンク (記号排除済み)
+    { date: "2025-12-16", text: "<a href='announcement_detail.html' style='color: inherit; font-weight: bold;'>V1.7.0リリース！アクセシビリティ機能と広告適用について（詳細はこちら）</a>" },
+    
+    // 既存の要素 (記号排除済み)
+    { date: "2025-12-16", text: "設定ページにアクセシビリティ設定（文字サイズ、色の反転、アニメ無効化）を追加しました。" },
+    { date: "2025-12-15", text: "文字数カウント機能のダウンロードボタンを追加しました。" },
+    { date: "2025-12-10", text: "新しいテーマ「モダングレイ（ダーク）」を追加しました。" },
+    { date: "2025-12-01", text: "サイト全体をレスポンシブデザインに最適化しました。" }
 ];
 
 // ====================================
@@ -27,6 +30,7 @@ function showLoadingScreen() {
     const loadingOverlay = document.createElement('div');
     loadingOverlay.id = 'loading-overlay';
     loadingOverlay.innerHTML = `<div class="loader"></div><div id="loading-text">データを読み込み中...</div>`;
+    // ロード中もbodyのopacityが1であることを保証
     body.appendChild(loadingOverlay);
     body.style.overflow = 'hidden';
     body.style.opacity = 1; 
@@ -87,7 +91,7 @@ function applyAccessibilitySettings() {
     const noAnimation = localStorage.getItem('accessibility_no_animation') === 'true';
     body.classList.toggle('no-animation', noAnimation);
     
-    // settings.html のフォーム要素の状態を更新
+    // settings.html のフォーム要素の状態を更新 (設定ページでのみ機能)
     const textZoomSelector = document.getElementById('text-zoom-selector');
     const invertColorsToggle = document.getElementById('invert-colors-toggle');
     const grayscaleToggle = document.getElementById('grayscale-toggle');
@@ -180,7 +184,7 @@ const updateRouletteStatus = () => {
     
     if (startButton) {
         const count = rouletteItems.length;
-        // 2つ未満の場合は非表示
+        // 2つ未満の場合は警告表示
         const statusStyle = count >= 2 ? 'none' : 'block'; 
         startButton.disabled = count < 2;
         if (itemCountStatus) itemCountStatus.style.display = statusStyle;

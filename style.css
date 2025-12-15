@@ -1,205 +1,181 @@
-/*
- * ----------------------------------------
- * style.css (共通スタイルシート)
- * ----------------------------------------
- */
-
-/* テーマ変数定義 */
-:root {
-    /* ライトグリーンテーマ (light_green) */
-    --accent: #4CAF50;          /* メインの強調色 (緑) */
-    --accent-dark: #388E3C;     /* 強調色の濃い部分 */
-    --accent-light: #C8E6C9;    /* 強調色の薄い部分 */
-
-    --background: #f4f7f6;      /* ページ全体の背景 */
-    --card: #ffffff;            /* カード/コンテンツ背景 */
-    --text-color: #212121;      /* メインテキスト */
-    --text-soft: #757575;       /* 控えめなテキスト */
-    --border: #e0e0e0;          /* 境界線 */
-    
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 6px 10px rgba(0, 0, 0, 0.15);
-}
-
-/* 他のテーマを追加する場合はここで定義（例: dark_mode）
-body[data-theme="dark_mode"] {
-    --accent: #90CAF9;
-    --background: #121212;
-    ...
-}
-*/
-
-/* グローバルリセットと基本設定 */
-* {
-    box-sizing: border-box;
+/* ====================================
+   グローバルリセットと基本設定
+   ==================================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-}
-
-body {
-    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-    background-color: var(--background);
-    color: var(--text-color);
     line-height: 1.6;
-    transition: background-color 0.3s, color 0.3s;
-    padding-top: 60px; /* PC版ヘッダーの高さ分 */
+    transition: 
+        background-color 0.5s, 
+        color 0.5s;
+    opacity: 0; /* JSでロード後に1にする */
 }
 
+/* リンクの基本スタイル */
 a {
-    color: var(--accent-dark);
     text-decoration: none;
     transition: color 0.2s;
 }
 
-a:hover {
-    color: var(--accent);
-    text-decoration: underline;
+/* ====================================
+   テーマカラーの定義 (5種類)
+   ==================================== */
+
+/* -- デフォルト: Light Green -- */
+body[data-theme="light_green"] {
+    --primary-color: #4db6ac;     
+    --secondary-color: #80cbc4;   
+    --background-color: #f4f7f6;  
+    --text-color: #333333;        
+    --header-footer-bg: #e0f2f1;  
+    --button-bg: #009688;         
 }
 
-/* -------------------- ヘッダーとナビゲーション -------------------- */
+/* -- テーマ 2: Deep Blue -- */
+body[data-theme="deep_blue"] {
+    --primary-color: #42a5f5;     
+    --secondary-color: #90caf9;   
+    --background-color: #f0f4f8;  
+    --text-color: #1a237e;        
+    --header-footer-bg: #e3f2fd;  
+    --button-bg: #1e88e5;         
+}
 
-.header {
-    background-color: var(--card);
+/* -- テーマ 3: Sunset Orange -- */
+body[data-theme="sunset_orange"] {
+    --primary-color: #ffb74d;     
+    --secondary-color: #ffcc80;   
+    --background-color: #fef8f4;  
+    --text-color: #d84315;        
+    --header-footer-bg: #fff3e0;  
+    --button-bg: #ff7043;         
+}
+
+/* -- テーマ 4: Modern Grey (Darkish) -- */
+body[data-theme="modern_grey"] {
+    --primary-color: #90a4ae;     
+    --secondary-color: #cfd8dc;   
+    --background-color: #263238;  
+    --text-color: #eceff1;        
+    --header-footer-bg: #37474f;  
+    --button-bg: #546e7a;         
+}
+
+/* -- テーマ 5: Classic Red -- */
+body[data-theme="classic_red"] {
+    --primary-color: #e57373;     
+    --secondary-color: #ef9a9a;   
+    --background-color: #fafafa;  
+    --text-color: #b71c1c;        
+    --header-footer-bg: #ffebee;  
+    --button-bg: #c62828;         
+}
+
+/* 全体の適用 */
+body {
     color: var(--text-color);
-    padding: 10px 20px;
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
+    background-color: var(--background-color);
 }
-
-.header-title {
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-left: 20px;
-    color: var(--text-color) !important;
-}
-
-.menu-toggle {
-    font-size: 1.8em;
-    cursor: pointer;
+header, footer {
+    background-color: var(--header-footer-bg);
     color: var(--text-color);
 }
-
-/* 垂直ナビゲーション (サイドメニュー) */
-.side-nav {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1001;
-    top: 0;
-    left: 0;
-    background-color: var(--card);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    box-shadow: var(--shadow);
+main {
+    background-color: white;
+}
+body[data-theme="modern_grey"] main {
+    background-color: #455a64; /* ダークテーマのメインコンテンツ背景 */
+    color: #eceff1;
 }
 
-.side-nav.open {
-    width: 250px;
+/* リンクとボタンの適用 */
+a {
+    color: var(--primary-color);
 }
-
-.side-nav a {
-    padding: 15px 25px;
-    text-decoration: none;
-    font-size: 1.1em;
-    color: var(--text-color);
-    display: block;
-    transition: 0.3s;
-    border-bottom: 1px solid var(--border);
+button, select {
+    background-color: var(--button-bg);
+    color: white;
 }
-
-.side-nav a:hover, .side-nav a.active-tab {
-    background-color: var(--accent-light);
-    color: var(--accent-dark);
-    text-decoration: none;
+button:hover {
+    background-color: var(--primary-color);
 }
-
-/* -------------------- 広告エリア -------------------- */
-
-.top-ad-header {
-    width: 100%;
-    text-align: center;
-    padding: 10px 0;
-    background-color: var(--background);
-}
-
-.bottom-ad-footer {
-    width: 100%;
-    text-align: center;
-    padding: 10px 0;
-    background-color: var(--background);
-}
-
-/* -------------------- コンテンツラッパー -------------------- */
-
-.content-wrapper {
-    padding: 20px;
-    max-width: 100%;
-    margin: 0 auto;
-}
-
 h1 {
-    font-size: 2em;
-    color: var(--accent-dark);
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--secondary-color);
+}
+h2 {
+    color: var(--primary-color);
+}
+
+/* ====================================
+   アニメーション定義
+   ==================================== */
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide {
+    animation: slideInFromLeft 0.5s ease-out forwards;
+}
+
+/* ====================================
+   ローディング画面 (JSによって挿入される)
+   ==================================== */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+}
+
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
     margin-bottom: 20px;
-    padding: 0 20px;
 }
 
-/* -------------------- フッター -------------------- */
-
-.footer {
-    border-top: 1px solid var(--border);
-    padding: 15px 0;
-    text-align: center;
-    font-size: 0.75em;
-    color: var(--text-soft);
-    background-color: var(--card);
-    margin-top: 30px;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* -------------------- レスポンシブデザイン (PC版調整) -------------------- */
-
-@media (min-width: 768px) {
-    body {
-        /* PC版ではコンテンツを中央に寄せる */
-        padding-top: 70px;
-    }
-    .header {
-        padding: 15px 0;
-        justify-content: center; /* タイトルを中央に */
-    }
-    .header-title {
-        margin-left: 0;
-    }
-    .menu-toggle {
-        display: none; /* PC版ではハンバーガーメニューを隠す */
-    }
-    .side-nav.open {
-        width: 0; /* PC版ではサイドメニューを強制的に閉じる */
-    }
-    .content-wrapper {
-        padding: 30px 20px;
-    }
+#loading-text {
+    color: var(--primary-color);
+    font-size: 1.2em;
 }
 
-/* -------------------- SP版調整 (767px以下) -------------------- */
-
-@media (max-width: 767px) {
-    body {
-        /* SP版ではヘッダーの高さで上部パディングを調整 */
-        padding-top: 60px; 
-    }
-    h1 {
-        font-size: 1.8em;
-        padding: 0 15px;
-    }
-    .content-wrapper {
-        padding: 15px;
-    }
+/* ====================================
+   その他レイアウト (既存の再定義)
+   ==================================== */
+main {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
+
+/* コンテンツにアニメーションを適用 */
+header, footer, main, section {
+    opacity: 0; /* 初期状態で非表示 */
+        }

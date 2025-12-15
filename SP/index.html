@@ -1,41 +1,66 @@
-<body data-theme="light_green">
-<script>
-// --- バージョン情報 ---
-const APP_VERSION = "v1.2.0"; 
-// ----------------------
-// ★★★ 自動リダイレクトを再開 ★★★
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (!isMobile) { location.href = '../index.html'; }
+<!DOCTYPE html>
+<html lang="ja" data-ads="true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>【SP版】多機能ツールボックス | 篠ノ井乗務区制作</title>
+    <link rel="stylesheet" href="../style.css"> 
+    <script src="../ads.js"></script>
+</head>
+<body data-theme="light_green"> 
+    
+    <script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) { 
+        location.replace('../index.html'); 
+    }
+    </script>
+    
+    <div id="ad-area-top"></div>
+    
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">多機能ツールボックス (SP版)</a></li>
+                <li><a href="counter.html">📝 文字数カウント</a></li>
+                <li><a href="roulette.html">🎲 ルーレット</a></li>
+                <li><a href="settings.html">⚙ 設定</a></li>
+                <li><a href="help.html">ヘルプ</a></li>
+                <li><a href="about.html">制作者</a></li>
+            </ul>
+        </nav>
+    </header>
 
-// ... (他の関数省略) ...
+    <main>
+        <h1>多機能ツールボックスへようこそ (SP)</h1>
+        <section>
+            <h2>📝 文字数カウント</h2>
+            <p>テキストの文字数、行数、バイト数をリアルタイムで計測します。目標設定やデータ保存も可能です。</p>
+            <p><a href="counter.html">使う</a></p>
+        </section>
+        <section>
+            <h2>🎲 ルーレット / カウントダウン</h2>
+            <p>目標日時までのカウントダウン、または設定した項目からランダムに一つを選ぶルーレット機能です。</p>
+            <p><a href="roulette.html">使う</a></p>
+        </section>
+        <section>
+            <h2>⚙ 設定</h2>
+            <p>テーマカラーの変更、ルーレット項目や目標日時の設定を行います。</p>
+            <p><a href="settings.html">設定へ</a></p>
+        </section>
+        <p>バージョン (ここにバージョン番号を記述)</p>
+    </main>
 
-window.onload = function() { 
-    document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
-    const savedTheme = localStorage.getItem('selectedTheme') || 'light_green';
-    applyTheme(savedTheme);
-}
-</script>
+    <div id="ad-area-bottom"></div>
 
-<div class="content-wrapper">
-            <h1>ツールボックス</h1>
-            
-            <div class="tool-grid">
-                </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <p style="font-size: 0.8em; color: var(--text-soft);">バージョン <span id="appVersionDisplay"></span></p>
-                <p><a href="privacy.html" style="font-size: 0.8em;">プライバシーポリシー</a> | <a href="terms.html" style="font-size: 0.8em;">利用規約</a></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="bottom-ad-footer" style="height: 50px;"><div id="ad-area-bottom"></div></div>
-
-<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
-</footer>
-
-<script src="../ads.js"></script>
+    <footer>
+        <p>
+            <a href="../privacy.html">プライバシーポリシー</a> | 
+            <a href="../terms.html">利用規約</a>
+        </p>
+        <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="../script.js"></script>
 </body>
 </html>

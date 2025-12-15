@@ -1,6 +1,6 @@
 /*
  * style.css
- * バージョン 1.70 - アクセシビリティ対応
+ * バージョン 1.70 - アクセシビリティ対応、お知らせスタイル追加
  * 制作: 篠ノ井乗務区制作
  */
 
@@ -131,7 +131,7 @@ input[type="text"], input[type="color"], textarea, select {
     margin-right: 10px;
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
-    font-size: calc(16px * var(--global-zoom)); /* 文字サイズズームを適用 */
+    font-size: calc(16px * var(--global-zoom)); 
 }
 input[type="text"]:focus, textarea:focus, select:focus {
     border-color: var(--primary-color);
@@ -208,6 +208,47 @@ hr { border-top: 1px solid var(--secondary-color); }
 /* ====================================
    コンポーネント固有のスタイル
    ==================================== */
+
+/* お知らせエリアのスタイル */
+#announcement-area {
+    background-color: var(--header-footer-bg); 
+    padding: 15px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+#announcement-area h2 {
+    color: var(--text-color);
+    border-bottom: 1px dashed var(--secondary-color);
+    padding-bottom: 5px;
+    margin-top: 0;
+    font-size: 1.2em;
+}
+#announcement-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+#announcement-list li {
+    margin-bottom: 8px;
+    padding-left: 10px;
+    position: relative;
+    font-size: 0.95em;
+}
+#announcement-list li::before {
+    content: '▶'; 
+    color: var(--primary-color);
+    font-size: 0.7em;
+    margin-right: 5px;
+    display: inline-block;
+}
+/* 日付のスタイル調整 */
+#announcement-list .date {
+    color: #888;
+    margin-right: 10px;
+    font-size: 0.9em;
+}
+
 
 /* ルーレット項目タグ */
 .item-tag { 
@@ -378,10 +419,8 @@ input:checked + .slider:before {
 /* (2) スマートフォン向け (最大幅 600px) */
 @media (max-width: 600px) {
     /* ページの基本設定 */
-    body {
-        /* font-sizeはvar(--global-zoom)で制御 */
-        line-height: 1.5;
-    }
+    line-height: 1.5;
+    
     main {
         margin: 0; 
         padding: 10px;

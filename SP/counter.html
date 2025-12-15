@@ -1,246 +1,59 @@
 <!DOCTYPE html>
 <html lang="ja" data-ads="true">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>【SP版】文字数カウント 保存ツール | ツール</title>
-<link rel="stylesheet" href="../style.css">
-<style>
-/* Font optimization: 日本語/英語フォントの指定を復旧 */
-body, .content-wrapper, textarea, input {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, 
-                 "Hiragino Kaku Gothic ProN", "Meiryo", "Osaka", "MS PGothic", "sans-serif";
-}
-
-/* カウンター表示エリア */
-.count-display {
-    display: flex;
-    justify-content: space-around; 
-    flex-wrap: wrap;
-    background: var(--card);
-    padding: 10px 5px; /* SP版に合わせてパディング調整 */
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.count-item {
-    text-align: center;
-    padding: 5px 0;
-    width: 45%; /* 2列表示を想定 */
-}
-.count-label {
-    display: block;
-    font-size: 0.7em;
-    color: var(--text-soft);
-    margin-bottom: 1px;
-    white-space: nowrap;
-}
-.count-value {
-    font-size: 1.3em;
-    font-weight: bold;
-    color: var(--text-color);
-}
-/* 目標文字数入力フィールドのスタイル調整 */
-#targetCount {
-    width: 60px; /* SP版に合わせて幅を狭く */
-    text-align: center;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2px 5px;
-    font-size: 1em; /* SP版に合わせてフォントサイズ調整 */
-}
-
-/* テキストエリア */
-#textArea {
-    width: 100%;
-    min-height: 300px; /* SP版に合わせて高さを調整 */
-    padding: 15px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    resize: vertical;
-    font-size: 14px;
-    line-height: 1.6;
-    background: var(--background);
-    color: var(--text-color);
-    box-sizing: border-box;
-}
-
-/* アクションボタンコンテナ */
-.action-buttons-container {
-    display: flex;
-    justify-content: space-between; /* SP版は両端揃えでボタンを大きく */
-    gap: 10px;
-    margin-top: 15px;
-}
-.action-buttons-container button {
-    flex-grow: 1; /* ボタンを均等に広げる */
-    padding: 12px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9em;
-    transition: background-color 0.2s;
-}
-#clearButton {
-    background-color: var(--border);
-    color: var(--text-color);
-}
-#clearButton:hover {
-    background-color: #ccc;
-}
-/* ダウンロードボタンにアクセントカラーを適用 */
-#downloadButton {
-    background-color: var(--accent);
-    color: #fff;
-}
-#downloadButton:hover {
-    background-color: var(--accent-dark);
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>文字数カウント | 多機能ツールボックス (SP)</title>
+    <link rel="stylesheet" href="../style.css"> 
+    <script src="../ads.js"></script>
 </head>
-<body data-theme="light_green">
-<script>
-// --- バージョン情報 ---
-const APP_VERSION = "v1.2.0"; 
-// ----------------------
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-if (!isMobile) { location.href = '../counter.html'; }
-
-function toggleMenu() { document.getElementById('sideNav').classList.toggle('open'); }
-
-// ★★★ 機能復旧: カウントロジックの強化 ★★★
-function updateCounts() {
-    const textArea = document.getElementById('textArea');
-    const text = textArea.value;
-    
-    // 文字数 (カウントアップ)
-    const charCount = text.length;
-    
-    // 目標文字数
-    const targetCountInput = document.getElementById('targetCount');
-    const targetCount = parseInt(targetCountInput.value) || 0;
-
-    // 残り文字数 (カウントダウン)
-    const remainingCount = targetCount - charCount;
-    
-    // 行数
-    const lineCount = text.split('\n').length;
-
-    document.getElementById('charCount').textContent = charCount;
-    document.getElementById('lineCount').textContent = lineCount;
-    document.getElementById('remainingCount').textContent = remainingCount;
-    
-    // カウントダウン表示の色変更 (目標を超えた場合)
-    const remainingDisplay = document.getElementById('remainingCount');
-    remainingDisplay.style.color = remainingCount < 0 ? 'red' : 'var(--text-color)';
-}
-
-// ★★★ 機能復旧: ダウンロード機能の追加 ★★★
-function downloadText() {
-    const text = document.getElementById('textArea').value;
-    // ファイル名の生成例: text_count_20251214.txt
-    const filename = "text_count_" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + ".txt";
-    
-    // Blobを作成し、ダウンロードリンクを生成
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-window.onload = function() { 
-    document.getElementById('appVersionDisplay').textContent = APP_VERSION; 
-    document.getElementById('versionDisplay').textContent = APP_VERSION;
-    
-    // イベントリスナーの設定
-    const textArea = document.getElementById('textArea');
-    const targetCountInput = document.getElementById('targetCount');
-    const clearButton = document.getElementById('clearButton');
-    const downloadButton = document.getElementById('downloadButton');
-
-    textArea.addEventListener('input', updateCounts);
-    targetCountInput.addEventListener('input', updateCounts);
-
-    clearButton.addEventListener('click', () => {
-        textArea.value = '';
-        updateCounts();
-    });
-    
-    downloadButton.addEventListener('click', downloadText);
-    
-    // 初期カウントの実行
-    updateCounts();
-}
-</script>
-
-<div class="main-content-area">
-
-    <header class="header">
-        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-        <a href="counter.html" class="header-title" style="font-size: 1.2em;">文字数カウント (SP版)</a>
+<body data-theme="light_green"> 
+    <script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) { location.replace('../counter.html'); }
+    </script>
+    <div id="ad-area-top"></div>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">多機能ツールボックス (SP版)</a></li>
+                <li><a href="counter.html">📝 文字数カウント</a></li>
+                <li><a href="roulette.html">🎲 ルーレット</a></li>
+                <li><a href="settings.html">⚙ 設定</a></li>
+                <li><a href="help.html">ヘルプ</a></li>
+                <li><a href="about.html">制作者</a></li>
+            </ul>
+        </nav>
     </header>
-
-    <div class="top-ad-header" style="height: 50px;">
-        <div id="ad-area-top-sp">
-            <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-        </div>
-    </div>
-
-    <nav class="side-nav" id="sideNav">
-        <a href="counter.html" class="active-tab">📝 文字数カウント</a> 
-        <a href="roulette.html">🎲 ルーレット</a> 
-        <a href="settings.html">⚙ 設定</a>
-        <a href="help.html">ヘルプ</a>
-        <a href="about.html">制作者</a>
-    </nav>
-    
-    <div class="content-wrapper">
-
-        <h1>文字数カウント・保存ツール</h1>
-        <p style="color: var(--text-soft); margin-top: -10px; margin-bottom: 15px; font-size: 0.9em;">文章の文字数、行数をリアルタイムで計測し、目標文字数からのカウントダウンも行えます。</p>
-
-        <div class="count-display">
-            <div class="count-item">
-                <span class="count-label">文字数 (現在)</span>
-                <span id="charCount" class="count-value">0</span>
-            </div>
-            <div class="count-item">
-                <span class="count-label">行数</span>
-                <span id="lineCount" class="count-value">1</span>
-            </div>
-            <div class="count-item">
-                <span class="count-label">目標文字数</span>
-                <input type="number" id="targetCount" class="count-value" value="400" min="1" max="10000">
-            </div>
-            <div class="count-item">
-                <span class="count-label">残り文字数 (CD)</span>
-                <span id="remainingCount" class="count-value">400</span>
-            </div>
-        </div>
-        <textarea id="textArea" placeholder="ここに文章を入力してください..."></textarea>
-
-        <div class="action-buttons-container">
-            <button id="clearButton">クリア</button>
-            <button id="downloadButton">TXT保存</button>
-        </div>
-        </div>
-</div>
-
-<div class="bottom-ad-footer" style="height: 50px;">
-    <div id="ad-area-bottom-sp">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-    </div>
-</div>
-
-<footer class="footer" style="text-align:center; padding: 20px 0; font-size: 0.8em; color: var(--text-soft);">
-    <p>Version <span id="appVersionDisplay"></span></p>
-</footer>
+    <main>
+        <h1>文字数カウントツール (SP)</h1>
+        <section>
+            <h2>📝 テキスト設定</h2>
+            <label for="font-size-selector">サイズ:</label>
+            <select id="font-size-selector">
+                <option value="14px">小</option>
+                <option value="16px" selected>標準</option>
+                <option value="18px">中</option>
+                <option value="20px">大</option>
+            </select>
+            <label for="font-color-selector" style="margin-left: 10px;">色:</label>
+            <input type="color" id="font-color-selector" value="#333333">
+        </section>
+        <textarea id="text-input" placeholder="ここに文字を入力してください"></textarea>
+        <section>
+            <h2>📊 結果と操作</h2>
+            <p>現在の文字数: <span id="char-count">0</span></p>
+            <button id="download-button">📄 ダウンロード</button>
+        </section>
+    </main>
+    <div id="ad-area-bottom"></div>
+    <footer>
+        <p>
+            <a href="../privacy.html">プライバシーポリシー</a> | 
+            <a href="../terms.html">利用規約</a>
+        </p>
+        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
+    <script src="../script.js"></script>
 </body>
 </html>

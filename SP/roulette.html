@@ -8,16 +8,11 @@
     <script src="../ads.js"></script>
 </head>
 <body data-theme="light_green"> 
-
     <script>
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (!isMobile) { 
-        location.replace('../roulette.html'); 
-    }
+    if (!isMobile) { location.replace('../roulette.html'); }
     </script>
-
     <div id="ad-area-top"></div>
-    
     <header>
         <nav>
             <ul>
@@ -30,23 +25,31 @@
             </ul>
         </nav>
     </header>
-    
     <main>
         <h1>ルーレット機能 (SP)</h1>
-        <div id="roulette-display">ルーレットが表示されるエリア</div>
-        <button id="start-button">スタート</button>
+        <section>
+            <h2>🎲 項目設定</h2>
+            <input type="text" id="item-input" placeholder="項目名を入力 (例: ラーメン)" style="padding: 10px; width: 60%; margin-right: 10px;">
+            <button id="add-item-button" style="padding: 10px 15px;">追加</button>
+            <div id="roulette-items">
+                <p style="color: #777;">（項目を3つ以上追加してください）</p>
+            </div>
+        </section>
+        <section>
+            <h2>🎰 ルーレット実行</h2>
+            <div id="roulette-display" style="font-size: 1.5em; font-weight: bold; margin: 20px 0; padding: 10px; border: 2px dashed var(--primary-color);">項目を設定してスタートを押してください。</div>
+            <button id="start-button" disabled>🎯 ルーレットをスタート</button>
+            <p id="item-count-status" style="margin-top: 10px; color: #cc0000; display: none;">※ 項目を2つ以上設定してください。</p>
+        </section>
     </main>
-
     <div id="ad-area-bottom"></div>
-
     <footer>
         <p>
             <a href="../privacy.html">プライバシーポリシー</a> | 
             <a href="../terms.html">利用規約</a>
         </p>
-        <p>Copyright © 2024 篠ノ井乗務区制作. All Rights Reserved.</p>
+        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
     </footer>
-    
     <script src="../script.js"></script>
 </body>
 </html>

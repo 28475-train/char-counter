@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>【お知らせ】V1.7.0リリース詳細 | 多機能ツールボックス</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body data-theme="light_green"> 
+    <script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) { location.replace('SP/announcement_detail.html'); }
+    </script>
+    
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">トップ (PC版)</a></li>
+                <li><a href="counter.html">📝 文字数カウント</a></li>
+                <li><a href="roulette.html">🎲 ルーレット</a></li>
+                <li><a href="settings.html">⚙ 設定</a></li>
+                <li><a href="help.html">ヘルプ</a></li>
+                <li><a href="about.html">制作者</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <h1>V1.7.0 リリース詳細のお知らせ (PC版)</h1>
+
+        <p style="font-weight: bold;">
+            リリースが遅くなり、大変申し訳ございません。
+            この度、以下の新機能実装を伴うバージョン1.7.0を正式に公開しました。
+        </p>
+
+        <hr>
+
+        <section>
+            <h2>1. アクセシビリティ機能の完全実装</h2>
+            <p>より多くの方に快適にご利用いただくため、全ページでアクセシビリティ設定が可能になりました。</p>
+            <ul>
+                <li>機能: 文字サイズ調整、色の反転（ハイコントラスト）、グレースケール、アニメーション無効化。</li>
+                <li>設定場所: 「⚙ 設定」ページから設定し、自動で保存されます。</li>
+            </ul>
+        </section>
+        
+        <hr>
+
+        <section>
+            <h2>2. お知らせエリアの導入</h2>
+            <p>トップページ（PC版/SP版）の目立つ位置に、最新の更新情報をお知らせするエリアを追加しました。</p>
+        </section>
+
+        <hr>
+
+        <section>
+            <h2>3. 広告の適用について</h2>
+            <p>サイトの継続的な運用維持のため、広告を導入いたしました。</p>
+            <p>広告は以下の主要なページに適用されます。</p>
+            <ul>
+                <li><code>index.html</code> および <code>SP/index.html</code> (トップページ)</li>
+                <li><code>counter.html</code> および <code>SP/counter.html</code> (文字数カウント)</li>
+                <li><code>roulette.html</code> および <code>SP/roulette.html</code> (ルーレット)</li>
+            </ul>
+            <p>ご不便をおかけしますが、ご理解ご協力をお願いいたします。</p>
+        </section>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button onclick="location.href='index.html'" style="padding: 12px 30px; font-size: 1.1em;">
+                トップページに戻る
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

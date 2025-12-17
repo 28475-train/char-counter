@@ -5,10 +5,9 @@
     --text: #334155;
     --text-sub: #64748b;
     --border: #e2e8f0;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* ダークモード設定 */
 body.member-mode {
     --bg: #0f172a;
     --card: #1e293b;
@@ -17,7 +16,6 @@ body.member-mode {
     --border: #334155;
 }
 
-/* 基本リセット & スマホ最適化 */
 body {
     margin: 0;
     padding: 0;
@@ -29,7 +27,6 @@ body {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* ヘッダーデザイン */
 header {
     background: var(--card);
     padding: 12px 0;
@@ -57,7 +54,6 @@ header {
     letter-spacing: -0.5px;
 }
 
-/* ナビゲーションボタン */
 .nav-btn-primary, .nav-btn-logout {
     padding: 8px 18px;
     border-radius: 50px;
@@ -67,50 +63,18 @@ header {
     font-weight: bold;
     font-size: 0.85rem;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .nav-btn-logout {
-    background: #e11d48;
+    background: #64748b;
 }
 
-/* メインコンテンツ容器 */
 .container {
     width: 92%;
     max-width: 800px;
     margin: 20px auto 100px;
 }
 
-/* ツールグリッド (ホーム画面) */
-#tool-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-}
-
-@media (min-width: 640px) {
-    #tool-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* カード型UI */
-.tool-card, .custom-form {
-    background: var(--card);
-    padding: 25px;
-    border-radius: 24px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    text-align: center;
-    transition: transform 0.2s;
-}
-
-.tool-card h3 {
-    margin: 0 0 15px;
-    font-size: 1.1rem;
-}
-
-/* メニューボタン (タブ風) */
 .btn-group {
     display: flex;
     gap: 10px;
@@ -130,14 +94,31 @@ header {
     transition: all 0.2s;
 }
 
-.menu-btn:active {
-    transform: scale(0.95);
+.tool-card, .custom-form {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    text-align: center;
 }
 
-/* 入力要素 */
+#tool-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+@media (min-width: 640px) {
+    #tool-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 input[type="text"],
 input[type="password"],
-textarea {
+textarea,
+select {
     width: 100%;
     padding: 16px;
     margin-bottom: 15px;
@@ -145,29 +126,32 @@ textarea {
     border: 2px solid var(--border);
     background: var(--card);
     color: var(--text);
-    font-size: 16px; /* スマホズーム防止 */
+    font-size: 16px;
     box-sizing: border-box;
     outline: none;
-    transition: border-color 0.2s;
 }
 
-input:focus, textarea:focus {
-    border-color: var(--accent);
-}
-
-/* カウンター：スマホ専用の色変更 */
+/* スマホ限定：カウンター背景色変更 */
 @media (max-width: 600px) {
     #counter-input {
-        background-color: #fffde7; /* 薄い黄色 */
-        border-color: #ffd600;
-    }
-    body.member-mode #counter-input {
-        background-color: #2d2d1a;
+        background-color: #fffde7;
         border-color: #ffd600;
     }
 }
 
-/* カウントステータス表示 */
+.submit-btn {
+    width: 100%;
+    padding: 18px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 18px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
 .status-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -196,61 +180,22 @@ body.member-mode .status-item {
 .count-label {
     font-size: 0.65rem;
     font-weight: bold;
-    text-transform: uppercase;
     opacity: 0.7;
 }
 
-/* 実行ボタン (大) */
-.submit-btn {
-    width: 100%;
-    padding: 18px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 18px;
-    font-size: 1.1rem;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.submit-btn:disabled {
-    background: #cbd5e1;
-    cursor: not-allowed;
-}
-
-/* 設定：カラードット */
-.color-dot {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: inline-block;
-    margin: 8px;
-    cursor: pointer;
-    border: 4px solid white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-/* 会員限定ロック表示 */
 .locked {
     filter: grayscale(1);
     opacity: 0.6;
     pointer-events: none;
-    position: relative;
 }
 
-/* ルーレット結果 */
-#roulette-result {
-    font-size: 3.5rem;
-    font-weight: 900;
-    color: var(--accent);
-    margin: 20px 0;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-/* チェックボックス */
-input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--accent);
+.color-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 8px;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }

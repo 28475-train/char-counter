@@ -6,36 +6,38 @@
     <title>ToolBox | 篠ノ井乗務区 公式ツール集</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* --- 同意ポップアップスタイル --- */
+        /* --- 同意ポップアップ --- */
         #consent-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             display: flex; align-items: center; justify-content: center;
-            z-index: 9999; backdrop-filter: blur(8px);
+            z-index: 9999; backdrop-filter: blur(10px);
             display: none;
         }
         .consent-card {
             background: var(--bg);
-            width: 90%; max-width: 450px; padding: 30px;
-            border-radius: 30px; text-align: center;
+            width: 90%; max-width: 450px; padding: 35px;
+            border-radius: 35px; text-align: center;
             border: 2px solid var(--accent);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
         .consent-text {
-            font-size: 0.85rem; line-height: 1.7; color: var(--text-sub);
+            font-size: 0.85rem; line-height: 1.8; color: var(--text-sub);
             margin-bottom: 25px; text-align: left;
-            background: var(--card); padding: 15px; border-radius: 15px;
-            max-height: 150px; overflow-y: auto;
+            background: var(--card); padding: 20px; border-radius: 18px;
+            max-height: 160px; overflow-y: auto;
         }
         .consent-btn {
-            width: 100%; padding: 15px; background: var(--accent);
+            width: 100%; padding: 16px; background: var(--accent);
             color: white; border: none; border-radius: 50px;
             font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
         }
+        .consent-btn:active { transform: scale(0.95); }
         body.modal-open { overflow: hidden; }
 
-        /* --- お知らせセクションスタイル --- */
+        /* --- お知らせセクション --- */
         .info-container { text-align: left; margin-bottom: 40px; }
         .info-list {
             background: var(--card); border-radius: 20px;
@@ -47,15 +49,28 @@
         }
         .info-item:last-child { border-bottom: none; }
         .info-date { font-weight: bold; color: var(--text-sub); width: 85px; flex-shrink: 0; }
-        .info-content { flex-grow: 1; color: var(--text); line-height: 1.5; }
-        .badge-new { background: var(--accent); color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; margin-right: 8px; }
+        
+        /* お知らせタイトルの特殊スタイル */
+        #info-trigger {
+            font-size: 1.2rem; margin-bottom: 15px; 
+            border-left: 5px solid var(--accent); padding-left: 12px; 
+            font-weight: 900; transition: all 0.2s ease;
+            cursor: pointer; user-select: none; display: inline-block;
+        }
+        /* PC版ホバー演出 */
+        @media (hover: hover) {
+            #info-trigger:hover {
+                color: var(--accent);
+                transform: translateX(8px);
+            }
+        }
     </style>
 </head>
 <body>
 
     <div id="consent-overlay">
         <div class="consent-card">
-            <h2 style="color: var(--accent); margin-bottom: 20px;">ご利用前の確認</h2>
+            <h2 style="color: var(--accent); margin-bottom: 20px;">SECURITY CHECK</h2>
             <div class="consent-text">
                 当サイト「ToolBox」をご利用いただきありがとうございます。<br><br>
                 ご利用にあたり、以下の内容に同意いただく必要があります：<br>
@@ -64,7 +79,7 @@
                 ・ブラウザ保存機能（LocalStorage）の使用<br><br>
                 詳細はページ下部の「運営者情報」をご確認ください。
             </div>
-            <button class="consent-btn" onclick="acceptConsent()">同意して利用を開始する</button>
+            <button class="consent-btn" onclick="acceptConsent()">同意してシステムを開始</button>
         </div>
     </div>
 
@@ -77,51 +92,47 @@
 
     <main class="container">
         <section class="info-container">
-            <h2 id="info-trigger" style="font-size: 1.2rem; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900; transition: transform 0.1s; cursor: pointer; user-select: none;">
-                お知らせ
-            </h2>
+            <h2 id="info-trigger">お知らせ</h2>
             <div class="info-list">
                 <div class="info-item">
                     <div class="info-date">2025/12/17</div>
-                    <div class="info-content"><span class="badge-new">NEW</span> ルーレットの履歴保存機能を実装しました。</div>
+                    <div class="info-content"><span style="background:var(--accent);color:white;font-size:0.6rem;padding:2px 6px;border-radius:4px;margin-right:8px;">NEW</span> ルーレットの履歴保存機能を実装。</div>
                 </div>
                 <div class="info-item">
                     <div class="info-date">2025/12/10</div>
-                    <div class="info-content"> サイトのセキュリティプロトコルを更新しました。</div>
+                    <div class="info-content"> セキュリティ・プロトコル v2.0を適用しました。</div>
                 </div>
             </div>
         </section>
 
         <section style="margin-bottom: 50px;">
-            <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">
-                メインメニュー
-            </h2>
+            <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">メインメニュー</h2>
             <div id="tool-grid"></div>
         </section>
 
         <hr style="border: none; border-top: 2px solid var(--border); margin: 60px 0 40px;">
 
         <section class="custom-form" style="text-align: left; padding: 35px; border-radius: 32px;">
-            <h3 style="color: var(--accent); font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">プライバシーポリシー・免責</h3>
-            <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 10px; line-height: 1.6;">
-                ツール内に入力されたデータはブラウザ内でのみ処理され、外部へ送信されることはありません。本サービスの利用により発生した損害について、運営者は一切の責任を負いません。
+            <h3 style="color: var(--accent); font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">免責事項・プライバシー</h3>
+            <p style="font-size: 0.8rem; color: var(--text-sub); margin-top: 10px; line-height: 1.6;">
+                本サービスで提供されるツールの結果により発生したいかなる損害についても、運営者は責任を負いません。データはすべてローカル環境で処理されます。
             </p>
             <div style="margin-top: 25px;">
-                <table style="width: 100%; font-size: 0.85rem; color: var(--text-sub); border-collapse: collapse;">
-                    <tr><td style="padding: 5px 0; width: 80px; font-weight: bold;">運営：</td><td>篠ノ井乗務区</td></tr>
-                    <tr><td style="padding: 5px 0; font-weight: bold;">連絡：</td><td>shinorail.contact@gmail.com</td></tr>
+                <table style="width: 100%; font-size: 0.8rem; color: var(--text-sub);">
+                    <tr><td style="width: 70px; font-weight: bold;">運営：</td><td>篠ノ井乗務区</td></tr>
+                    <tr><td style="font-weight: bold;">連絡：</td><td>shinorail.contact@gmail.com</td></tr>
                 </table>
             </div>
         </section>
 
         <footer style="margin-top: 60px; text-align: center;">
-            <p style="font-size: 0.7rem; color: var(--text-sub); letter-spacing: 1px;">&copy; 2025 篠ノ井乗務区 All Rights Reserved.</p>
+            <p style="font-size: 0.7rem; color: var(--text-sub);">&copy; 2025 篠ノ井乗務区 All Rights Reserved.</p>
         </footer>
     </main>
 
     <script src="script.js"></script>
     <script>
-        // --- 1. 同意管理 ---
+        // 1. 同意システムの実行
         const CONSENT_KEY = 'shinorail_consent_v1';
         window.addEventListener('DOMContentLoaded', () => {
             if (!localStorage.getItem(CONSENT_KEY)) {
@@ -141,30 +152,41 @@
             }, 400);
         }
 
-        // --- 2. 隠しページトリガー（お知らせ3回タップ） ---
-        let infoTapCount = 0;
-        let infoTimer;
-        const infoTitle = document.getElementById('info-trigger');
+        // 2. 隠しトリガー：お知らせ3回クリック
+        let tapCount = 0;
+        let tapTimer;
+        const trigger = document.getElementById('info-trigger');
 
-        if (infoTitle) {
-            infoTitle.addEventListener('click', () => {
-                infoTapCount++;
+        if (trigger) {
+            trigger.addEventListener('click', () => {
+                tapCount++;
                 
-                // タップ時の視覚効果（少し揺れる）
-                infoTitle.style.transform = 'translateX(5px)';
-                setTimeout(() => { infoTitle.style.transform = 'translateX(0)'; }, 50);
+                // 視覚演出（ポコンと跳ねる）
+                trigger.style.transform = 'scale(1.15)';
+                setTimeout(() => { trigger.style.transform = 'scale(1)'; }, 100);
 
-                // 2秒操作がないとリセット
-                clearTimeout(infoTimer);
-                infoTimer = setTimeout(() => { infoTapCount = 0; }, 2000);
+                clearTimeout(tapTimer);
+                tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
 
-                if (infoTapCount === 3) {
-                    if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-                    alert("秘密のセクターへのアクセスを承認しました。");
+                if (tapCount === 3) {
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                    alert("AUTHORIZATION GRANTED: 隠しセクターへ。");
                     location.href = 'secret.html';
                 }
             });
         }
+
+        // 3. PC限定：キーボード隠しコマンド「S」を3回
+        let keyCount = 0;
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 's') {
+                keyCount++;
+                if (keyCount === 3) {
+                    location.href = 'secret.html';
+                }
+                setTimeout(() => { keyCount = 0; }, 2000);
+            }
+        });
     </script>
 </body>
 </html>

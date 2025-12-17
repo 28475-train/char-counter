@@ -1,141 +1,134 @@
-/* TOOLBOX PREMIUM - INTEGRATED LOGIC
-   1. 会員判定 & UI動的生成
-   2. アクセシビリティ & 設定保存
-   3. 全4ツールのロジック
-   4. GAS お問い合わせ送信
-*/
-
+// 共通設定：GASのURL
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwR7OwIAmzQikZxAOM2x4hYJNB_6MaBoFqrhdNnn_39GuqinipwFn1v8icxsc5II69-XQ/exec";
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 0. 初期設定の適用
-    initApp();
-
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const grid = document.getElementById('tool-grid');
+    // 1. 設定の適用（カラー、フォント、ダークモード）
+    applySettings();
     
-    // 1. UIの描画（index.html用）
-    if (grid) {
-        renderTools(isLoggedIn);
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const statusArea = document.getElementById('status-area');
+    const settingsNav = document.getElementById('settings-nav-btn');
+
+    // 2. ログイン状態の反映
+    if (isLoggedIn) {
+        document.body.classList.add('member-mode');
+        if (settingsNav) settingsNav.style.display = 'inline-block';
+        if (statusArea) statusArea.innerHTML = `<button onclick="logout()" class="nav-btn">Logout</button>`;
+    } else {
+        if (statusArea) statusArea.innerHTML = `<button onclick="login()" class="nav-btn-primary">Login</button>`;
     }
 
-    // 2. お問い合わせフォーム送信
+    // 3. ツールグリッドの描画 (index.html用)
+    const grid = document.getElementById('tool-grid');
+    if (grid) renderToolGrid(isLoggedIn);
+
+    // 4. 文字数カウント機能 (count.html用)
+    const counterInput = document.getElementById('counter-input');
+    if (counterInput) {
+        const charDisplay = document.getElementById('char-count');
+        counterInput.addEventListener('input', () => {
+            charDisplay.innerText = counterInput.value.length;
+        });
+    }
+
+    // 5. ルーレット機能 (roulette.html用)
+    const runRoulette = document.getElementById('run-roulette-btn');
+    if (runRoulette) {
+        runRoulette.onclick = () => {
+            const resultDisplay = document.getElementById('roulette-result');
+            resultDisplay.innerText = "抽選中...";
+            setTimeout(() => {
+                const items = ["大吉", "中吉", "小吉", "吉", "末吉", "凶"];
+                const res = items[Math.floor(Math.random() * items.length)];
+                resultDisplay.innerText = res;
+            }, 500);
+        };
+    }
+
+    // 6. パスワード生成機能 (pass.html用)
+    const passBtn = document.getElementById('generate-pass-btn');
+    if (passBtn) {
+        passBtn.onclick = () => {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let pass = "";
+            for (let i = 0; i < 16; i++) {
+                pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('pass-result').value = pass;
+        };
+    }
+
+    // 7. メモ帳機能 (memo.html用)
+    const memoArea = document.getElementById('memo-area');
+    if (memoArea) {
+        memoArea.value = localStorage.getItem('user-memo') || "";
+        memoArea.addEventListener('input', () => {
+            localStorage.setItem('user-memo', memoArea.value);
+        });
+    }
+
+    // 8. お問い合わせ送信 (contact.html用)
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
-        handleContactForm(contactForm);
+        contactForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerText = "送信中...";
+            const data = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            };
+            try {
+                await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+                document.getElementById('form-wrapper').style.display = 'none';
+                document.getElementById('form-success').style.display = 'block';
+            } catch (err) {
+                alert("送信失敗");
+                btn.disabled = false;
+            }
+        };
     }
 });
 
-/* ==========================================
-   APP 初期化
-   ========================================== */
-function initApp() {
-    // 設定読み込み
-    const color = localStorage.getItem('user-color') || '#4CAF50';
-    const font = localStorage.getItem('user-font') || '16px';
-    const isDark = localStorage.getItem('dark-mode') === 'true';
+/* --- 管理・共通関数 --- */
 
-    document.documentElement.style.setProperty('--accent', color);
-    document.documentElement.style.fontSize = font;
-    
-    if (isDark || (localStorage.getItem('isLoggedIn') === 'true')) {
-        document.body.classList.add('member-mode');
-    }
-
-    // スマホ用タブバーの「active」制御
-    const path = window.location.pathname;
-    document.querySelectorAll('.tab-item').forEach(el => {
-        if (path.includes(el.getAttribute('href'))) el.classList.add('active');
-    });
-}
-
-/* ==========================================
-   ツール描画 & ツール機能 (文字数・ルーレット等)
-   ========================================== */
-function renderTools(isLoggedIn) {
+function renderToolGrid(isLoggedIn) {
     const grid = document.getElementById('tool-grid');
-    
     const tools = [
-        { id: 'count', name: '文字数カウント', icon: '📝', free: true },
-        { id: 'roulette', name: '抽選ルーレット', icon: '🎲', free: isLoggedIn },
-        { id: 'pass', name: '強固なパス作成', icon: '🔐', free: isLoggedIn },
-        { id: 'memo', name: 'クラウドメモ', icon: '💾', free: isLoggedIn }
+        { name: "📝 文字数カウント", page: "count.html", free: true },
+        { name: "🎲 ルーレット", page: "roulette.html", free: isLoggedIn },
+        { name: "🔐 パス生成", page: "pass.html", free: isLoggedIn },
+        { name: "💾 メモ帳", page: "memo.html", free: isLoggedIn }
     ];
-
     grid.innerHTML = tools.map(t => `
         <div class="tool-card ${!t.free ? 'locked' : ''}">
-            <div style="font-size: 3rem; margin-bottom:15px;">${t.icon}</div>
-            <h3 style="margin:0;">${t.name}</h3>
-            <p style="font-size:0.8rem; opacity:0.7;">${t.free ? '起動可能です' : '会員限定機能'}</p>
-            <button class="submit-btn" style="margin-top:20px; padding:12px;" 
-                onclick="${t.free ? `runTool('${t.id}')` : 'login()'}">
-                ${t.free ? 'ツールを開く' : 'ログインして開放'}
+            <h3>${t.name}</h3>
+            <button onclick="${t.free ? `location.href='${t.page}'` : 'login()'}" class="submit-btn">
+                ${t.free ? 'ツールを起動' : 'Loginして開放'}
             </button>
         </div>
     `).join('');
 }
 
-// 簡易ツール実行エンジン
-function runTool(id) {
-    if (id === 'count') {
-        const val = prompt("文字数を数えるテキストを入力してください:");
-        if (val) alert(`文字数: ${val.length}文字です！`);
-    } else if (id === 'roulette') {
-        const items = ["大吉", "中吉", "小吉", "凶"];
-        const res = items[Math.floor(Math.random() * items.length)];
-        alert(`運勢結果: ${res}`);
-    } else if (id === 'pass') {
-        const pass = Math.random().toString(36).slice(-10) + "!";
-        alert(`生成されたパスワード: ${pass}\n(安全に保管してください)`);
-    } else if (id === 'memo') {
-        const memo = localStorage.getItem('user-memo') || "メモはまだありません";
-        const newMemo = prompt("メモを保存します:", memo);
-        if (newMemo) localStorage.setItem('user-memo', newMemo);
-    }
+function applySettings() {
+    const color = localStorage.getItem('user-color') || '#4CAF50';
+    const font = localStorage.getItem('user-font') || '16px';
+    const dark = localStorage.getItem('dark-mode') === 'true';
+    document.documentElement.style.setProperty('--accent', color);
+    document.documentElement.style.fontSize = font;
+    if (dark) document.body.classList.add('member-mode');
+    else document.body.classList.remove('member-mode');
 }
 
-/* ==========================================
-   お問い合わせ送信
-   ========================================== */
-function handleContactForm(form) {
-    form.onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submit-btn');
-        btn.disabled = true;
-        btn.innerHTML = "📡 通信中...";
+function login() { localStorage.setItem('isLoggedIn', 'true'); location.reload(); }
+function logout() { localStorage.clear(); location.href = 'index.html'; }
 
-        const payload = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            message: document.getElementById('message').value
-        };
-
-        try {
-            await fetch(GAS_URL, {
-                method: 'POST',
-                mode: 'no-cors', // 重要
-                body: JSON.stringify(payload)
-            });
-            document.getElementById('form-wrapper').style.display = 'none';
-            document.getElementById('form-success').style.display = 'block';
-        } catch (err) {
-            alert("送信に失敗しました。ネット環境を確認してください。");
-            btn.disabled = false;
-            btn.innerText = "メールを送信する";
-        }
-    };
-}
-
-/* ==========================================
-   認証 & 設定
-   ========================================== */
-function login() {
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('dark-mode', 'true');
-    location.reload();
-}
-
-function logout() {
-    localStorage.clear();
-    location.href = 'index.html';
+// 設定変更用（settings.htmlから呼ぶ）
+function setTheme(c) { localStorage.setItem('user-color', c); applySettings(); }
+function setFontSize(s) { localStorage.setItem('user-font', s); applySettings(); }
+function toggleDark() { 
+    const d = localStorage.getItem('dark-mode') === 'true';
+    localStorage.setItem('dark-mode', !d); applySettings();
 }

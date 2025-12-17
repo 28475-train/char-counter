@@ -1,55 +1,165 @@
 <!DOCTYPE html>
-<html lang="ja" data-ads="true">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ルーレットツール | 多機能ツールボックス</title>
-    <link rel="stylesheet" href="style.css"> 
-    <script src="ads.js"></script>
+    <title>確率操作ルーレット | 篠ノ井乗務区</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #roulette-display {
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.05);
+            border-radius: 24px;
+            margin-bottom: 25px;
+            border: 3px dashed var(--accent);
+            transition: all 0.3s;
+        }
+        #roulette-target {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--text);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .settings-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .hint-text {
+            font-size: 0.7rem;
+            color: var(--text-sub);
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
-<body data-theme="light_green"> 
-    <script>
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) { location.replace('SP/roulette.html'); }
-    </script>
-    <div id="ad-area-top"></div>
+<body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">多機能ツールボックス (PC版)</a></li>
-                <li><a href="counter.html">📝 文字数カウント</a></li>
-                <li><a href="roulette.html">🎲 ルーレット</a></li>
-                <li><a href="settings.html">⚙ 設定</a></li>
-                <li><a href="help.html">ヘルプ</a></li>
-                <li><a href="about.html">制作者</a></li>
-            </ul>
-        </nav>
+        <div class="header-container">
+            <a href="index.html" class="logo-text">ROULETTE Pro</a>
+            <div id="status-area"></div>
+        </div>
     </header>
-    <main>
-        <h1>ルーレット機能</h1>
-        <section>
-            <h2>🎲 項目設定</h2>
-            <input type="text" id="item-input" placeholder="項目名を入力 (例: ラーメン)" style="padding: 10px; width: 60%; margin-right: 10px;">
-            <button id="add-item-button" style="padding: 10px 15px;">追加</button>
-            <div id="roulette-items">
-                <p style="color: #777;">（項目を3つ以上追加してください）</p>
+
+    <main class="container">
+        <div class="btn-group">
+            <button class="menu-btn" onclick="location.href='index.html'">ホーム</button>
+            <button class="menu-btn" onclick="clearSettings()">設定初期化</button>
+        </div>
+
+        <div class="custom-form">
+            <div id="roulette-display">
+                <div id="roulette-target">READY</div>
+                <div id="probability-info" style="font-size: 0.75rem; color: var(--accent); margin-top: 10px; font-weight: bold;"></div>
             </div>
-        </section>
-        <section>
-            <h2>🎰 ルーレット実行</h2>
-            <div id="roulette-display" style="font-size: 1.5em; font-weight: bold; margin: 20px 0; padding: 10px; border: 2px dashed var(--primary-color);">項目を設定してスタートを押してください。</div>
-            <button id="start-button" disabled>🎯 ルーレットをスタート</button>
-            <p id="item-count-status" style="margin-top: 10px; color: #cc0000; display: none;">※ 項目を2つ以上設定してください。</p>
-        </section>
+
+            <div style="text-align: left;">
+                <div class="settings-label">
+                    <span>項目と重みの設定</span>
+                    <span id="save-status" style="font-weight: normal; color: var(--accent); opacity: 0;">保存済み</span>
+                </div>
+                <p class="hint-text">「項目名,重み」の形式で入力してください（例：大吉,1）</p>
+                <textarea id="roulette-config" rows="8" placeholder="あたり,1&#10;はずれ,10&#10;レア,0.1"></textarea>
+            </div>
+
+            <button id="roulette-start" onclick="runProRoulette()" class="submit-btn" style="height: 75px; font-size: 1.5rem; margin-top: 10px;">抽選開始</button>
+        </div>
     </main>
-    <div id="ad-area-bottom"></div>
-    <footer>
-        <p>
-            <a href="privacy.html">プライバシーポリシー</a> | 
-            <a href="terms.html">利用規約</a>
-        </p>
-        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
-    </footer>
+
     <script src="script.js"></script>
+    <script>
+        // --- ルーレット専用ロジック ---
+        const configInput = document.getElementById('roulette-config');
+        const target = document.getElementById('roulette-target');
+        const probInfo = document.getElementById('probability-info');
+        const saveStatus = document.getElementById('save-status');
+
+        // ブラウザから設定を読み込み
+        window.onload = () => {
+            const saved = localStorage.getItem('roulette_settings');
+            if (saved) {
+                configInput.value = saved;
+            } else {
+                configInput.value = "特賞,1\n当たり,5\nハズレ,10";
+            }
+        };
+
+        // 入力されるたびにブラウザに自動保存
+        configInput.addEventListener('input', () => {
+            localStorage.setItem('roulette_settings', configInput.value);
+            saveStatus.style.opacity = 1;
+            setTimeout(() => { saveStatus.style.opacity = 0; }, 1000);
+        });
+
+        function clearSettings() {
+            if(confirm("設定をリセットしますか？")) {
+                localStorage.removeItem('roulette_settings');
+                location.reload();
+            }
+        }
+
+        async function runProRoulette() {
+            const lines = configInput.value.split('\n').filter(l => l.trim() !== "");
+            let pool = [];
+            let totalWeight = 0;
+
+            // 確率計算ロジック
+            const items = lines.map(line => {
+                const parts = line.split(',');
+                const name = parts[0].trim();
+                const weight = parseFloat(parts[1]) || 1; // 重みが指定ない場合は1
+                totalWeight += weight;
+                return { name, weight };
+            });
+
+            if (items.length < 2) return alert("項目を2つ以上設定してください");
+
+            const startBtn = document.getElementById('roulette-start');
+            startBtn.disabled = true;
+            probInfo.innerText = "";
+            target.style.color = "var(--text)";
+
+            // 演出用タイマー
+            let counter = 0;
+            const steps = 30;
+            
+            const spin = () => {
+                // 重みに基づいた抽選
+                let random = Math.random() * totalWeight;
+                let selected = items[0];
+                for (let item of items) {
+                    if (random < item.weight) {
+                        selected = item;
+                        break;
+                    }
+                    random -= item.weight;
+                }
+
+                target.innerText = selected.name;
+                counter++;
+
+                if (counter < steps) {
+                    setTimeout(spin, 50 + (counter * 5)); // 徐々に遅くなる
+                } else {
+                    // 確定
+                    target.style.color = "var(--accent)";
+                    const chance = ((selected.weight / totalWeight) * 100).toFixed(2);
+                    probInfo.innerText = `当選確率: ${chance}% (重み: ${selected.weight})`;
+                    
+                    startBtn.disabled = false;
+                    startBtn.innerText = "もう一度引く";
+                }
+            };
+
+            spin();
+        }
+    </script>
 </body>
 </html>

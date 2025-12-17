@@ -7,51 +7,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="header-container">
-            <a href="index.html" class="logo-text">CONTACT</a>
-            <div id="status-area"></div>
-        </div>
-    </header>
-
+    <header><div class="header-container"><a href="index.html" class="logo-text">CONTACT</a><div id="status-area"></div></div></header>
     <main class="container">
-        <div class="btn-group">
-            <button class="menu-btn" onclick="location.href='index.html'">ホームへ</button>
-            <button class="menu-btn" onclick="location.href='settings.html'">設定</button>
-        </div>
-
         <div class="custom-form">
-            <h2 style="color: var(--accent); margin-top: 0;">お問い合わせ</h2>
-            <p style="font-size: 0.85rem; margin-bottom: 25px; opacity: 0.8;">
-                送信後、Googleスプレッドシートへ記録され、自動返信メールが届きます。
-            </p>
-
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="font-size: 0.8rem; font-weight: bold;">返信用メールアドレス</label>
-                <input type="text" id="contact-email" placeholder="example@mail.com">
-            </div>
-
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="font-size: 0.8rem; font-weight: bold;">お問い合わせの種類</label>
-                <select id="contact-type">
-                    <option value="">選択してください</option>
-                    <option value="不具合報告">不具合・バグの報告</option>
-                    <option value="新機能の要望">新しい機能の要望</option>
-                    <option value="その他">その他</option>
-                </select>
-            </div>
-
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label style="font-size: 0.8rem; font-weight: bold;">メッセージ詳細</label>
-                <textarea id="contact-message" rows="8" placeholder="内容を詳しく記入してください"></textarea>
-            </div>
-
-            <button id="send-btn" onclick="processContact()" class="submit-btn">メッセージを送信</button>
+            <h2 style="color: var(--accent);">お問い合わせ</h2>
+            <input type="text" id="contact-email" placeholder="メールアドレス">
+            <select id="contact-type">
+                <option value="不具合">不具合報告</option>
+                <option value="要望">新機能要望</option>
+                <option value="その他">その他</option>
+            </select>
+            <textarea id="contact-message" rows="8" placeholder="メッセージ内容"></textarea>
+            <button id="send-btn" onclick="processContact()" class="submit-btn">送信する</button>
             
-            <p id="msg-status" style="margin-top: 20px; font-weight: bold; font-size: 0.9rem; display: none;"></p>
+            <button onclick="location.href='index.html'" class="menu-btn" style="width:100%; margin-top:15px;">ホームに戻る</button>
         </div>
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>

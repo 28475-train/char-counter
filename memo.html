@@ -1,31 +1,216 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8"><title>💾 クラウドメモ | 会員限定</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CLOUD MEMO | 篠ノ井乗務区</title>
+    <style>
+        /* 全体スタイル（省略なし） */
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ゲーミングカーソル設定 */
+        html, body, * {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="5" fill="%2300ffaa" stroke="white" stroke-width="1"/><path d="M16 0v32M0 16h32" stroke="%2300ffaa" stroke-width="1" stroke-dasharray="2,2"/></svg>') 16 16, auto !important;
+        }
+
+        /* ログイン済みの青カーソル */
+        body.is-logged-in, body.is-logged-in * {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="5" fill="%2300aaff" stroke="white" stroke-width="1"/><path d="M16 0v32M0 16h32" stroke="%2300aaff" stroke-width="1" stroke-dasharray="2,2"/></svg>') 16 16, auto !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Share Tech Mono', monospace, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* スマホのバウンス防止 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .title {
+            color: #00ffaa;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        body.is-logged-in .title {
+            color: #00aaff;
+        }
+
+        #status {
+            font-size: 0.6rem;
+            color: #555;
+        }
+
+        textarea {
+            flex: 1;
+            background: #050505;
+            border: 1px solid #222;
+            color: #fff;
+            padding: 15px;
+            font-size: 16px; /* スマホのズーム防止 */
+            border-radius: 10px;
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            border-color: #00aaff;
+        }
+
+        .footer-nav {
+            display: flex;
+            gap: 10px;
+            padding-bottom: env(safe-area-inset-bottom); /* iPhone対策 */
+        }
+
+        .btn {
+            flex: 1;
+            background: #111;
+            border: 1px solid #333;
+            color: #888;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:active {
+            background: #00aaff;
+            color: #000;
+            border-color: #00aaff;
+        }
+    </style>
 </head>
-<body class="member-mode">
-    <header><div class="logo-text">ToolBox</div><div id="user-status-area"></div></header>
-    <main style="max-width:800px;">
-        <h1>💾 会員専用クラウドメモ</h1>
-        <div class="tool-box">
-            <textarea id="memo-area" rows="15" placeholder="ここに書いた内容は自動的に保存されます..."></textarea>
-            <p id="save-status" style="font-size:0.8em; color:gray; text-align:right;">保存済み</p>
-        </div>
-        <button onclick="location.href='index.html'" style="margin-top:20px;">トップに戻る</button>
-    </main>
-    <script src="script.js"></script>
-    <script>
-        const memo = document.getElementById('memo-area');
-        const status = document.getElementById('save-status');
-        // 保存データの読み込み
-        memo.value = localStorage.getItem('user_memo') || "";
-        // 入力するたびに保存
-        memo.addEventListener('input', () => {
-            localStorage.setItem('user_memo', memo.value);
-            status.innerText = "保存中...";
-            setTimeout(() => { status.innerText = "保存済み"; }, 500);
-        });
-    </script>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="title">CLOUD_SHARED_MEMO_v3</div>
+        <div id="status">STATUS: STANDBY</div>
+    </div>
+
+    <textarea id="memo-box" placeholder="同期データを読み込み中..."></textarea>
+
+    <div class="footer-nav">
+        <button class="btn" onclick="location.href='index.html'">BACK</button>
+        <button class="btn" onclick="manualSync()">SYNC_NOW</button>
+        <button class="btn" onclick="clearMemo()">CLEAR</button>
+    </div>
+</div>
+
+<script>
+    // --- 設定エリア ---
+    // 別デバイスと共有するには、ここにGAS等で発行したURLを記述します。
+    // 空のままでも、同じ端末内（LocalStorage）での保存は継続されます。
+    const API_URL = ""; 
+
+    const memoBox = document.getElementById('memo-box');
+    const statusLabel = document.getElementById('status');
+    const authKey = 'shinorail_consent_v1';
+
+    // ログイン状態（カーソル色）の反映
+    if (localStorage.getItem(authKey)) {
+        document.body.classList.add('is-logged-in');
+    }
+
+    // 初期読み込み
+    window.onload = async () => {
+        statusLabel.innerText = "STATUS: CONNECTING...";
+        
+        // ローカルデータを優先表示
+        const localData = localStorage.getItem('shinorail_memo_data');
+        if (localData) memoBox.value = localData;
+
+        // APIがあればサーバーから取得
+        if (API_URL) {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                if (data.content) {
+                    memoBox.value = data.content;
+                    statusLabel.innerText = "STATUS: CLOUD_SYNCED";
+                }
+            } catch (e) {
+                statusLabel.innerText = "STATUS: LOCAL_ONLY";
+            }
+        } else {
+            statusLabel.innerText = "STATUS: LOCAL_READY";
+        }
+    };
+
+    // 保存処理
+    async function saveContent() {
+        const content = memoBox.value;
+        localStorage.setItem('shinorail_memo_data', content);
+        
+        if (API_URL) {
+            statusLabel.innerText = "STATUS: UPLOADING...";
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ content: content })
+                });
+                statusLabel.innerText = "STATUS: CLOUD_SAVED";
+            } catch (e) {
+                statusLabel.innerText = "STATUS: SYNC_ERROR";
+            }
+        } else {
+            statusLabel.innerText = "STATUS: LOCAL_SAVED";
+        }
+    }
+
+    // 入力監視（タイピングが止まって1秒後に自動保存）
+    let timer;
+    memoBox.addEventListener('input', () => {
+        statusLabel.innerText = "STATUS: TYPING...";
+        clearTimeout(timer);
+        timer = setTimeout(saveContent, 1000);
+    });
+
+    // 手動同期
+    function manualSync() {
+        saveContent();
+    }
+
+    // 全消去
+    function clearMemo() {
+        if (confirm("全データを消去しますか？")) {
+            memoBox.value = "";
+            localStorage.removeItem('shinorail_memo_data');
+            saveContent();
+        }
+    }
+</script>
+
 </body>
 </html>

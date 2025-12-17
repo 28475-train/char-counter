@@ -1,130 +1,26 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Contact | ToolBox Premium</title>
-    <style>
-        :root {
-            --main-green: #4CAF50;
-            --accent-gold: #D4AF37;
-            --bg-dark: #0f172a;
-            --text-light: #f8fafc;
-        }
-        body {
-            margin: 0; font-family: 'Helvetica Neue', Arial, sans-serif;
-            background: #f1f5f9; color: #334155; transition: 0.4s;
-        }
-        /* 会員・VIP向けダークモード風デザイン */
-        body.member-mode { background: var(--bg-dark); color: var(--text-light); }
-
-        header {
-            background: white; padding: 15px; text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        body.member-mode header { background: #1e293b; border-bottom: 2px solid var(--accent-gold); }
-
-        .logo-text { font-size: 1.5rem; font-weight: 900; color: var(--main-green); }
-
-        .container { padding: 20px; max-width: 500px; margin: 0 auto; }
-
-        .custom-form {
-            background: white; padding: 30px; border-radius: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        body.member-mode .custom-form { background: #1e293b; color: white; }
-
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; }
-        .form-group input, .form-group textarea {
-            width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px;
-            font-size: 1rem; outline: none; box-sizing: border-box; transition: 0.3s;
-        }
-        .form-group input:focus { border-color: var(--main-green); }
-
-        .submit-btn {
-            width: 100%; padding: 16px; background: var(--main-green);
-            color: white; border: none; border-radius: 12px;
-            font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-        .submit-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
-
-        #form-success {
-            display: none; text-align: center; padding: 40px 20px;
-            background: white; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        body.member-mode #form-success { background: #1e293b; }
-    </style>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolBox Premium</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="member-mode"> <header>
-        <div class="logo-text">ToolBox Premium.</div>
+<body id="app-body">
+    <header>
+        <div class="header-container">
+            <div class="logo-text" onclick="location.href='index.html'">ToolBox.</div>
+            <nav id="nav-area"></nav>
+            <div id="status-area"></div>
+        </div>
     </header>
 
+    <div id="ad-wrapper" class="ad-container" style="display:none;">
+        <div class="ad-label">SPONSOR</div><div id="ad-space"></div>
+    </div>
+
     <main class="container">
-        <div id="form-success">
-            <div style="font-size: 4rem; margin-bottom: 10px;">✅</div>
-            <h2>送信が完了しました</h2>
-            <p>shinorail.contact@gmail.com 宛に通知を送信しました。また、ご入力いただいたアドレスに確認メールをお送りしています。</p>
-            <button onclick="location.reload()" class="submit-btn" style="background:#64748b; margin-top:20px;">戻る</button>
-        </div>
-
-        <div class="custom-form" id="form-wrapper">
-            <h2 style="text-align:center; margin-top:0;">Contact Support</h2>
-            <form id="contact-form">
-                <div class="form-group">
-                    <label>お名前</label>
-                    <input type="text" id="name" placeholder="Name" required>
-                </div>
-                <div class="form-group">
-                    <label>メールアドレス</label>
-                    <input type="email" id="email" placeholder="example@mail.com" required>
-                </div>
-                <div class="form-group">
-                    <label>お問い合わせ内容</label>
-                    <textarea id="message" rows="5" placeholder="ご用件を入力してください" required></textarea>
-                </div>
-                <button type="submit" id="submit-btn" class="submit-btn">
-                    メールを送信する
-                </button>
-            </form>
-        </div>
+        <section id="tool-grid"></section>
     </main>
-
-    <script>
-        // 提供されたGAS URL
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwR7OwIAmzQikZxAOM2x4hYJNB_6MaBoFqrhdNnn_39GuqinipwFn1v8icxsc5II69-XQ/exec";
-
-        document.getElementById('contact-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            
-            // 送信中の状態
-            btn.disabled = true;
-            btn.innerText = "送信中...";
-
-            const data = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                message: document.getElementById('message').value
-            };
-            
-            try {
-                const response = await fetch(GAS_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(data)
-                });
-
-                // 送信成功
-                document.getElementById('form-wrapper').style.display = 'none';
-                document.getElementById('form-success').style.display = 'block';
-                
-            } catch (err) {
-                console.error(err);
-                alert('送信中にエラーが発生しました。ネットワーク接続を確認してください。');
-                btn.disabled = false;
-                btn.innerText = "メールを送信する";
-            }
-        };
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,39 +1,166 @@
-:root { --accent: #4CAF50; --bg: #f1f5f9; --card: #ffffff; --text: #334155; }
-body.member-mode { --bg: #0f172a; --card: #1e293b; --text: #ffffff; }
+:root {
+    --accent: #4CAF50;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #334155;
+    --border: #e2e8f0;
+}
 
-body { margin: 0; font-family: sans-serif; background-color: var(--bg); color: var(--text); transition: 0.3s; overflow-x: hidden; }
+body.member-mode {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f8fafc;
+    --border: #334155;
+}
 
-header { background: var(--card); padding: 15px 5%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-.header-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
-.logo-text { font-size: 1.6rem; font-weight: 900; color: var(--accent); cursor: pointer; }
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color 0.3s, color 0.3s;
+    line-height: 1.6;
+}
+
+header {
+    background: var(--card);
+    padding: 15px 5%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo-text {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--accent);
+    cursor: pointer;
+}
 
 /* 巨大化したログインボタン */
-.nav-btn-primary { 
-    padding: 15px 35px; border-radius: 40px; border: none; 
-    background: var(--accent); color: white; cursor: pointer; 
-    font-size: 1.2rem; font-weight: 900; box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
-}
-.nav-btn { padding: 10px 25px; border-radius: 30px; border: 1px solid #ddd; background: transparent; color: var(--text); cursor: pointer; }
-
-.menu-bar { display: flex; gap: 10px; margin-bottom: 30px; }
-.menu-btn { flex: 1; padding: 16px; border-radius: 15px; border: none; background: var(--card); color: var(--text); font-weight: bold; cursor: pointer; }
-.menu-btn.active { background: var(--accent); color: white; }
-
-.container { max-width: 800px; margin: 0 auto; padding: 25px; }
-#tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
-.tool-card, .custom-form { background: var(--card); padding: 35px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.06); text-align: center; }
-
-textarea, input[type="text"], input[type="password"] { 
-    width: 100%; padding: 20px; border-radius: 15px; border: 2px solid #ddd; 
-    font-size: 1.2rem; box-sizing: border-box; background: var(--card); color: var(--text); margin-bottom: 15px;
+.nav-btn-primary {
+    padding: 15px 35px;
+    border-radius: 50px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
 }
 
-.submit-btn { 
-    width: 100%; padding: 22px; background: var(--accent); color: white; 
-    border: none; border-radius: 20px; font-weight: 900; font-size: 1.3rem; 
-    cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-.submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+.nav-btn-primary:active { transform: scale(0.95); }
 
-.locked { opacity: 0.5; filter: grayscale(1); }
-@media (max-width: 600px) { .header-container { flex-direction: column; gap: 15px; } }
+.nav-btn {
+    padding: 10px 25px;
+    border-radius: 50px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.menu-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.menu-btn {
+    flex: 1;
+    padding: 15px;
+    border-radius: 15px;
+    border: none;
+    background: var(--card);
+    color: var(--text);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.menu-btn.active {
+    background: var(--accent);
+    color: white;
+}
+
+#tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.tool-card, .custom-form {
+    background: var(--card);
+    padding: 35px;
+    border-radius: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+textarea, input[type="text"], input[type="password"], select {
+    width: 100%;
+    padding: 18px;
+    border-radius: 15px;
+    border: 2px solid var(--border);
+    font-size: 1.1rem;
+    box-sizing: border-box;
+    background: var(--card);
+    color: var(--text);
+    margin-bottom: 15px;
+    outline: none;
+}
+
+/* フォーム内巨大ボタン */
+.submit-btn {
+    width: 100%;
+    padding: 22px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.submit-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.color-dot {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+}
+
+.locked {
+    opacity: 0.6;
+    filter: grayscale(1);
+}
+
+@media (max-width: 600px) {
+    .header-container { flex-direction: column; gap: 15px; }
+    .nav-btn-primary { width: 100%; }
+}

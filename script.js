@@ -3,119 +3,85 @@ const AUTH_ID = "shinorail";
 const AUTH_PASS = "12345";
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 設定の反映（全ページ共通）
+    // ページ読み込み時に設定を反映（背景色・フォントサイズ同期）
     applySettings();
     
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const statusArea = document.getElementById('status-area');
     const settingsNav = document.getElementById('settings-nav-btn');
 
-    // 2. ログイン状態の反映
+    // ログイン状態によるヘッダー表示の切り替え
     if (isLoggedIn) {
         document.body.classList.add('member-mode');
         if (settingsNav) settingsNav.style.display = 'inline-block';
-        if (statusArea) statusArea.innerHTML = `<button onclick="logout()" class="nav-btn">Logout</button>`;
+        if (statusArea) statusArea.innerHTML = `<button onclick="logout()" class="nav-btn">ログアウト</button>`;
     } else {
-        if (statusArea) statusArea.innerHTML = `<button onclick="location.href='login.html'" class="nav-btn-primary">Login</button>`;
+        if (statusArea) statusArea.innerHTML = `<button onclick="location.href='login.html'" class="nav-btn-primary">会員ログイン</button>`;
     }
 
-    // 3. index.html: ツールグリッド描画
-    const grid = document.getElementById('tool-grid');
-    if (grid) renderToolGrid(isLoggedIn);
-
-    // 4. count.html: 高機能文字数カウンター
-    initCharCounter();
-
-    // 5. roulette.html: ルーレット
-    const runRoulette = document.getElementById('run-roulette-btn');
-    if (runRoulette) {
-        runRoulette.onclick = () => {
-            const res = document.getElementById('roulette-result');
-            res.innerText = "抽選中...";
-            setTimeout(() => {
-                const items = ["大吉", "中吉", "小吉", "吉", "末吉", "凶"];
-                res.innerText = items[Math.floor(Math.random() * items.length)];
-            }, 600);
-        };
-    }
-
-    // 6. pass.html: パスワード生成
-    const passBtn = document.getElementById('generate-pass-btn');
-    if (passBtn) {
-        passBtn.onclick = () => {
-            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-            let pass = "";
-            for (let i = 0; i < 16; i++) { pass += chars.charAt(Math.floor(Math.random() * chars.length)); }
-            document.getElementById('pass-result').value = pass;
-        };
-    }
-
-    // 7. memo.html: メモ帳保存
-    const memoArea = document.getElementById('memo-area');
-    if (memoArea) {
-        memoArea.value = localStorage.getItem('user-memo') || "";
-        memoArea.addEventListener('input', () => {
-            localStorage.setItem('user-memo', memoArea.value);
-        });
-    }
-
-    // 8. contact.html: GAS送信
-    const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
-        contactForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            btn.disabled = true; btn.innerText = "送信中...";
-            const data = { 
-                name: document.getElementById('name').value, 
-                email: document.getElementById('email').value, 
-                message: document.getElementById('message').value 
-            };
-            try {
-                await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-                document.getElementById('form-wrapper').style.display = 'none';
-                document.getElementById('form-success').style.display = 'block';
-            } catch (err) { alert("エラー"); btn.disabled = false; }
-        };
-    }
+    // 各ツールの初期化
+    if (document.getElementById('tool-grid')) renderToolGrid(isLoggedIn);
+    if (document.getElementById('counter-input')) initCharCounter();
+    if (document.getElementById('roulette-result')) initRoulette();
+    if (document.getElementById('pass-result')) initPasswordGen();
+    if (document.getElementById('memo-area')) initMemo();
 });
 
-// 高機能カウンターロジック
+// ログイン処理（処理中表示付き）
+function checkAuth() {
+    const btn = document.querySelector('.submit-btn');
+    const id = document.getElementById('login-id').value;
+    const pass = document.getElementById('login-pass').value;
+
+    if (!id || !pass) { alert("IDとパスワードを入力してください"); return; }
+
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = "処理中...";
+
+    setTimeout(() => {
+        if (id === AUTH_ID && pass === AUTH_PASS) {
+            localStorage.setItem('isLoggedIn', 'true');
+            location.href = 'index.html';
+        } else {
+            alert("IDまたはパスワードが違います");
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    }, 1000);
+}
+
+// 文字数カウンター（フォント自動切替・色変更）
 function initCharCounter() {
     const textarea = document.getElementById('counter-input');
-    if (!textarea) return;
-
     const charDisplay = document.getElementById('char-count');
     const colorPicker = document.getElementById('text-color-picker');
 
     textarea.addEventListener('input', () => {
         const text = textarea.value;
         charDisplay.innerText = text.length;
-        // 言語判定: 日本語があれば日本語用、なければ英語用フォント
+        // 日本語判定によるフォント自動切替
         textarea.style.fontFamily = /[ぁ-んァ-ヶー一-龠]/.test(text) 
-            ? "'Sawarabi Gothic', 'Hiragino Sans', sans-serif" 
-            : "'Roboto', 'Segoe UI', sans-serif";
+            ? "'Hiragino Sans', 'Meiryo', sans-serif" 
+            : "'Courier New', Courier, monospace";
     });
-
     if (colorPicker) {
-        colorPicker.addEventListener('input', () => {
-            textarea.style.color = colorPicker.value;
-        });
+        colorPicker.addEventListener('input', () => { textarea.style.color = colorPicker.value; });
     }
 }
 
-// 保存・ダウンロード機能
+// ファイルダウンロード機能
 function downloadText() {
     const text = document.getElementById('counter-input').value;
-    if (!text) return alert("文字を入力してください");
+    if (!text) { alert("保存する内容がありません"); return; }
     const blob = new Blob([text], { type: 'text/plain' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'shinorail_text_' + new Date().getTime() + '.txt';
+    a.download = 'tool_data_' + new Date().getTime() + '.txt';
     a.click();
 }
 
-// 設定変更用関数（settings.htmlなどで使用）
+// 設定の同期と反映
 function updateConfig(type, value) {
     localStorage.setItem(type, value);
     applySettings();
@@ -128,39 +94,57 @@ function applySettings() {
 
     document.documentElement.style.setProperty('--accent', color);
     document.documentElement.style.fontSize = font;
-    
-    if (dark) {
-        document.body.classList.add('member-mode');
-    } else {
-        document.body.classList.remove('member-mode');
-    }
+    if (dark) document.body.classList.add('member-mode');
+    else document.body.classList.remove('member-mode');
 }
 
+// ツール一覧の動的生成
 function renderToolGrid(isLoggedIn) {
     const grid = document.getElementById('tool-grid');
     const tools = [
-        { name: "📝 文字数カウント", page: "count.html", free: true },
-        { name: "🎲 ルーレット", page: "roulette.html", free: isLoggedIn },
-        { name: "🔐 パス生成", page: "pass.html", free: isLoggedIn },
-        { name: "💾 メモ帳", page: "memo.html", free: isLoggedIn }
+        { name: "📝 文字数カウント", page: "count.html", free: true, icon: "📋" },
+        { name: "🎲 ルーレット", page: "roulette.html", free: isLoggedIn, icon: "🎯" },
+        { name: "🔐 パスワード生成", page: "pass.html", free: isLoggedIn, icon: "🛡️" },
+        { name: "💾 メモ帳", page: "memo.html", free: isLoggedIn, icon: "📁" }
     ];
     grid.innerHTML = tools.map(t => `
         <div class="tool-card ${!t.free ? 'locked' : ''}">
+            <div style="font-size: 2rem; margin-bottom: 10px;">${t.icon}</div>
             <h3>${t.name}</h3>
             <button onclick="${t.free ? `location.href='${t.page}'` : "location.href='login.html'"} " class="submit-btn">
-                ${t.free ? 'ツールを起動' : 'Loginして開放'}
+                ${t.free ? '起動する' : '会員限定で解放'}
             </button>
         </div>
     `).join('');
 }
 
-function checkAuth() {
-    const id = document.getElementById('login-id').value;
-    const pass = document.getElementById('login-pass').value;
-    if (id === AUTH_ID && pass === AUTH_PASS) {
-        localStorage.setItem('isLoggedIn', 'true');
-        location.href = 'index.html';
-    } else { alert("IDまたはパスワードが違います"); }
+// ルーレット機能
+function runRoulette() {
+    const res = document.getElementById('roulette-result');
+    res.innerText = "抽選中...";
+    setTimeout(() => {
+        const items = ["大吉", "中吉", "小吉", "吉", "末吉", "凶"];
+        res.innerText = items[Math.floor(Math.random() * items.length)];
+    }, 600);
 }
 
-function logout() { localStorage.clear(); location.href = 'index.html'; }
+// パスワード生成機能
+function generatePass() {
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let pass = "";
+    for (let i = 0; i < 16; i++) { pass += chars.charAt(Math.floor(Math.random() * chars.length)); }
+    document.getElementById('pass-result').value = pass;
+}
+
+// メモ帳保存機能
+function initMemo() {
+    const memo = document.getElementById('memo-area');
+    memo.value = localStorage.getItem('user-memo') || "";
+    memo.oninput = () => localStorage.setItem('user-memo', memo.value);
+}
+
+// ログアウト処理
+function logout() {
+    localStorage.clear();
+    location.href = 'index.html';
+}

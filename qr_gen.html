@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"><title>📱 QRコード作成 | 会員限定</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="member-mode">
+    <header><div class="logo-text">ToolBox</div><div id="user-status-area"></div></header>
+    <main style="max-width:500px; text-align:center;">
+        <h1>📱 QRコード生成</h1>
+        <div class="tool-box">
+            <input type="text" id="qr-input" placeholder="https://example.com" oninput="makeQR()">
+            <div id="qr-output" style="margin-top:20px; background:white; padding:10px; display:inline-block;">
+                </div>
+            <p style="font-size:0.8em; margin-top:10px;">URLを入力すると自動生成されます</p>
+        </div>
+        <p><a href="index.html" style="color:inherit;">トップに戻る</a></p>
+    </main>
+    <script src="script.js"></script>
+    <script>
+        function makeQR() {
+            const val = document.getElementById('qr-input').value;
+            const output = document.getElementById('qr-output');
+            if(!val) return;
+            // 外部APIを使用してQRを生成
+            output.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(val)}" alt="QR Code">`;
+        }
+    </script>
+</body>
+</html>

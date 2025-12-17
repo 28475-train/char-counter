@@ -6,95 +6,63 @@
     <title>ToolBox | 篠ノ井乗務区 公式ツール集</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* 同意ポップアップ専用スタイル */
+        /* --- 同意ポップアップスタイル --- */
         #consent-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            backdrop-filter: blur(8px);
-            display: none; /* JSで表示制御 */
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; backdrop-filter: blur(8px);
+            display: none;
         }
         .consent-card {
             background: var(--bg);
-            width: 90%;
-            max-width: 450px;
-            padding: 30px;
-            border-radius: 30px;
-            text-align: center;
+            width: 90%; max-width: 450px; padding: 30px;
+            border-radius: 30px; text-align: center;
             border: 2px solid var(--accent);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        .consent-card h2 {
-            color: var(--accent);
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-        }
         .consent-text {
-            font-size: 0.85rem;
-            line-height: 1.7;
-            color: var(--text-sub);
-            margin-bottom: 25px;
-            text-align: left;
-            background: var(--card);
-            padding: 15px;
-            border-radius: 15px;
-            max-height: 150px;
-            overflow-y: auto;
+            font-size: 0.85rem; line-height: 1.7; color: var(--text-sub);
+            margin-bottom: 25px; text-align: left;
+            background: var(--card); padding: 15px; border-radius: 15px;
+            max-height: 150px; overflow-y: auto;
         }
         .consent-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
+            width: 100%; padding: 15px; background: var(--accent);
+            color: white; border: none; border-radius: 50px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
         }
         body.modal-open { overflow: hidden; }
 
-        /* お知らせセクションのスタイル */
+        /* --- お知らせセクションスタイル --- */
         .info-container { text-align: left; margin-bottom: 40px; }
         .info-list {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 10px 20px;
-            border: 1px solid var(--border);
+            background: var(--card); border-radius: 20px;
+            padding: 10px 20px; border: 1px solid var(--border);
         }
         .info-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.85rem;
+            display: flex; align-items: flex-start; padding: 12px 0;
+            border-bottom: 1px solid var(--border); font-size: 0.85rem;
         }
         .info-item:last-child { border-bottom: none; }
-        .info-date { font-weight: bold; color: var(--text-sub); width: 100px; flex-shrink: 0; }
+        .info-date { font-weight: bold; color: var(--text-sub); width: 85px; flex-shrink: 0; }
         .info-content { flex-grow: 1; color: var(--text); line-height: 1.5; }
         .badge-new { background: var(--accent); color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; margin-right: 8px; }
-        .badge-important { background: #f43f5e; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; margin-right: 8px; }
     </style>
 </head>
 <body>
 
     <div id="consent-overlay">
         <div class="consent-card">
-            <h2>ご利用前の確認</h2>
+            <h2 style="color: var(--accent); margin-bottom: 20px;">ご利用前の確認</h2>
             <div class="consent-text">
                 当サイト「ToolBox」をご利用いただきありがとうございます。<br><br>
                 ご利用にあたり、以下の内容に同意いただく必要があります：<br>
                 ・利用規約およびプライバシーポリシーの遵守<br>
                 ・提供ツールの結果による損害への免責事項<br>
                 ・ブラウザ保存機能（LocalStorage）の使用<br><br>
-                詳細はページ下部の「運営者情報・お問い合わせ」をご確認ください。
+                詳細はページ下部の「運営者情報」をご確認ください。
             </div>
             <button class="consent-btn" onclick="acceptConsent()">同意して利用を開始する</button>
         </div>
@@ -109,23 +77,17 @@
 
     <main class="container">
         <section class="info-container">
-            <h2 style="font-size: 1.2rem; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">
+            <h2 id="info-trigger" style="font-size: 1.2rem; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900; transition: transform 0.1s; cursor: pointer; user-select: none;">
                 お知らせ
             </h2>
             <div class="info-list">
                 <div class="info-item">
                     <div class="info-date">2025/12/17</div>
-                    <div class="info-content">
-                        <span class="badge-new">NEW</span>
-                        ルーレット機能をアップデートしました。履歴のブラウザ保存に対応しました。
-                    </div>
+                    <div class="info-content"><span class="badge-new">NEW</span> ルーレットの履歴保存機能を実装しました。</div>
                 </div>
                 <div class="info-item">
                     <div class="info-date">2025/12/10</div>
-                    <div class="info-content">
-                        <span class="badge-important">重要</span>
-                        利用規約同意ポップアップを導入しました。初回アクセス時に確認が必要です。
-                    </div>
+                    <div class="info-content"> サイトのセキュリティプロトコルを更新しました。</div>
                 </div>
             </div>
         </section>
@@ -134,84 +96,74 @@
             <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">
                 メインメニュー
             </h2>
-            <div id="tool-grid">
-                </div>
+            <div id="tool-grid"></div>
         </section>
 
         <hr style="border: none; border-top: 2px solid var(--border); margin: 60px 0 40px;">
 
         <section class="custom-form" style="text-align: left; padding: 35px; border-radius: 32px;">
-            <div style="margin-bottom: 35px;">
-                <h3 style="color: var(--accent); font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">プライバシーポリシー</h3>
-                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 10px;">
-                    当サイト（以下「本サービス」）は、ユーザーのプライバシーを尊重します。お問い合わせ時に取得したメールアドレスは、返信および重要なお知らせの配信にのみ使用し、第三者への提供は行いません。ツール内に入力されたデータはブラウザ内でのみ処理され、外部サーバーへ送信・保存されることはありません。
-                </p>
-            </div>
-
-            <div style="margin-bottom: 35px;">
-                <h3 style="color: var(--accent); font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">著作権・免責事項</h3>
-                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 10px;">
-                    本サービスで提供されるすべてのコンテンツの著作権は「篠ノ井乗務区」に帰属します。無断転載・複製を禁じます。本サービスの利用により発生した損害について、運営者は一切の責任を負いません。
-                </p>
-            </div>
-
-            <div>
-                <h3 style="color: var(--accent); font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">運営者情報・お問い合わせ</h3>
-                <table style="width: 100%; font-size: 0.85rem; color: var(--text-sub); margin-top: 10px; border-collapse: collapse;">
-                    <tr>
-                        <td style="padding: 5px 0; width: 100px; font-weight: bold;">運営組織：</td>
-                        <td>篠ノ井乗務区</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 5px 0; font-weight: bold;">公式メール：</td>
-                        <td><a href="mailto:shinorail.contact@gmail.com" style="color: var(--accent); text-decoration: none;">shinorail.contact@gmail.com</a></td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 5px 0; font-weight: bold;">開設日：</td>
-                        <td>2025年</td>
-                    </tr>
+            <h3 style="color: var(--accent); font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">プライバシーポリシー・免責</h3>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 10px; line-height: 1.6;">
+                ツール内に入力されたデータはブラウザ内でのみ処理され、外部へ送信されることはありません。本サービスの利用により発生した損害について、運営者は一切の責任を負いません。
+            </p>
+            <div style="margin-top: 25px;">
+                <table style="width: 100%; font-size: 0.85rem; color: var(--text-sub); border-collapse: collapse;">
+                    <tr><td style="padding: 5px 0; width: 80px; font-weight: bold;">運営：</td><td>篠ノ井乗務区</td></tr>
+                    <tr><td style="padding: 5px 0; font-weight: bold;">連絡：</td><td>shinorail.contact@gmail.com</td></tr>
                 </table>
             </div>
         </section>
 
         <footer style="margin-top: 60px; text-align: center;">
-            <div style="margin-bottom: 15px;">
-                <a href="contact.html" style="color: var(--text); font-size: 0.8rem; text-decoration: none; margin: 0 15px; opacity: 0.7;">お問い合わせ</a>
-                <a href="settings.html" style="color: var(--text); font-size: 0.8rem; text-decoration: none; margin: 0 15px; opacity: 0.7;">サイト設定</a>
-            </div>
-            <p style="font-size: 0.7rem; color: var(--text-sub); letter-spacing: 1px;">
-                &copy; 2025 篠ノ井乗務区 (ToolBox) All Rights Reserved.
-            </p>
+            <p style="font-size: 0.7rem; color: var(--text-sub); letter-spacing: 1px;">&copy; 2025 篠ノ井乗務区 All Rights Reserved.</p>
         </footer>
     </main>
 
     <script src="script.js"></script>
     <script>
-        // --- 同意管理ロジック ---
+        // --- 1. 同意管理 ---
         const CONSENT_KEY = 'shinorail_consent_v1';
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // 同意済みかチェック
+        window.addEventListener('DOMContentLoaded', () => {
             if (!localStorage.getItem(CONSENT_KEY)) {
-                const overlay = document.getElementById('consent-overlay');
-                overlay.style.display = 'flex';
+                document.getElementById('consent-overlay').style.display = 'flex';
                 document.body.classList.add('modal-open');
             }
         });
 
         function acceptConsent() {
-            // 同意をLocalStorageに記録
             localStorage.setItem(CONSENT_KEY, 'true');
             const overlay = document.getElementById('consent-overlay');
-            
-            // フェードアウト演出
             overlay.style.opacity = '0';
-            overlay.style.transition = 'opacity 0.4s ease';
-            
+            overlay.style.transition = 'opacity 0.4s';
             setTimeout(() => {
                 overlay.style.display = 'none';
                 document.body.classList.remove('modal-open');
             }, 400);
+        }
+
+        // --- 2. 隠しページトリガー（お知らせ3回タップ） ---
+        let infoTapCount = 0;
+        let infoTimer;
+        const infoTitle = document.getElementById('info-trigger');
+
+        if (infoTitle) {
+            infoTitle.addEventListener('click', () => {
+                infoTapCount++;
+                
+                // タップ時の視覚効果（少し揺れる）
+                infoTitle.style.transform = 'translateX(5px)';
+                setTimeout(() => { infoTitle.style.transform = 'translateX(0)'; }, 50);
+
+                // 2秒操作がないとリセット
+                clearTimeout(infoTimer);
+                infoTimer = setTimeout(() => { infoTapCount = 0; }, 2000);
+
+                if (infoTapCount === 3) {
+                    if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+                    alert("秘密のセクターへのアクセスを承認しました。");
+                    location.href = 'secret.html';
+                }
+            });
         }
     </script>
 </body>

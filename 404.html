@@ -2,27 +2,74 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>404 Not Found | 多機能ツールボックス</title>
-    <link rel="stylesheet" href="style.css"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 NOT FOUND | 篠ノ井乗務区</title>
+    <style>
+        body {
+            background: #000;
+            color: #ff0044;
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            overflow: hidden;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px #ff0044;
+            margin: 0;
+        }
+        .message {
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+        }
+        .glitch-box {
+            border: 1px solid #ff0044;
+            padding: 20px;
+            background: rgba(255, 0, 68, 0.05);
+        }
+        .back-link {
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid #fff;
+            padding: 10px 20px;
+            margin-top: 30px;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .back-link:hover {
+            background: #fff;
+            color: #000;
+        }
+        /* カーソル設定をここにも追加 */
+        * {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3" fill="%23ff0044"/><path d="M10 0v20M0 10h20" stroke="%23ff0044" stroke-width="1"/></svg>') 10 10, auto !important;
+        }
+    </style>
 </head>
-<body data-theme="light_green"> 
-    <script>
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) { location.replace('SP/404.html'); }
-    </script>
-    <main>
-        <h1>404 Not Found (ページが見つかりません)</h1>
-        <p>お探しのページは、移動または削除された可能性があります。</p>
-        <p><a href="index.html">トップページに戻る</a></p>
-    </main>
-    <footer>
-        <p>
-            <a href="privacy.html">プライバシーポリシー</a> | 
-            <a href="terms.html">利用規約</a>
+<body>
+    <div class="glitch-box">
+        <p style="margin:0; font-size: 0.7rem;">CRITICAL ERROR: ACCESS_VIOLATION</p>
+        <h1 class="error-code">404</h1>
+        <div class="message">指定されたセクターは見つかりません</div>
+        <p style="font-size: 0.8rem; opacity: 0.7;">
+            リクエストされたデータは削除されたか、<br>
+            元々存在しない座標です。
         </p>
-        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
-    </footer>
-    <script src="script.js"></script>
+    </div>
+    <a href="index.html" class="back-link">ホームセクターへ帰還</a>
+
+    <script>
+        // 404ページのみ、ときどき画面を揺らす演出
+        setInterval(() => {
+            document.body.style.transform = `translate(${Math.random()*2}px, ${Math.random()*2}px)`;
+        }, 50);
+    </script>
 </body>
 </html>

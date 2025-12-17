@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"><title>💎 履歴付き計算機 | 会員限定</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="member-mode">
+    <header><div class="logo-text">ToolBox</div><div id="user-status-area"></div></header>
+    <main style="max-width:500px;">
+        <h1>💎 プレミアム計算機</h1>
+        <div class="tool-box">
+            <input type="text" id="c-in" placeholder="例: (100 + 200) * 1.1">
+            <button onclick="calc()" style="width:100%; margin-top:10px;">計算</button>
+            <h2 id="c-out" style="text-align:center; color:#d4af37;">結果: -</h2>
+        </div>
+        <div class="announcement-box">
+            <h3>📝 計算履歴</h3>
+            <ul id="c-history"></ul>
+        </div>
+    </main>
+    <script src="script.js"></script>
+    <script>
+        function calc() {
+            const input = document.getElementById('c-in').value;
+            try {
+                const result = eval(input);
+                document.getElementById('c-out').innerText = "結果: " + result;
+                let h = JSON.parse(localStorage.getItem('c_h') || '[]');
+                h.unshift(`${input} = ${result}`);
+                localStorage.setItem('c_h', JSON.stringify(h.slice(0, 10)));
+                showH();
+            } catch(e) { alert("無効な式です"); }
+        }
+        function showH() {
+            const h = JSON.parse(localStorage.getItem('c_h') || '[]');
+            document.getElementById('c-history').innerHTML = h.map(x => `<li>${x}</li>`).join('');
+        }
+        showH();
+    </script>
+</body>
+</html>

@@ -1,55 +1,213 @@
 <!DOCTYPE html>
-<html lang="ja" data-ads="true">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ルーレットツール | 多機能ツールボックス (SP)</title>
-    <link rel="stylesheet" href="../style.css"> 
-    <script src="../ads.js"></script>
+    <title>ルーレット | 篠ノ井乗務区</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #roulette-display {
+            height: 150px;
+            background: linear-gradient(145deg, var(--card), var(--bg));
+            border: 4px solid var(--accent);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+        }
+        #roulette-target {
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: var(--text);
+            text-align: center;
+        }
+        .item-input-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .input-field {
+            flex: 1;
+            margin-bottom: 0 !important;
+            padding: 12px !important;
+        }
+        .del-btn {
+            background: #f43f5e;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            width: 44px;
+            font-weight: bold;
+        }
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--card);
+            border: 2px dashed var(--border);
+            color: var(--text-sub);
+            border-radius: 15px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .history-section {
+            margin-top: 25px;
+            text-align: left;
+        }
+        .history-list {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+        .history-item {
+            padding: 5px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
 </head>
-<body data-theme="light_green"> 
-    <script>
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (!isMobile) { location.replace('../roulette.html'); }
-    </script>
-    <div id="ad-area-top"></div>
+<body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">多機能ツールボックス (SP版)</a></li>
-                <li><a href="counter.html">📝 文字数カウント</a></li>
-                <li><a href="roulette.html">🎲 ルーレット</a></li>
-                <li><a href="settings.html">⚙ 設定</a></li>
-                <li><a href="help.html">ヘルプ</a></li>
-                <li><a href="about.html">制作者</a></li>
-            </ul>
-        </nav>
+        <div class="header-container">
+            <a href="index.html" class="logo-text">ROULETTE</a>
+            <div id="status-area"></div>
+        </div>
     </header>
-    <main>
-        <h1>ルーレット機能 (SP)</h1>
-        <section>
-            <h2>🎲 項目設定</h2>
-            <input type="text" id="item-input" placeholder="項目名を入力 (例: ラーメン)" style="padding: 10px; width: 60%; margin-right: 10px;">
-            <button id="add-item-button" style="padding: 10px 15px;">追加</button>
-            <div id="roulette-items">
-                <p style="color: #777;">（項目を3つ以上追加してください）</p>
+
+    <main class="container">
+        <div class="btn-group">
+            <button class="menu-btn" onclick="location.href='index.html'">ホーム</button>
+            <button class="menu-btn" onclick="clearAllData()">履歴削除</button>
+        </div>
+
+        <div class="custom-form">
+            <div id="roulette-display">
+                <div id="roulette-target">READY</div>
             </div>
-        </section>
-        <section>
-            <h2>🎰 ルーレット実行</h2>
-            <div id="roulette-display" style="font-size: 1.5em; font-weight: bold; margin: 20px 0; padding: 10px; border: 2px dashed var(--primary-color);">項目を設定してスタートを押してください。</div>
-            <button id="start-button" disabled>🎯 ルーレットをスタート</button>
-            <p id="item-count-status" style="margin-top: 10px; color: #cc0000; display: none;">※ 項目を2つ以上設定してください。</p>
-        </section>
+
+            <div class="item-input-container">
+                <label style="font-size: 0.8rem; font-weight: bold; color: var(--text-sub);">抽選項目</label>
+                <div id="items-wrapper" style="margin-top: 10px;">
+                    </div>
+                <button class="add-btn" onclick="addItemRow()">＋ 項目を追加</button>
+            </div>
+
+            <button id="spin-btn" onclick="startSpin()" class="submit-btn" style="height: 70px; font-size: 1.4rem;">スタート</button>
+
+            <div class="history-section">
+                <label style="font-size: 0.8rem; font-weight: bold; color: var(--text-sub);">最近の履歴</label>
+                <div class="history-list" id="history-box">
+                    </div>
+            </div>
+        </div>
     </main>
-    <div id="ad-area-bottom"></div>
-    <footer>
-        <p>
-            <a href="../privacy.html">プライバシーポリシー</a> | 
-            <a href="../terms.html">利用規約</a>
-        </p>
-        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
-    </footer>
-    <script src="../script.js"></script>
+
+    <script src="script.js"></script>
+    <script>
+        // データ保存キー
+        const KEY_ITEMS = 'shinorail_items';
+        const KEY_HISTORY = 'shinorail_history';
+
+        window.onload = () => {
+            // 保存された項目を復元
+            const savedItems = JSON.parse(localStorage.getItem(KEY_ITEMS) || '[]');
+            if (savedItems.length > 0) {
+                savedItems.forEach(txt => addItemRow(txt));
+            } else {
+                ['あたり', 'はずれ'].forEach(txt => addItemRow(txt));
+            }
+            updateHistoryUI();
+        };
+
+        function addItemRow(val = '') {
+            const wrapper = document.getElementById('items-wrapper');
+            const div = document.createElement('div');
+            div.className = 'row';
+            div.innerHTML = `
+                <input type="text" class="input-field item-text" value="${val}" placeholder="項目名" oninput="saveItems()">
+                <button class="del-btn" onclick="this.parentElement.remove(); saveItems();">×</button>
+            `;
+            wrapper.appendChild(div);
+            saveItems();
+        }
+
+        function saveItems() {
+            const inputs = document.querySelectorAll('.item-text');
+            const data = Array.from(inputs).map(i => i.value).filter(v => v.trim() !== "");
+            localStorage.setItem(KEY_ITEMS, JSON.stringify(data));
+        }
+
+        function saveHistory(result) {
+            let history = JSON.parse(localStorage.getItem(KEY_HISTORY) || '[]');
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            history.unshift({ name: result, time: time });
+            if (history.length > 20) history.pop(); // 最大20件
+            localStorage.setItem(KEY_HISTORY, JSON.stringify(history));
+            updateHistoryUI();
+        }
+
+        function updateHistoryUI() {
+            const box = document.getElementById('history-box');
+            const history = JSON.parse(localStorage.getItem(KEY_HISTORY) || '[]');
+            if (history.length === 0) {
+                box.innerHTML = '<p style="text-align:center; opacity:0.5;">履歴なし</p>';
+                return;
+            }
+            box.innerHTML = history.map(h => `
+                <div class="history-item">
+                    <span>${h.name}</span>
+                    <span style="font-size:0.7rem; opacity:0.6;">${h.time}</span>
+                </div>
+            `).join('');
+        }
+
+        function clearAllData() {
+            if (confirm("履歴を削除しますか？")) {
+                localStorage.removeItem(KEY_HISTORY);
+                updateHistoryUI();
+            }
+        }
+
+        function startSpin() {
+            const inputs = document.querySelectorAll('.item-text');
+            const items = Array.from(inputs).map(i => i.value).filter(v => v.trim() !== "");
+            
+            if (items.length < 2) return alert("項目を2つ以上入れてください");
+
+            const btn = document.getElementById('spin-btn');
+            const target = document.getElementById('roulette-target');
+            
+            btn.disabled = true;
+            target.style.color = "var(--text)";
+            
+            let count = 0;
+            const total = 30;
+            
+            const run = () => {
+                const pick = items[Math.floor(Math.random() * items.length)];
+                target.innerText = pick;
+                count++;
+
+                if (count < total) {
+                    setTimeout(run, 50 + (count * 5));
+                } else {
+                    target.style.color = "var(--accent)";
+                    saveHistory(pick);
+                    btn.disabled = false;
+                }
+            };
+            run();
+        }
+    </script>
 </body>
 </html>

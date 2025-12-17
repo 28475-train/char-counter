@@ -2,11 +2,11 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Contact | ToolBox Premium</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body id="app-body">
     <header>
         <div class="header-container">
             <div class="logo-text" onclick="location.href='index.html'">CONTACT</div>
@@ -22,8 +22,10 @@
         </div>
 
         <div class="custom-form" id="form-wrapper">
-            <h2>お問い合わせ</h2>
-            <p style="font-size: 0.8rem; margin-bottom: 20px; opacity: 0.8;">不具合報告やご要望を24時間受け付けています。</p>
+            <h2 style="font-size: 1.2rem;">お問い合わせ</h2>
+            <p style="font-size: 0.8rem; margin-bottom: 20px; opacity: 0.7;">
+                返信が必要な場合はメールアドレスを正確に入力してください。
+            </p>
             
             <form id="contact-form">
                 <div class="form-group">
@@ -36,19 +38,21 @@
                 </div>
                 <div class="form-group">
                     <label>メッセージ内容</label>
-                    <textarea id="message" rows="6" placeholder="こちらに入力してください" required></textarea>
+                    <textarea id="message" rows="5" placeholder="こちらに入力してください" required></textarea>
                 </div>
                 <button type="submit" id="submit-btn" class="submit-btn">メールを送信する</button>
             </form>
         </div>
 
-        <div id="form-success" style="display: none; text-align: center; padding: 50px; background: var(--card); border-radius: 25px;">
+        <div id="form-success" style="display: none; text-align: center; padding: 40px; background: var(--card); border-radius: 25px; margin-top: 20px;">
             <div style="font-size: 4rem;">✅</div>
-            <h2>送信が完了しました</h2>
-            <p>管理者（shinorail.contact@gmail.com）へ通知しました。<br>確認メールをお待ちください。</p>
-            <button onclick="location.href='index.html'" class="submit-btn" style="margin-top:20px; background:#64748b;">ホームに戻る</button>
+            <h2 style="font-size: 1.3rem;">送信完了</h2>
+            <p style="font-size: 0.9rem;">管理者へ送信しました。<br>確認メールが届くのをお待ちください。</p>
+            <button onclick="location.href='index.html'" class="submit-btn" style="margin-top:20px; background:#64748b;">トップに戻る</button>
         </div>
     </main>
+
+    <div style="height: 100px;"></div>
 
     <script src="script.js"></script>
 </body>

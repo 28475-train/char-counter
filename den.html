@@ -3,77 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CALC-X | 篠ノ井乗務区</title>
-    <link rel="stylesheet" href="style.css">
+    <title>S-CALC Pro | 篠ノ井乗務区</title>
     <script>
-        // --- 不正アクセスチェック ---
+        // 不正アクセスチェック
         (function() {
             const token = localStorage.getItem('den_access_token');
             const now = new Date().getTime();
-            // トークンがない、または期限切れ（30秒以上経過）の場合は追い出す
             if (!token || now > parseInt(token)) {
-                alert("ACCESS DENIED: 認証が必要です。");
-                localStorage.removeItem('den_access_token');
+                alert("ACCESS DENIED: 認証エラー");
                 location.href = 'index.html';
             }
-            // 使用済みトークンを削除（リロードでの再アクセス防止）
             localStorage.removeItem('den_access_token');
         })();
     </script>
     <style>
-        body { background: #000; color: #00ffaa; font-family: monospace; text-align: center; padding: 20px; }
-        .calc-box { border: 2px solid #00ffaa; display: inline-block; padding: 20px; border-radius: 10px; background: #050505; }
-        #display { background: #000; border: 1px solid #00ffaa; color: #00ffaa; font-size: 2rem; text-align: right; padding: 10px; margin-bottom: 15px; height: 50px; overflow: hidden; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        button { background: transparent; border: 1px solid #00ffaa; color: #00ffaa; padding: 15px; font-size: 1.2rem; cursor: pointer; border-radius: 5px; }
-        button:active { background: #00ffaa; color: #000; }
-        .op { color: #fff; border-color: #fff; }
+        body {
+            background: #000;
+            color: #00ffaa;
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .calc-frame {
+            border: 2px solid #00ffaa;
+            padding: 15px;
+            background: #0a0a0a;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 255, 170, 0.2);
+            width: 90%;
+            max-width: 360px;
+        }
+        #display {
+            background: #000;
+            border: 1px solid #333;
+            color: #00ffaa;
+            font-size: 1.8rem;
+            text-align: right;
+            padding: 15px;
+            margin-bottom: 15px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 5px;
+            text-shadow: 0 0 10px #00ffaa;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            color: #00ffaa;
+            padding: 12px 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.1s;
+        }
+        button:active {
+            background: #00ffaa;
+            color: #000;
+        }
+        .btn-func { color: #38bdf8; border-color: #38bdf8; font-size: 0.8rem; }
+        .btn-op { color: #fff; border-color: #777; font-weight: bold; }
+        .btn-ac { color: #ff0044; border-color: #ff0044; }
+        .btn-eq { background: #00ffaa; color: #000; grid-column: span 2; font-weight: bold; }
+        
+        .sys-info {
+            font-size: 0.6rem;
+            margin-bottom: 10px;
+            text-align: left;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
 
-    <div style="font-size: 0.7rem; margin-bottom: 20px; opacity: 0.6;">AUTHORIZED_CALCULATOR_ONLY</div>
-
-    <div class="calc-box">
-        <div id="display">0</div>
+    <div class="calc-frame">
+        <div class="sys-info">SYSTEM: SCIENTIFIC_CALC_PRO<br>STATUS: ENCRYPTED</div>
+        <div id="display">CONNECTING...</div>
+        
         <div class="grid">
-            <button onclick="c()" style="grid-column: span 2; color: #ff0044;">AC</button>
-            <button class="op" onclick="o('/')">÷</button>
-            <button class="op" onclick="o('*')">×</button>
-            
+            <button class="btn-func" onclick="f('sin')">sin</button>
+            <button class="btn-func" onclick="f('cos')">cos</button>
+            <button class="btn-func" onclick="f('tan')">tan</button>
+            <button class="btn-ac" onclick="c()">AC</button>
+
+            <button class="btn-func" onclick="f('sqrt')">√</button>
+            <button class="btn-func" onclick="f('pow')">x²</button>
+            <button class="btn-func" onclick="f('pi')">π</button>
+            <button class="btn-op" onclick="o('/')">÷</button>
+
             <button onclick="n('7')">7</button>
             <button onclick="n('8')">8</button>
             <button onclick="n('9')">9</button>
-            <button class="op" onclick="o('-')">-</button>
-            
+            <button class="btn-op" onclick="o('*')">×</button>
+
             <button onclick="n('4')">4</button>
             <button onclick="n('5')">5</button>
             <button onclick="n('6')">6</button>
-            <button class="op" onclick="o('+')">+</button>
-            
+            <button class="btn-op" onclick="o('-')">-</button>
+
             <button onclick="n('1')">1</button>
             <button onclick="n('2')">2</button>
             <button onclick="n('3')">3</button>
-            <button style="background:#00ffaa; color:#000;" onclick="e()">=</button>
-            
-            <button onclick="n('0')" style="grid-column: span 2;">0</button>
+            <button class="btn-op" onclick="o('+')">+</button>
+
+            <button onclick="n('0')">0</button>
             <button onclick="n('.')">.</button>
-            <button onclick="location.href='secret.html'" style="font-size: 0.7rem;">戻る</button>
+            <button class="btn-eq" onclick="e()">=</button>
         </div>
+        
+        <button onclick="location.href='secret.html'" style="margin-top:15px; width:100%; font-size:0.7rem; border:none; background:transparent; color:#555; cursor:pointer;">TERMINATE_SESSION</button>
     </div>
 
     <script>
-        let s = "0", f = null, op = null, w = false;
-        function d() { document.getElementById('display').innerText = s; }
-        function n(v) { if(w){s=v;w=false;}else{s=s==="0"?v:s+v;} d(); }
-        function o(v) { if(op!==null)e(); f=parseFloat(s); op=v; w=true; }
-        function c() { s="0"; f=null; op=null; w=false; d(); }
-        function e() {
-            if(op===null||w)return;
-            let v=parseFloat(s), r=0;
-            if(op==='+') r=f+v; else if(op==='-') r=f-v; else if(op==='*') r=f*v; else if(op==='/') r=f/v;
-            s=String(parseFloat(r.toFixed(8))); op=null; w=true; d();
+        let s = "0", val = null, op = null, w = false;
+        const d = () => document.getElementById('display').innerText = s;
+
+        // 起動シークエンス演出
+        window.onload = () => {
+            const display = document.getElementById('display');
+            const startupLines = [
+                "LINKING...",
+                "LOADING_MODULES",
+                "SECURITY_CHECK_OK",
+                "READY_S_CALC",
+                "0"
+            ];
+            
+            let i = 0;
+            const interval = setInterval(() => {
+                display.innerText = startupLines[i];
+                display.style.fontSize = "1rem";
+                i++;
+                if (i >= startupLines.length) {
+                    clearInterval(interval);
+                    display.style.fontSize = "1.8rem";
+                    s = "0";
+                    d();
+                }
+            }, 350);
+        };
+
+        function n(v) {
+            if (w) { s = v; w = false; }
+            else { s = s === "0" ? v : s + v; }
+            d();
         }
+
+        function o(v) {
+            if (op !== null) e();
+            val = parseFloat(s);
+            op = v;
+            w = true;
+        }
+
+        function c() {
+            s = "0"; val = null; op = null; w = false;
+            d();
+        }
+
+        function f(type) {
+            let current = parseFloat(s);
+            let res = 0;
+            switch(type) {
+                case 'sin': res = Math.sin(current * Math.PI / 180); break;
+                case 'cos': res = Math.cos(current * Math.PI / 180); break;
+                case 'tan': res = Math.tan(current * Math.PI / 180); break;
+                case 'sqrt': res = Math.sqrt(current); break;
+                case 'pow': res = Math.pow(current, 2); break;
+                case 'pi': res = Math.PI; break;
+            }
+            s = String(parseFloat(res.toFixed(8)));
+            w = true;
+            d();
+        }
+
+        function e() {
+            if (op === null || w) return;
+            let v = parseFloat(s), r = 0;
+            switch(op) {
+                case '+': r = val + v; break;
+                case '-': r = val - v; break;
+                case '*': r = val * v; break;
+                case '/': r = val / v; break;
+            }
+            s = String(parseFloat(r.toFixed(8)));
+            op = null;
+            w = true;
+            d();
+        }
+
+        document.querySelectorAll('button').forEach(b => {
+            b.addEventListener('touchstart', () => navigator.vibrate && navigator.vibrate(10));
+        });
     </script>
 </body>
 </html>

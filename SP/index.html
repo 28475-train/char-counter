@@ -1,65 +1,33 @@
 <!DOCTYPE html>
-<html lang="ja" data-ads="true">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>【SP版】多機能ツールボックス | 篠ノ井乗務区制作</title>
-    <link rel="stylesheet" href="../style.css"> 
-    <script src="../ads.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多機能ツールボックス (SP)</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
-<body data-theme="light_green"> 
-    <script>
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (!isMobile) { location.replace('../index.html'); }
-    </script>
-    
-    <div id="ad-area-top">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
-        </div>
-    
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">多機能ツールボックス (SP版)</a></li>
-                <li><a href="counter.html">📝 文字数カウント</a></li>
-                <li><a href="roulette.html">🎲 ルーレット</a></li>
-                <li><a href="settings.html">⚙ 設定</a></li>
-                <li><a href="help.html">ヘルプ</a></li>
-                <li><a href="about.html">制作者</a></li>
-            </ul>
-        </nav>
+<body data-theme="light_green">
+    <header style="padding: 10px; text-align: center;">
+        <div id="user-status-area"></div>
     </header>
+
     <main>
-        <h1>多機能ツールボックスへようこそ (SP)</h1>
-        <section>
-            <h2>📝 文字数カウント</h2>
-            <p>テキストの文字数、行数、バイト数をリアルタイムで計測します。</p>
-            <p><a href="counter.html">使う</a></p>
-        </section>
-        <section>
-            <h2>🎲 ルーレット</h2>
-            <p>自分で項目を設定し、ランダムに一つを選びます。</p>
-            <p><a href="roulette.html">使う</a></p>
-        </section>
-        <section>
-            <h2>⚙ 設定</h2>
-            <p>テーマカラーの変更などを行います。</p>
-            <p><a href="settings.html">設定へ</a></p>
-        </section>
-        <p>バージョン 1.50</p>
+        <h2 style="text-align:center;">SP版 ツールメニュー</h2>
     </main>
-    
-    <div id="ad-area-bottom">
-        <script src="https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328"></script>
+
+    <section id="bottom-info-area" style="text-align: center; padding: 20px 0;">
+        <div id="policy-links" style="margin-bottom: 20px;">
+            <button onclick="location.href='../privacy_policy.html'" style="font-size:0.8em; margin:2px;">プライバシー</button>
+            <button onclick="location.href='../terms_of_service.html'" style="font-size:0.8em; margin:2px;">利用規約</button>
+            <button onclick="location.href='../ads_policy.html'" style="font-size:0.8em; margin:2px;">広告ポリシー</button>
         </div>
-    
-    <footer>
-        <p>
-            <a href="../privacy.html">プライバシーポリシー</a> | 
-            <a href="../terms.html">利用規約</a>
-        </p>
-        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
-    </footer>
+        <div id="announcement-section">
+            <h3>お知らせ</h3>
+            <ul id="announcement-list" style="list-style:none; padding:0;"></ul>
+        </div>
+        <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">TOPへ</button>
+    </section>
+
     <script src="../script.js"></script>
 </body>
 </html>

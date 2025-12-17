@@ -1,5 +1,5 @@
 /* ============================================
-   1. 変数定義とベース設定
+   1. 変数とベース設定 (全テーマ共通)
    ============================================ */
 :root {
     --main-green: #4CAF50;
@@ -10,7 +10,6 @@
     --card-bg: #ffffff;
     --text-main: #333333;
     --shadow: 0 10px 20px rgba(0,0,0,0.08);
-    --premium-gradient: linear-gradient(135deg, #1a2a1a 0%, #0d1a0d 100%);
 }
 
 * {
@@ -20,28 +19,31 @@
 
 body {
     margin: 0;
-    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    font-family: 'Helvetica Neue', Arial, "Hiragino Sans", Meiryo, sans-serif;
     background-color: var(--bg-light);
     color: var(--text-main);
     line-height: 1.6;
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-x: hidden;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================
-   2. ヘッダー・ステータスエリア
+   2. ヘッダー・ナビゲーション (崩れ防止)
    ============================================ */
 header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    padding: 10px 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: #ffffff;
+    padding: 15px 5%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .logo-text {
@@ -50,88 +52,110 @@ header {
     background: linear-gradient(to right, var(--dark-green), var(--main-green));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: -1px;
+    cursor: pointer;
 }
 
-#user-status-area {
+nav {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    gap: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #555;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: var(--main-green);
 }
 
 /* ============================================
-   3. ツールグリッド & カード
+   3. ログインステータス表示
+   ============================================ */
+#user-status-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.member-badge {
+    color: var(--gold);
+    font-weight: bold;
+    font-size: 0.75rem;
+    border: 1px solid var(--gold);
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+}
+
+/* ============================================
+   4. ツールカード・グリッドレイアウト
    ============================================ */
 main {
     max-width: 1200px;
     margin: 40px auto;
     padding: 0 20px;
+    min-height: 80vh;
 }
 
 #tool-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 30px;
 }
 
 .tool-card {
     background: var(--card-bg);
-    padding: 30px;
+    padding: 35px;
     border-radius: 20px;
     text-align: center;
     border: 1px solid rgba(0,0,0,0.05);
     box-shadow: var(--shadow);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
 .tool-card:hover {
-    transform: translateY(-12px) scale(1.02);
+    transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(0,0,0,0.12);
 }
 
-.tool-card h3 {
-    margin: 0 0 15px 0;
-    font-size: 1.3rem;
-    color: #222;
-}
-
 /* ============================================
-   4. 【ログイン後】プレミアム会員モード
+   5. 【ログイン後】プレミアム会員モード (会員限定機能)
    ============================================ */
 body.member-mode {
     background-color: #050a05;
     color: #e0e0e0;
 }
 
-/* 会員専用：動くオーロラ背景 */
+/* 会員専用背景アニメーション */
 body.member-mode::before {
     content: "";
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: 
-        radial-gradient(circle at 20% 30%, rgba(46, 77, 46, 0.4) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(20, 40, 20, 0.4) 0%, transparent 50%);
+    background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #050a05 100%);
     z-index: -1;
-    animation: aurora 15s ease infinite alternate;
 }
 
-@keyframes aurora {
-    0% { transform: scale(1); opacity: 0.5; }
-    100% { transform: scale(1.2); opacity: 0.8; }
+body.member-mode header {
+    background: #111;
+    border-bottom: 1px solid var(--gold);
 }
 
-/* 会員用カード：ガラス質感 */
+body.member-mode nav a {
+    color: #ccc;
+}
+
 body.member-mode .tool-card {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    border: 1px solid rgba(212, 175, 55, 0.4);
     color: var(--gold-light);
 }
 
-/* カードを光が走るアニメーション */
+/* 会員限定カードの「キラリ」アニメーション */
 .premium-card {
     position: relative;
     overflow: hidden;
@@ -140,107 +164,118 @@ body.member-mode .tool-card {
 .premium-card::before {
     content: "";
     position: absolute;
-    top: -50%; left: -50%; width: 200%; height: 200%;
+    top: -100%; left: -100%; width: 300%; height: 300%;
     background: linear-gradient(45deg, transparent, rgba(255,215,0,0.1), transparent);
     transform: rotate(45deg);
-    animation: shine 4s infinite;
+    animation: shine 6s infinite;
 }
 
 @keyframes shine {
-    0% { left: -100%; }
-    100% { left: 100%; }
+    0% { left: -150%; }
+    100% { left: 150%; }
 }
 
-/* プレミアムバッジ */
 .premium-card::after {
     content: "PREMIUM";
     position: absolute;
-    top: 12px; right: -28px;
-    background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+    top: 15px; right: -30px;
+    background: var(--gold);
     color: #000;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 900;
-    padding: 3px 30px;
+    padding: 3px 35px;
     transform: rotate(45deg);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 /* ============================================
-   5. UIコンポーネント (ボタン・入力)
+   6. 文字数カウント・入力エリアのデザイン
+   ============================================ */
+.tool-box {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid #ddd;
+    margin: 20px 0;
+    color: #333;
+}
+
+body.member-mode .tool-box {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+textarea, input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: 0.3s;
+    outline: none;
+}
+
+textarea:focus, input:focus {
+    border-color: var(--main-green);
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+}
+
+/* ============================================
+   7. ボタンデザイン (全バリエーション)
    ============================================ */
 button {
-    background: linear-gradient(to bottom, var(--main-green), var(--dark-green));
+    background: linear-gradient(135deg, var(--main-green), var(--dark-green));
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 12px;
+    padding: 12px 25px;
+    border-radius: 10px;
     font-weight: bold;
-    font-size: 0.95rem;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-    transition: all 0.3s ease;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    opacity: 0.9;
 }
 
-button:active { transform: translateY(0); }
-
-/* 会員用ボタン */
 body.member-mode button {
-    background: linear-gradient(to bottom, #d4af37, #aa771c);
+    background: linear-gradient(135deg, #d4af37, #aa771c);
     color: #000;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
-}
-
-input, textarea {
-    background: rgba(255,255,255,0.9);
-    border: 2px solid #eee;
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-input:focus {
-    border-color: var(--main-green);
-    outline: none;
-    background: #fff;
 }
 
 /* ============================================
-   6. フッター・その他
+   8. 未登録・ロック状態のスタイル
    ============================================ */
-#bottom-info-area {
-    margin-top: 100px;
-    background: rgba(0,0,0,0.03);
-    padding: 60px 20px;
-    border-radius: 50px 50px 0 0;
+.locked-card {
+    background: #ececec !important;
+    color: #999 !important;
+    border: 2px dashed #ccc !important;
+    pointer-events: none;
 }
 
-body.member-mode #bottom-info-area {
-    background: rgba(255,255,255,0.02);
-}
-
-.announcement-box {
-    max-width: 800px;
-    margin: 20px auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: var(--shadow);
-}
-
-body.member-mode .announcement-box {
-    background: rgba(255,255,255,0.05);
-    color: #ccc;
-}
-
-/* スマホ対応 */
+/* ============================================
+   9. レスポンシブ対応 (スマホ最適化)
+   ============================================ */
 @media (max-width: 768px) {
-    header { padding: 10px 20px; flex-direction: column; gap: 10px; }
-    #tool-grid { grid-template-columns: 1fr; }
-    .logo-text { font-size: 1.2rem; }
+    header {
+        padding: 10px 20px;
+    }
+    
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav {
+        gap: 10px;
+        font-size: 0.8rem;
+    }
+
+    #tool-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .logo-text {
+        font-size: 1.2rem;
+    }
 }

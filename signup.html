@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>新規登録</title><link rel="stylesheet" href="style.css"></head>
+<body>
+    <header><div class="header-container"><a href="index.html" class="logo-text">SIGNUP</a></div></header>
+    <main class="container">
+        <div class="custom-form">
+            <h2>会員登録</h2>
+            <input type="text" id="reg-email" placeholder="メールアドレス">
+            <input type="password" id="reg-pass" placeholder="パスワード">
+            <label style="display:flex; align-items:center; gap:10px; margin-bottom:20px; text-align:left;">
+                <input type="checkbox" id="reg-news" checked style="width:20px; height:20px; margin:0;"> ニュースレターを購読する
+            </label>
+            <button onclick="registerUser()" class="submit-btn">アカウント作成</button>
+            <button onclick="location.href='login.html'" style="background:none; border:none; color:var(--text); margin-top:15px; width:100%; cursor:pointer;">ログインに戻る</button>
+        </div>
+    </main><script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"><title>💾 クラウドメモ | 会員限定</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="member-mode">
+    <header><div class="logo-text">ToolBox</div><div id="user-status-area"></div></header>
+    <main style="max-width:800px;">
+        <h1>💾 会員専用クラウドメモ</h1>
+        <div class="tool-box">
+            <textarea id="memo-area" rows="15" placeholder="ここに書いた内容は自動的に保存されます..."></textarea>
+            <p id="save-status" style="font-size:0.8em; color:gray; text-align:right;">保存済み</p>
+        </div>
+        <button onclick="location.href='index.html'" style="margin-top:20px;">トップに戻る</button>
+    </main>
+    <script src="script.js"></script>
+    <script>
+        const memo = document.getElementById('memo-area');
+        const status = document.getElementById('save-status');
+        // 保存データの読み込み
+        memo.value = localStorage.getItem('user_memo') || "";
+        // 入力するたびに保存
+        memo.addEventListener('input', () => {
+            localStorage.setItem('user_memo', memo.value);
+            status.innerText = "保存中...";
+            setTimeout(() => { status.innerText = "保存済み"; }, 500);
+        });
+    </script>
+</body>
+</html>

@@ -1,119 +1,141 @@
-/* ============================================
-   1. 会員ランク・システム定義
-   ============================================ */
-const USER_GRADES = {
-    FREE: 'free',
-    MEMBER: 'member',
-    VIP: 'vip'
-};
+/* TOOLBOX PREMIUM - INTEGRATED LOGIC
+   1. 会員判定 & UI動的生成
+   2. アクセシビリティ & 設定保存
+   3. 全4ツールのロジック
+   4. GAS お問い合わせ送信
+*/
+
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwR7OwIAmzQikZxAOM2x4hYJNB_6MaBoFqrhdNnn_39GuqinipwFn1v8icxsc5II69-XQ/exec";
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 状態の取得
+    // 0. 初期設定の適用
+    initApp();
+
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const userGrade = localStorage.getItem('userGrade') || USER_GRADES.FREE;
+    const grid = document.getElementById('tool-grid');
     
-    const currentPage = window.location.pathname.split("/").pop();
-    const body = document.body;
-
-    /* ============================================
-       2. 自動転送ロジック (ランクによるアクセス制限)
-       ============================================ */
-    // VIP会員がTOPに来たら、自動でVIP専用ページへ転送
-    if (isLoggedIn && userGrade === USER_GRADES.VIP && (currentPage === 'index.html' || currentPage === '')) {
-        window.location.href = 'vip_top.html';
-        return;
+    // 1. UIの描画（index.html用）
+    if (grid) {
+        renderTools(isLoggedIn);
     }
 
-    // 非会員が会員専用ページにアクセスしようとしたらTOPへ戻す
-    if (!isLoggedIn && (currentPage === 'vip_top.html' || currentPage === 'member_only.html')) {
-        window.location.href = 'index.html';
-        return;
+    // 2. お問い合わせフォーム送信
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        handleContactForm(contactForm);
     }
-
-    /* ============================================
-       3. UI・デザイン制御
-       ============================================ */
-    const adWrapper = document.getElementById('ad-wrapper');
-    const toolGrid = document.getElementById('tool-grid');
-
-    if (!isLoggedIn) {
-        // --- 非会員モード ---
-        if (adWrapper) {
-            adWrapper.style.display = 'block';
-            loadAdMax(); // 忍者アドマックス読み込み
-        }
-        renderFreeTools(toolGrid);
-    } else {
-        // --- ログイン会員・VIPモード ---
-        body.classList.add('member-mode');
-        if (userGrade === USER_GRADES.VIP) body.classList.add('vip-mode');
-        
-        if (adWrapper) adWrapper.style.display = 'none'; // 広告非表示
-        renderAllTools(toolGrid, userGrade === USER_GRADES.VIP);
-    }
-
-    updateStatusArea(isLoggedIn, userGrade);
 });
 
-/* ============================================
-   4. ツール生成・ユーティリティ関数
-   ============================================ */
+/* ==========================================
+   APP 初期化
+   ========================================== */
+function initApp() {
+    // 設定読み込み
+    const color = localStorage.getItem('user-color') || '#4CAF50';
+    const font = localStorage.getItem('user-font') || '16px';
+    const isDark = localStorage.getItem('dark-mode') === 'true';
 
-// 忍者アドマックスの動的発火
-function loadAdMax() {
-    const space = document.getElementById('ad-space');
-    if (!space) return;
-    const script = document.createElement('script');
-    script.src = "https://adm.shinobi.jp/o/b4938a5bb7d245347d3a4f3bf5b38328";
-    space.appendChild(script);
+    document.documentElement.style.setProperty('--accent', color);
+    document.documentElement.style.fontSize = font;
+    
+    if (isDark || (localStorage.getItem('isLoggedIn') === 'true')) {
+        document.body.classList.add('member-mode');
+    }
+
+    // スマホ用タブバーの「active」制御
+    const path = window.location.pathname;
+    document.querySelectorAll('.tab-item').forEach(el => {
+        if (path.includes(el.getAttribute('href'))) el.classList.add('active');
+    });
 }
 
-// 非会員：文字数カウントのみ
-function renderFreeTools(container) {
-    if (!container) return;
-    container.innerHTML = `
-        <div class="tool-card">
-            <h3>📝 文字数カウント</h3>
-            <p>標準ツール。どなたでもご利用いただけます。</p>
-            <button onclick="location.href='counter.html'">起動</button>
-        </div>
-        <div class="tool-card locked-card">
-            <h3>🔒 会員限定機能</h3>
-            <p>ログインすると全ての広告が消え、機能が開放されます。</p>
-            <button disabled>ロック中</button>
-        </div>
-    `;
-}
-
-// 会員・VIP：全ツール表示
-function renderAllTools(container, isVip) {
-    if (!container) return;
+/* ==========================================
+   ツール描画 & ツール機能 (文字数・ルーレット等)
+   ========================================== */
+function renderTools(isLoggedIn) {
+    const grid = document.getElementById('tool-grid');
+    
     const tools = [
-        {name: "📝 文字数カウント", url: "counter.html"},
-        {name: "🎲 プレミアムルーレット", url: "roulette.html"},
-        {name: "🔐 高度なパスワード生成", url: "pass_gen.html"},
-        {name: "💾 クラウド保存メモ", url: "memo.html"},
-        {name: "🔍 テキスト比較ツール", url: "diff.html"}
+        { id: 'count', name: '文字数カウント', icon: '📝', free: true },
+        { id: 'roulette', name: '抽選ルーレット', icon: '🎲', free: isLoggedIn },
+        { id: 'pass', name: '強固なパス作成', icon: '🔐', free: isLoggedIn },
+        { id: 'memo', name: 'クラウドメモ', icon: '💾', free: isLoggedIn }
     ];
-    container.innerHTML = tools.map(t => `
-        <div class="tool-card ${isVip ? 'vip-card' : ''}">
-            <h3>${t.name}</h3>
-            <button onclick="location.href='${t.url}'">起動する</button>
+
+    grid.innerHTML = tools.map(t => `
+        <div class="tool-card ${!t.free ? 'locked' : ''}">
+            <div style="font-size: 3rem; margin-bottom:15px;">${t.icon}</div>
+            <h3 style="margin:0;">${t.name}</h3>
+            <p style="font-size:0.8rem; opacity:0.7;">${t.free ? '起動可能です' : '会員限定機能'}</p>
+            <button class="submit-btn" style="margin-top:20px; padding:12px;" 
+                onclick="${t.free ? `runTool('${t.id}')` : 'login()'}">
+                ${t.free ? 'ツールを開く' : 'ログインして開放'}
+            </button>
         </div>
     `).join('');
 }
 
-function updateStatusArea(isLoggedIn, grade) {
-    const area = document.getElementById('user-status-area');
-    if (!area) return;
-    if (isLoggedIn) {
-        area.innerHTML = `
-            ${grade === 'vip' ? '<span class="member-badge">VIP</span>' : '<span class="member-badge" style="color:#4CAF50; border-color:#4CAF50;">MEMBER</span>'}
-            <button onclick="logout()" class="nav-btn" style="background:#ff4757; color:white; border:none;">ログアウト</button>
-        `;
-    } else {
-        area.innerHTML = `<button onclick="location.href='login.html'" class="nav-btn" style="background:var(--main-green); color:white; border:none;">ログイン</button>`;
+// 簡易ツール実行エンジン
+function runTool(id) {
+    if (id === 'count') {
+        const val = prompt("文字数を数えるテキストを入力してください:");
+        if (val) alert(`文字数: ${val.length}文字です！`);
+    } else if (id === 'roulette') {
+        const items = ["大吉", "中吉", "小吉", "凶"];
+        const res = items[Math.floor(Math.random() * items.length)];
+        alert(`運勢結果: ${res}`);
+    } else if (id === 'pass') {
+        const pass = Math.random().toString(36).slice(-10) + "!";
+        alert(`生成されたパスワード: ${pass}\n(安全に保管してください)`);
+    } else if (id === 'memo') {
+        const memo = localStorage.getItem('user-memo') || "メモはまだありません";
+        const newMemo = prompt("メモを保存します:", memo);
+        if (newMemo) localStorage.setItem('user-memo', newMemo);
     }
 }
 
-function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+/* ==========================================
+   お問い合わせ送信
+   ========================================== */
+function handleContactForm(form) {
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true;
+        btn.innerHTML = "📡 通信中...";
+
+        const payload = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            message: document.getElementById('message').value
+        };
+
+        try {
+            await fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors', // 重要
+                body: JSON.stringify(payload)
+            });
+            document.getElementById('form-wrapper').style.display = 'none';
+            document.getElementById('form-success').style.display = 'block';
+        } catch (err) {
+            alert("送信に失敗しました。ネット環境を確認してください。");
+            btn.disabled = false;
+            btn.innerText = "メールを送信する";
+        }
+    };
+}
+
+/* ==========================================
+   認証 & 設定
+   ========================================== */
+function login() {
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('dark-mode', 'true');
+    location.reload();
+}
+
+function logout() {
+    localStorage.clear();
+    location.href = 'index.html';
+}

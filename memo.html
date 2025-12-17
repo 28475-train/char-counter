@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CLOUD MEMO | 篠ノ井乗務区</title>
     <style>
-        /* 全体スタイル（省略なし） */
+        /* 全体設定 */
         * {
             box-sizing: border-box;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* ゲーミングカーソル設定 */
+        /* ゲーミングカーソル（未ログイン：緑） */
         html, body, * {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="5" fill="%2300ffaa" stroke="white" stroke-width="1"/><path d="M16 0v32M0 16h32" stroke="%2300ffaa" stroke-width="1" stroke-dasharray="2,2"/></svg>') 16 16, auto !important;
         }
@@ -30,14 +30,14 @@
             font-family: 'Share Tech Mono', monospace, sans-serif;
             height: 100vh;
             width: 100vw;
-            overflow: hidden; /* スマホのバウンス防止 */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
         .container {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -53,7 +53,7 @@
 
         .title {
             color: #00ffaa;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             letter-spacing: 2px;
         }
 
@@ -64,6 +64,7 @@
         #status {
             font-size: 0.6rem;
             color: #555;
+            transition: color 0.3s;
         }
 
         textarea {
@@ -72,22 +73,23 @@
             border: 1px solid #222;
             color: #fff;
             padding: 15px;
-            font-size: 16px; /* スマホのズーム防止 */
-            border-radius: 10px;
+            font-size: 16px; /* スマホズーム防止 */
+            border-radius: 12px;
             resize: none;
             outline: none;
             line-height: 1.6;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         textarea:focus {
             border-color: #00aaff;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.1);
         }
 
-        .footer-nav {
+        .footer {
             display: flex;
             gap: 10px;
-            padding-bottom: env(safe-area-inset-bottom); /* iPhone対策 */
+            padding: 10px 15px calc(15px + env(safe-area-inset-bottom));
         }
 
         .btn {
@@ -95,18 +97,19 @@
             background: #111;
             border: 1px solid #333;
             color: #888;
-            padding: 15px;
+            padding: 14px;
             border-radius: 8px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             text-align: center;
-            text-decoration: none;
+            transition: 0.2s;
         }
 
         .btn:active {
             background: #00aaff;
             color: #000;
             border-color: #00aaff;
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -114,25 +117,23 @@
 
 <div class="container">
     <div class="header">
-        <div class="title">CLOUD_SHARED_MEMO_v3</div>
-        <div id="status">STATUS: STANDBY</div>
+        <div class="title">CLOUD_MEMO_PROTOCOL</div>
+        <div id="status">INITIALIZING...</div>
     </div>
 
-    <textarea id="memo-box" placeholder="同期データを読み込み中..."></textarea>
+    <textarea id="memo-box" placeholder="データを読み込み中..."></textarea>
+</div>
 
-    <div class="footer-nav">
-        <button class="btn" onclick="location.href='index.html'">BACK</button>
-        <button class="btn" onclick="manualSync()">SYNC_NOW</button>
-        <button class="btn" onclick="clearMemo()">CLEAR</button>
-    </div>
+<div class="footer">
+    <button class="btn" onclick="location.href='index.html'">CLOSE</button>
+    <button class="btn" onclick="manualSync()">FORCE_SYNC</button>
+    <button class="btn" onclick="clearMemo()">PURGE</button>
 </div>
 
 <script>
-    // --- 設定エリア ---
-    // 別デバイスと共有するには、ここにGAS等で発行したURLを記述します。
-    // 空のままでも、同じ端末内（LocalStorage）での保存は継続されます。
-    const API_URL = ""; 
-
+    // あなたのAPI URLをセット済み
+    const API_URL = "https://script.google.com/macros/s/AKfycbxkgbAIzQLw2N__Vwt8NjNWJA9srFxb5wbPLNDW5Tg47p1VehTM8t2RQtsRWLha3K2P/exec"; 
+    
     const memoBox = document.getElementById('memo-box');
     const statusLabel = document.getElementById('status');
     const authKey = 'shinorail_consent_v1';
@@ -142,74 +143,75 @@
         document.body.classList.add('is-logged-in');
     }
 
-    // 初期読み込み
-    window.onload = async () => {
+    // クラウドからデータ取得
+    async function loadMemo() {
         statusLabel.innerText = "STATUS: CONNECTING...";
-        
-        // ローカルデータを優先表示
-        const localData = localStorage.getItem('shinorail_memo_data');
-        if (localData) memoBox.value = localData;
+        statusLabel.style.color = "#00ffaa";
 
-        // APIがあればサーバーから取得
-        if (API_URL) {
-            try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                if (data.content) {
-                    memoBox.value = data.content;
-                    statusLabel.innerText = "STATUS: CLOUD_SYNCED";
-                }
-            } catch (e) {
-                statusLabel.innerText = "STATUS: LOCAL_ONLY";
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            if (data.content !== undefined) {
+                memoBox.value = data.content;
+                statusLabel.innerText = "STATUS: ONLINE";
+                statusLabel.style.color = "#00aaff";
             }
-        } else {
-            statusLabel.innerText = "STATUS: LOCAL_READY";
-        }
-    };
-
-    // 保存処理
-    async function saveContent() {
-        const content = memoBox.value;
-        localStorage.setItem('shinorail_memo_data', content);
-        
-        if (API_URL) {
-            statusLabel.innerText = "STATUS: UPLOADING...";
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ content: content })
-                });
-                statusLabel.innerText = "STATUS: CLOUD_SAVED";
-            } catch (e) {
-                statusLabel.innerText = "STATUS: SYNC_ERROR";
-            }
-        } else {
-            statusLabel.innerText = "STATUS: LOCAL_SAVED";
+        } catch (e) {
+            console.error(e);
+            statusLabel.innerText = "STATUS: OFFLINE";
+            statusLabel.style.color = "#ff0044";
+            // オフライン時はローカルから復元
+            memoBox.value = localStorage.getItem('shinorail_memo_backup') || "";
         }
     }
 
-    // 入力監視（タイピングが止まって1秒後に自動保存）
+    // クラウドへ保存
+    async function saveMemo() {
+        const content = memoBox.value;
+        // ローカルにバックアップ
+        localStorage.setItem('shinorail_memo_backup', content);
+        
+        statusLabel.innerText = "STATUS: UPLOADING...";
+        statusLabel.style.color = "#ffffff";
+
+        try {
+            // POSTリクエスト
+            await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ content: content })
+            });
+            statusLabel.innerText = "STATUS: SYNCED";
+            statusLabel.style.color = "#00aaff";
+        } catch (e) {
+            statusLabel.innerText = "STATUS: SYNC_ERROR";
+            statusLabel.style.color = "#ff0044";
+        }
+    }
+
+    // 入力監視：タイピングが止まって1.2秒後に自動送信
     let timer;
     memoBox.addEventListener('input', () => {
-        statusLabel.innerText = "STATUS: TYPING...";
+        statusLabel.innerText = "STATUS: EDITING...";
+        statusLabel.style.color = "#ffaa00";
         clearTimeout(timer);
-        timer = setTimeout(saveContent, 1000);
+        timer = setTimeout(saveMemo, 1200);
     });
 
     // 手動同期
     function manualSync() {
-        saveContent();
+        saveMemo();
     }
 
     // 全消去
     function clearMemo() {
-        if (confirm("全データを消去しますか？")) {
+        if (confirm("全てのクラウドデータを消去しますか？")) {
             memoBox.value = "";
-            localStorage.removeItem('shinorail_memo_data');
-            saveContent();
+            saveMemo();
         }
     }
+
+    // 起動時にロードを実行
+    window.onload = loadMemo;
 </script>
 
 </body>

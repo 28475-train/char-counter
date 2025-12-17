@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"><title>🔍 テキスト比較 | 会員限定</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="member-mode">
+    <header><div class="logo-text">ToolBox</div><div id="user-status-area"></div></header>
+    <main>
+        <h1>🔍 テキスト比較ツール</h1>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <textarea id="text-a" rows="10" placeholder="元の文章"></textarea>
+            <textarea id="text-b" rows="10" placeholder="比較する文章"></textarea>
+        </div>
+        <button onclick="compare()" style="width:100%; margin-top:20px;">比較実行</button>
+        <div id="diff-res" class="tool-box" style="margin-top:20px; display:none;"></div>
+    </main>
+    <script src="script.js"></script>
+    <script>
+        function compare() {
+            const a = document.getElementById('text-a').value;
+            const b = document.getElementById('text-b').value;
+            const res = document.getElementById('diff-res');
+            res.style.display = "block";
+            if (a === b) {
+                res.innerHTML = "<b style='color:green;'>✅ 完全に一致しています</b>";
+            } else {
+                res.innerHTML = "<b style='color:red;'>❌ 違いがあります</b><br>文字数: " + a.length + " vs " + b.length;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -50,14 +50,36 @@
         .info-item:last-child { border-bottom: none; }
         .info-date { font-weight: bold; color: var(--text-sub); width: 85px; flex-shrink: 0; }
         
-        /* お知らせタイトルの特殊スタイル */
         #info-trigger {
             font-size: 1.2rem; margin-bottom: 15px; 
             border-left: 5px solid var(--accent); padding-left: 12px; 
             font-weight: 900; transition: all 0.2s ease;
             cursor: pointer; user-select: none; display: inline-block;
         }
-        /* PC版ホバー演出 */
+
+        /* --- 追加：メモプレビューセクション --- */
+        .memo-preview-section {
+            background: var(--card); border-radius: 20px;
+            padding: 25px; border: 1px solid var(--border);
+            margin-bottom: 40px; text-align: left;
+            position: relative;
+        }
+        #preview-content {
+            font-size: 0.9rem; line-height: 1.7; color: var(--text);
+            white-space: pre-wrap; word-wrap: break-word;
+            margin: 15px 0;
+        }
+        .limit-tag {
+            font-size: 0.65rem; color: #ff4444; font-weight: bold;
+            display: none; margin-top: 10px;
+        }
+        .memo-btn {
+            display: block; width: 100%; padding: 12px; 
+            background: #111; color: var(--accent); border: 1px solid var(--accent);
+            border-radius: 12px; font-size: 0.8rem; font-weight: bold;
+            text-decoration: none; text-align: center; margin-top: 15px;
+        }
+
         @media (hover: hover) {
             #info-trigger:hover {
                 color: var(--accent);
@@ -105,6 +127,13 @@
             </div>
         </section>
 
+        <section class="memo-preview-section">
+            <h2 style="font-size: 1rem; margin: 0; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">クラウドメモ（共有）</h2>
+            <div id="preview-content">LOADING_DATA...</div>
+            <div id="limit-msg" class="limit-tag">【制限】会員のみ100文字以降を閲覧可能です。</div>
+            <a href="memo.html" class="memo-btn">詳細・編集（要認証） ></a>
+        </section>
+
         <section style="margin-bottom: 50px;">
             <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">メインメニュー</h2>
             <div id="tool-grid"></div>
@@ -132,13 +161,38 @@
 
     <script src="script.js"></script>
     <script>
-        // 1. 同意システムの実行
+        const API_URL = "https://script.google.com/macros/s/AKfycbxkgbAIzQLw2N__Vwt8NjNWJA9srFxb5wbPLNDW5Tg47p1VehTM8t2RQtsRWLha3K2P/exec";
         const CONSENT_KEY = 'shinorail_consent_v1';
+
+        // メモプレビューの読み込み
+        async function fetchMemoPreview() {
+            const previewArea = document.getElementById('preview-content');
+            const limitMsg = document.getElementById('limit-msg');
+            const isLoggedIn = localStorage.getItem(CONSENT_KEY);
+
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                let text = data.content || "メモはありません。";
+
+                if (!isLoggedIn && text.length > 100) {
+                    previewArea.innerText = text.substring(0, 100) + "...";
+                    limitMsg.style.display = "block";
+                } else {
+                    previewArea.innerText = text;
+                    limitMsg.style.display = "none";
+                }
+            } catch (e) {
+                previewArea.innerText = "データ取得エラー";
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             if (!localStorage.getItem(CONSENT_KEY)) {
                 document.getElementById('consent-overlay').style.display = 'flex';
                 document.body.classList.add('modal-open');
             }
+            fetchMemoPreview();
         });
 
         function acceptConsent() {
@@ -149,44 +203,26 @@
             setTimeout(() => {
                 overlay.style.display = 'none';
                 document.body.classList.remove('modal-open');
+                location.reload(); // プレビュー制限を解除するためリロード
             }, 400);
         }
 
-        // 2. 隠しトリガー：お知らせ3回クリック
+        // 隠しトリガー
         let tapCount = 0;
         let tapTimer;
         const trigger = document.getElementById('info-trigger');
-
         if (trigger) {
             trigger.addEventListener('click', () => {
                 tapCount++;
-                
-                // 視覚演出（ポコンと跳ねる）
                 trigger.style.transform = 'scale(1.15)';
                 setTimeout(() => { trigger.style.transform = 'scale(1)'; }, 100);
-
                 clearTimeout(tapTimer);
                 tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
-
                 if (tapCount === 3) {
-                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                    alert("AUTHORIZATION GRANTED: 隠しセクターへ。");
                     location.href = 'secret.html';
                 }
             });
         }
-
-        // 3. PC限定：キーボード隠しコマンド「S」を3回
-        let keyCount = 0;
-        document.addEventListener('keydown', (e) => {
-            if (e.key.toLowerCase() === 's') {
-                keyCount++;
-                if (keyCount === 3) {
-                    location.href = 'secret.html';
-                }
-                setTimeout(() => { keyCount = 0; }, 2000);
-            }
-        });
     </script>
 </body>
 </html>

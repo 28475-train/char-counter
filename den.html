@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>S-CALC Pro | 篠ノ井乗務区</title>
     <script>
-        // 不正アクセスチェック
         (function() {
             const token = localStorage.getItem('den_access_token');
             const now = new Date().getTime();
@@ -37,21 +36,30 @@
             box-shadow: 0 0 30px rgba(0, 255, 170, 0.2);
             width: 90%;
             max-width: 360px;
+            position: relative;
         }
-        #display {
+        /* ディスプレイ：式を表示する小窓を追加 */
+        .display-area {
             background: #000;
             border: 1px solid #333;
-            color: #00ffaa;
-            font-size: 1.8rem;
-            text-align: right;
-            padding: 15px;
             margin-bottom: 15px;
-            height: 40px;
-            line-height: 40px;
+            padding: 10px;
             border-radius: 5px;
+            text-align: right;
+        }
+        #formula {
+            height: 15px;
+            font-size: 0.7rem;
+            color: #008855;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+        #display {
+            font-size: 1.8rem;
+            height: 35px;
+            line-height: 35px;
             text-shadow: 0 0 10px #00ffaa;
             overflow: hidden;
-            transition: all 0.2s;
         }
         .grid {
             display: grid;
@@ -66,99 +74,103 @@
             font-size: 1rem;
             cursor: pointer;
             border-radius: 6px;
-            transition: 0.1s;
         }
-        button:active {
-            background: #00ffaa;
-            color: #000;
-        }
+        button:active { background: #00ffaa; color: #000; }
         .btn-func { color: #38bdf8; border-color: #38bdf8; font-size: 0.8rem; }
         .btn-op { color: #fff; border-color: #777; font-weight: bold; }
         .btn-ac { color: #ff0044; border-color: #ff0044; }
         .btn-eq { background: #00ffaa; color: #000; grid-column: span 2; font-weight: bold; }
         
-        .sys-info {
-            font-size: 0.6rem;
-            margin-bottom: 10px;
+        /* ガイドポップアップ */
+        #guide-modal {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            background: rgba(0, 20, 10, 0.95);
+            border: 2px solid #00ffaa;
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 100;
+            display: none;
             text-align: left;
-            letter-spacing: 1px;
-            opacity: 0.7;
+            font-size: 0.8rem;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
 
     <div class="calc-frame">
-        <div class="sys-info">SYSTEM: SCIENTIFIC_CALC_PRO<br>STATUS: ENCRYPTED</div>
-        <div id="display">CONNECTING...</div>
+        <div id="guide-modal">
+            <h3 style="margin-top:0; color:#00ffaa; border-bottom:1px solid #00ffaa;">SYSTEM GUIDE</h3>
+            ・全ての操作はボタンで行います<br>
+            ・上部に現在の計算式が表示されます<br>
+            ・sin/cos/tanは角度(deg)で計算<br>
+            ・πボタンで円周率を即時入力<br>
+            <button onclick="closeGuide()" style="margin-top:15px; width:100%; border-color:#00ffaa;">UNDERSTOOD</button>
+        </div>
+
+        <div style="font-size:0.6rem; margin-bottom:10px; opacity:0.7;">PRO_TOOLS: SCIENTIFIC_CALC_V3</div>
+        
+        <div class="display-area">
+            <div id="formula"></div>
+            <div id="display">BOOTING...</div>
+        </div>
         
         <div class="grid">
             <button class="btn-func" onclick="f('sin')">sin</button>
             <button class="btn-func" onclick="f('cos')">cos</button>
             <button class="btn-func" onclick="f('tan')">tan</button>
             <button class="btn-ac" onclick="c()">AC</button>
-
             <button class="btn-func" onclick="f('sqrt')">√</button>
             <button class="btn-func" onclick="f('pow')">x²</button>
             <button class="btn-func" onclick="f('pi')">π</button>
             <button class="btn-op" onclick="o('/')">÷</button>
-
             <button onclick="n('7')">7</button>
             <button onclick="n('8')">8</button>
             <button onclick="n('9')">9</button>
             <button class="btn-op" onclick="o('*')">×</button>
-
             <button onclick="n('4')">4</button>
             <button onclick="n('5')">5</button>
             <button onclick="n('6')">6</button>
             <button class="btn-op" onclick="o('-')">-</button>
-
             <button onclick="n('1')">1</button>
             <button onclick="n('2')">2</button>
             <button onclick="n('3')">3</button>
             <button class="btn-op" onclick="o('+')">+</button>
-
             <button onclick="n('0')">0</button>
             <button onclick="n('.')">.</button>
             <button class="btn-eq" onclick="e()">=</button>
         </div>
-        
-        <button onclick="location.href='secret.html'" style="margin-top:15px; width:100%; font-size:0.7rem; border:none; background:transparent; color:#555; cursor:pointer;">TERMINATE_SESSION</button>
+        <button onclick="location.href='secret.html'" style="margin-top:15px; width:100%; font-size:0.7rem; border:none; background:transparent; color:#555; cursor:pointer;">CLOSE_SESSION</button>
     </div>
 
     <script>
         let s = "0", val = null, op = null, w = false;
-        const d = () => document.getElementById('display').innerText = s;
+        const disp = document.getElementById('display');
+        const form = document.getElementById('formula');
 
-        // 起動シークエンス演出
         window.onload = () => {
-            const display = document.getElementById('display');
-            const startupLines = [
-                "LINKING...",
-                "LOADING_MODULES",
-                "SECURITY_CHECK_OK",
-                "READY_S_CALC",
-                "0"
-            ];
-            
+            const startupLines = ["LINKING...", "STABILIZING...", "READY", "0"];
             let i = 0;
             const interval = setInterval(() => {
-                display.innerText = startupLines[i];
-                display.style.fontSize = "1rem";
+                disp.innerText = startupLines[i];
                 i++;
                 if (i >= startupLines.length) {
                     clearInterval(interval);
-                    display.style.fontSize = "1.8rem";
-                    s = "0";
-                    d();
+                    s = "0"; disp.innerText = s;
+                    document.getElementById('guide-modal').style.display = 'block';
                 }
-            }, 350);
+            }, 400);
         };
+
+        function closeGuide() { document.getElementById('guide-modal').style.display = 'none'; }
 
         function n(v) {
             if (w) { s = v; w = false; }
             else { s = s === "0" ? v : s + v; }
-            d();
+            disp.innerText = s;
         }
 
         function o(v) {
@@ -166,32 +178,36 @@
             val = parseFloat(s);
             op = v;
             w = true;
+            form.innerText = val + " " + v; // 式を表示
         }
 
         function c() {
             s = "0"; val = null; op = null; w = false;
-            d();
+            disp.innerText = s; form.innerText = "";
         }
 
         function f(type) {
             let current = parseFloat(s);
             let res = 0;
+            let label = "";
             switch(type) {
-                case 'sin': res = Math.sin(current * Math.PI / 180); break;
-                case 'cos': res = Math.cos(current * Math.PI / 180); break;
-                case 'tan': res = Math.tan(current * Math.PI / 180); break;
-                case 'sqrt': res = Math.sqrt(current); break;
-                case 'pow': res = Math.pow(current, 2); break;
-                case 'pi': res = Math.PI; break;
+                case 'sin': res = Math.sin(current * Math.PI / 180); label = `sin(${current})`; break;
+                case 'cos': res = Math.cos(current * Math.PI / 180); label = `cos(${current})`; break;
+                case 'tan': res = Math.tan(current * Math.PI / 180); label = `tan(${current})`; break;
+                case 'sqrt': res = Math.sqrt(current); label = `√(${current})`; break;
+                case 'pow': res = Math.pow(current, 2); label = `${current}²`; break;
+                case 'pi': res = Math.PI; s = res.toString(); disp.innerText = "3.141592..."; return;
             }
+            form.innerText = label;
             s = String(parseFloat(res.toFixed(8)));
+            disp.innerText = s;
             w = true;
-            d();
         }
 
         function e() {
             if (op === null || w) return;
             let v = parseFloat(s), r = 0;
+            form.innerText = val + " " + op + " " + v + " ="; // 式を完結させて表示
             switch(op) {
                 case '+': r = val + v; break;
                 case '-': r = val - v; break;
@@ -199,14 +215,10 @@
                 case '/': r = val / v; break;
             }
             s = String(parseFloat(r.toFixed(8)));
+            disp.innerText = s;
             op = null;
             w = true;
-            d();
         }
-
-        document.querySelectorAll('button').forEach(b => {
-            b.addEventListener('touchstart', () => navigator.vibrate && navigator.vibrate(10));
-        });
     </script>
 </body>
 </html>

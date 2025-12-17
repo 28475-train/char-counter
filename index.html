@@ -1,81 +1,50 @@
 <!DOCTYPE html>
-<html lang="ja" data-ads="true">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>多機能ツールボックス | 篠ノ井乗務区制作</title>
-    <link rel="stylesheet" href="style.css"> 
-    <script src="ads.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多機能ツールボックス</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body data-theme="light_green"> 
-    <script>
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) { location.replace('SP/index.html'); }
-    </script>
-
-    <div id="ad-area-top">広告スペース</div>
-
-    <header>
+<body data-theme="light_green">
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
         <nav>
-            <ul>
-                <li><a href="index.html" class="active">多機能ツールボックス (PC版)</a></li>
-                <li><a href="counter.html">📝 文字数カウント</a></li>
-                <li><a href="roulette.html">🎲 ルーレット</a></li>
-                <li><a href="settings.html">⚙ 設定</a></li>
-                <li><a href="help.html">ヘルプ</a></li>
-                <li><a href="about.html">制作者</a></li>
-            </ul>
+            <a href="index.html">トップ</a> | <a href="counter.html">文字数カウント</a>
         </nav>
+        <div id="user-status-area"></div>
     </header>
-    <main>
-        <section id="announcement-area">
-            <h2>📢 お知らせ</h2>
-            <ul id="announcement-list">
-                </ul>
-        </section>
-        
-        <h1>多機能ツールボックスへようこそ</h1>
-        
-        <section>
-            <h2>このサイトについて</h2>
-            <p>このサイトは、日常のちょっとした作業を効率化するための便利なツールを一箇所にまとめた多機能ツールボックスです。文字数カウント、ランダムな項目選択ができるルーレット、そして柔軟なデザイン設定機能を提供しています。</p>
-            <p>現在は以下の機能が利用可能です。ナビゲーションバーから移動してください。</p>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>機能</th>
-                        <th>説明</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>📝 文字数カウント</td>
-                        <td>入力したテキストの文字数をリアルタイムで計測します。テキストのダウンロードも可能です。</td>
-                    </tr>
-                    <tr>
-                        <td>🎲 ルーレット</td>
-                        <td>複数の項目からランダムに一つを選択します。会議での決定や遊びに使えます。</td>
-                    </tr>
-                    <tr>
-                        <td>⚙ 設定</td>
-                        <td>テーマカラーの変更、文字サイズの調整、色の反転（ハイコントラスト）などのアクセシビリティ設定が可能です。</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
 
+    <main>
+        <section style="text-align:center; padding:50px 0;">
+            <h1>多機能ツールボックスへようこそ</h1>
+            <p>便利ツールを自由に利用できます。会員登録で限定機能も開放！</p>
+        </section>
     </main>
-    
-    <div id="ad-area-bottom">広告スペース</div>
+
+    <hr>
+    <section id="bottom-info-area" style="text-align: center; padding: 20px 0;">
+        <div id="policy-links" style="margin-bottom: 25px;">
+            <button onclick="location.href='privacy_policy.html'" style="padding: 10px 15px; margin: 5px;">プライバシーポリシー</button>
+            <button onclick="location.href='terms_of_service.html'" style="padding: 10px 15px; margin: 5px;">利用規約</button>
+            <button onclick="location.href='ads_policy.html'" style="padding: 10px 15px; margin: 5px;">広告ポリシー</button>
+        </div>
+
+        <div id="announcement-section" style="margin-bottom: 20px;">
+            <h2>🔔 最新のお知らせ</h2>
+            <ul id="announcement-list" style="list-style-type: none; padding: 0;"></ul>
+        </div>
+        
+        <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" style="padding: 12px 30px; margin-bottom: 20px;">ページトップへ戻る</button>
+        
+        <div class="ad-container">
+            <p style="font-size: 0.8em; color: #888;">[広告エリア]</p>
+        </div>
+    </section>
 
     <footer>
-        <p>
-            <a href="privacy.html">プライバシーポリシー</a> | 
-            <a href="terms.html">利用規約</a>
-        </p>
-        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
+        <p style="text-align:center;">Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>

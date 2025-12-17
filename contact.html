@@ -3,56 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Contact | ToolBox Premium</title>
+    <title>お問い合わせ | ToolBox</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="app-body">
+<body>
     <header>
         <div class="header-container">
-            <div class="logo-text" onclick="location.href='index.html'">CONTACT</div>
+            <a href="index.html" class="logo-text">CONTACT</a>
             <div id="status-area"></div>
         </div>
     </header>
 
     <main class="container">
-        <div class="menu-bar">
-            <button onclick="location.href='index.html'" class="menu-btn">🛠 ツール</button>
-            <button onclick="location.href='contact.html'" class="menu-btn active">✉️ 連絡</button>
-            <button id="settings-nav-btn" onclick="location.href='settings.html'" class="menu-btn" style="display:none;">⚙️ 設定</button>
+        <div class="btn-group">
+            <button class="menu-btn" onclick="location.href='index.html'">ホームへ</button>
+            <button class="menu-btn" onclick="location.href='settings.html'">設定</button>
         </div>
 
-        <div class="custom-form" id="form-wrapper">
-            <h2 style="font-size: 1.2rem;">お問い合わせ</h2>
-            <p style="font-size: 0.8rem; margin-bottom: 20px; opacity: 0.7;">
-                返信が必要な場合はメールアドレスを正確に入力してください。
+        <div class="custom-form">
+            <h2 style="color: var(--accent); margin-top: 0;">お問い合わせ</h2>
+            <p style="font-size: 0.85rem; margin-bottom: 25px; opacity: 0.8;">
+                送信後、Googleスプレッドシートへ記録され、自動返信メールが届きます。
             </p>
-            
-            <form id="contact-form">
-                <div class="form-group">
-                    <label>お名前</label>
-                    <input type="text" id="name" placeholder="Name" required>
-                </div>
-                <div class="form-group">
-                    <label>メールアドレス</label>
-                    <input type="email" id="email" placeholder="example@mail.com" required>
-                </div>
-                <div class="form-group">
-                    <label>メッセージ内容</label>
-                    <textarea id="message" rows="5" placeholder="こちらに入力してください" required></textarea>
-                </div>
-                <button type="submit" id="submit-btn" class="submit-btn">メールを送信する</button>
-            </form>
-        </div>
 
-        <div id="form-success" style="display: none; text-align: center; padding: 40px; background: var(--card); border-radius: 25px; margin-top: 20px;">
-            <div style="font-size: 4rem;">✅</div>
-            <h2 style="font-size: 1.3rem;">送信完了</h2>
-            <p style="font-size: 0.9rem;">管理者へ送信しました。<br>確認メールが届くのをお待ちください。</p>
-            <button onclick="location.href='index.html'" class="submit-btn" style="margin-top:20px; background:#64748b;">トップに戻る</button>
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="font-size: 0.8rem; font-weight: bold;">返信用メールアドレス</label>
+                <input type="text" id="contact-email" placeholder="example@mail.com">
+            </div>
+
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="font-size: 0.8rem; font-weight: bold;">お問い合わせの種類</label>
+                <select id="contact-type">
+                    <option value="">選択してください</option>
+                    <option value="不具合報告">不具合・バグの報告</option>
+                    <option value="新機能の要望">新しい機能の要望</option>
+                    <option value="その他">その他</option>
+                </select>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="font-size: 0.8rem; font-weight: bold;">メッセージ詳細</label>
+                <textarea id="contact-message" rows="8" placeholder="内容を詳しく記入してください"></textarea>
+            </div>
+
+            <button id="send-btn" onclick="processContact()" class="submit-btn">メッセージを送信</button>
+            
+            <p id="msg-status" style="margin-top: 20px; font-weight: bold; font-size: 0.9rem; display: none;"></p>
         </div>
     </main>
-
-    <div style="height: 100px;"></div>
 
     <script src="script.js"></script>
 </body>

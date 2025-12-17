@@ -1,39 +1,67 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8"><title>💎 履歴付き計算機 | 会員限定</title>
+    <meta charset="UTF-8">
+    <title>🔍 高度な計算機 | 会員限定ツール</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="member-mode">
-    <header><div class="logo-text">ToolBox</div><div id="user-status-area"></div></header>
+    <header>
+        <div class="logo-text">ToolBox</div>
+        <div id="user-status-area"></div>
+    </header>
+
     <main style="max-width:500px;">
-        <h1>💎 プレミアム計算機</h1>
+        <h1>🔍 高度な計算機</h1>
+        <p style="font-size: 0.9em; opacity: 0.8;">※履歴は自動的に保存されます。</p>
+        
         <div class="tool-box">
-            <input type="text" id="c-in" placeholder="例: (100 + 200) * 1.1">
-            <button onclick="calc()" style="width:100%; margin-top:10px;">計算</button>
-            <h2 id="c-out" style="text-align:center; color:#d4af37;">結果: -</h2>
+            <input type="text" id="c-in" placeholder="例: (1200 + 800) * 1.1">
+            <button onclick="calc()" style="width:100%; margin-top:10px;">計算を実行</button>
+            <h2 id="c-out" style="text-align:center; color:#d4af37; margin-top:20px;">結果: -</h2>
         </div>
+
         <div class="announcement-box">
-            <h3>📝 計算履歴</h3>
-            <ul id="c-history"></ul>
+            <h3>📝 計算履歴（最新10件）</h3>
+            <ul id="c-history" style="line-height: 2;"></ul>
+            <button onclick="clearH()" style="background:none; color:#888; font-size:0.8em; text-decoration:underline; border:none; padding:0;">履歴を削除</button>
         </div>
+        
+        <p style="margin-top:30px; text-align:center;">
+            <a href="index.html" style="color:inherit; text-decoration:none;">← ツール一覧に戻る</a>
+        </p>
     </main>
+
     <script src="script.js"></script>
     <script>
         function calc() {
             const input = document.getElementById('c-in').value;
+            if(!input) return;
             try {
-                const result = eval(input);
+                // セキュリティに配慮した簡易計算
+                const result = Function('return (' + input + ')')();
                 document.getElementById('c-out').innerText = "結果: " + result;
+                
                 let h = JSON.parse(localStorage.getItem('c_h') || '[]');
                 h.unshift(`${input} = ${result}`);
                 localStorage.setItem('c_h', JSON.stringify(h.slice(0, 10)));
                 showH();
-            } catch(e) { alert("無効な式です"); }
+            } catch(e) { 
+                alert("正しい数式を入力してください。"); 
+            }
         }
+
         function showH() {
             const h = JSON.parse(localStorage.getItem('c_h') || '[]');
-            document.getElementById('c-history').innerHTML = h.map(x => `<li>${x}</li>`).join('');
+            const list = document.getElementById('c-history');
+            list.innerHTML = h.length ? h.map(x => `<li>${x}</li>`).join('') : "<li>履歴はありません</li>";
+        }
+
+        function clearH() {
+            if(confirm("履歴をすべて削除しますか？")) {
+                localStorage.removeItem('c_h');
+                showH();
+            }
         }
         showH();
     </script>

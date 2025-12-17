@@ -2,20 +2,79 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolBox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ToolBox | 篠ノ井乗務区 公式ツール集</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <div class="header-container">
-            <div class="logo-text" onclick="location.href='index.html'">ToolBox.</div>
+            <a href="index.html" class="logo-text">ToolBox</a>
             <div id="status-area"></div>
         </div>
     </header>
+
     <main class="container">
-        <div id="tool-grid"></div>
+        <section style="margin-bottom: 50px;">
+            <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">
+                メインメニュー
+            </h2>
+            <div id="tool-grid">
+                </div>
+        </section>
+
+        <hr style="border: none; border-top: 2px solid var(--border); margin: 60px 0 40px;">
+
+        <section class="custom-form" style="text-align: left; padding: 35px; border-radius: 32px;">
+            
+            <div style="margin-bottom: 35px;">
+                <h3 style="color: var(--accent); font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">プライバシーポリシー</h3>
+                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 10px;">
+                    当サイト（以下「本サービス」）は、ユーザーのプライバシーを尊重します。お問い合わせ時に取得したメールアドレスは、返信および重要なお知らせの配信にのみ使用し、第三者への提供は行いません。ツール内に入力されたデータはブラウザ内でのみ処理され、外部サーバーへ自動的に送信・保存されることはありません。
+                </p>
+            </div>
+
+            <div style="margin-bottom: 35px;">
+                <h3 style="color: var(--accent); font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">著作権・免責事項</h3>
+                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 10px;">
+                    本サービスで提供されるすべてのコンテンツ（プログラム、デザイン、文章等）の著作権は「篠ノ井乗務区」に帰属します。無断転載・複製を禁じます。<br>
+                    また、本サービスの利用により発生した直接的・間接的な損害について、運営者は一切の責任を負いません。ツールの結果は参考値としてご利用ください。
+                </p>
+            </div>
+
+            <div>
+                <h3 style="color: var(--accent); font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">運営者情報・お問い合わせ</h3>
+                <table style="width: 100%; font-size: 0.85rem; color: var(--text-sub); margin-top: 10px; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 5px 0; width: 100px; font-weight: bold;">運営組織：</td>
+                        <td>篠ノ井乗務区</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 5px 0; font-weight: bold;">公式メール：</td>
+                        <td><a href="mailto:shinorail.contact@gmail.com" style="color: var(--accent); text-decoration: none;">shinorail.contact@gmail.com</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 5px 0; font-weight: bold;">開設日：</td>
+                        <td>2025年</td>
+                    </tr>
+                </table>
+                <p style="font-size: 0.75rem; margin-top: 15px; opacity: 0.7;">
+                    ※サービス内容、不具合報告、提携等に関するご連絡は上記メールアドレス、またはお問い合わせフォームよりお願いいたします。
+                </p>
+            </div>
+        </section>
+
+        <footer style="margin-top: 60px; text-align: center;">
+            <div style="margin-bottom: 15px;">
+                <a href="contact.html" style="color: var(--text); font-size: 0.8rem; text-decoration: none; margin: 0 15px; opacity: 0.7;">お問い合わせ</a>
+                <a href="settings.html" style="color: var(--text); font-size: 0.8rem; text-decoration: none; margin: 0 15px; opacity: 0.7;">サイト設定</a>
+            </div>
+            <p style="font-size: 0.7rem; color: var(--text-sub); letter-spacing: 1px;">
+                &copy; 2025 篠ノ井乗務区 (ToolBox) All Rights Reserved.
+            </p>
+        </footer>
     </main>
+
     <script src="script.js"></script>
 </body>
 </html>

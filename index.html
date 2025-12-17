@@ -2,48 +2,38 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多機能ツールボックス</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Premium ToolBox</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
-<body data-theme="light_green">
-    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
-        <nav>
-            <a href="index.html">トップ</a> | <a href="counter.html">文字数カウント</a>
-        </nav>
-        <div id="user-status-area"></div>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-text" onclick="location.href='index.html'">ToolBox.</div>
+            <nav id="nav-area">
+                <a href="index.html" class="nav-btn">🏠 Home</a>
+                </nav>
+            <div id="status-area"></div>
+        </div>
     </header>
 
+    <div id="ad-wrapper" class="ad-container">
+        <div class="ad-label">SPONSOR</div>
+        <div id="ad-space">
+            </div>
+    </div>
+
     <main>
-        <section style="text-align:center; padding:50px 0;">
-            <h1>多機能ツールボックスへようこそ</h1>
-            <p>便利ツールを自由に利用できます。会員登録で限定機能も開放！</p>
-        </section>
+        <div id="hero-section" style="text-align:center; margin-bottom:40px;">
+            <h1 id="welcome-title">Loading...</h1>
+            <p id="welcome-desc"></p>
+        </div>
+
+        <div id="tool-grid" class="grid">
+            </div>
     </main>
-
-    <hr>
-    <section id="bottom-info-area" style="text-align: center; padding: 20px 0;">
-        <div id="policy-links" style="margin-bottom: 25px;">
-            <button onclick="location.href='privacy_policy.html'" style="padding: 10px 15px; margin: 5px;">プライバシーポリシー</button>
-            <button onclick="location.href='terms_of_service.html'" style="padding: 10px 15px; margin: 5px;">利用規約</button>
-            <button onclick="location.href='ads_policy.html'" style="padding: 10px 15px; margin: 5px;">広告ポリシー</button>
-        </div>
-
-        <div id="announcement-section" style="margin-bottom: 20px;">
-            <h2>🔔 最新のお知らせ</h2>
-            <ul id="announcement-list" style="list-style-type: none; padding: 0;"></ul>
-        </div>
-        
-        <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" style="padding: 12px 30px; margin-bottom: 20px;">ページトップへ戻る</button>
-        
-        <div class="ad-container">
-            <p style="font-size: 0.8em; color: #888;">[広告エリア]</p>
-        </div>
-    </section>
-
-    <footer>
-        <p style="text-align:center;">Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
-    </footer>
 
     <script src="script.js"></script>
 </body>

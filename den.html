@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CALC-X | 篠ノ井乗務区</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // --- 不正アクセスチェック ---
+        (function() {
+            const token = localStorage.getItem('den_access_token');
+            const now = new Date().getTime();
+            // トークンがない、または期限切れ（30秒以上経過）の場合は追い出す
+            if (!token || now > parseInt(token)) {
+                alert("ACCESS DENIED: 認証が必要です。");
+                localStorage.removeItem('den_access_token');
+                location.href = 'index.html';
+            }
+            // 使用済みトークンを削除（リロードでの再アクセス防止）
+            localStorage.removeItem('den_access_token');
+        })();
+    </script>
+    <style>
+        body { background: #000; color: #00ffaa; font-family: monospace; text-align: center; padding: 20px; }
+        .calc-box { border: 2px solid #00ffaa; display: inline-block; padding: 20px; border-radius: 10px; background: #050505; }
+        #display { background: #000; border: 1px solid #00ffaa; color: #00ffaa; font-size: 2rem; text-align: right; padding: 10px; margin-bottom: 15px; height: 50px; overflow: hidden; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        button { background: transparent; border: 1px solid #00ffaa; color: #00ffaa; padding: 15px; font-size: 1.2rem; cursor: pointer; border-radius: 5px; }
+        button:active { background: #00ffaa; color: #000; }
+        .op { color: #fff; border-color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div style="font-size: 0.7rem; margin-bottom: 20px; opacity: 0.6;">AUTHORIZED_CALCULATOR_ONLY</div>
+
+    <div class="calc-box">
+        <div id="display">0</div>
+        <div class="grid">
+            <button onclick="c()" style="grid-column: span 2; color: #ff0044;">AC</button>
+            <button class="op" onclick="o('/')">÷</button>
+            <button class="op" onclick="o('*')">×</button>
+            
+            <button onclick="n('7')">7</button>
+            <button onclick="n('8')">8</button>
+            <button onclick="n('9')">9</button>
+            <button class="op" onclick="o('-')">-</button>
+            
+            <button onclick="n('4')">4</button>
+            <button onclick="n('5')">5</button>
+            <button onclick="n('6')">6</button>
+            <button class="op" onclick="o('+')">+</button>
+            
+            <button onclick="n('1')">1</button>
+            <button onclick="n('2')">2</button>
+            <button onclick="n('3')">3</button>
+            <button style="background:#00ffaa; color:#000;" onclick="e()">=</button>
+            
+            <button onclick="n('0')" style="grid-column: span 2;">0</button>
+            <button onclick="n('.')">.</button>
+            <button onclick="location.href='secret.html'" style="font-size: 0.7rem;">戻る</button>
+        </div>
+    </div>
+
+    <script>
+        let s = "0", f = null, op = null, w = false;
+        function d() { document.getElementById('display').innerText = s; }
+        function n(v) { if(w){s=v;w=false;}else{s=s==="0"?v:s+v;} d(); }
+        function o(v) { if(op!==null)e(); f=parseFloat(s); op=v; w=true; }
+        function c() { s="0"; f=null; op=null; w=false; d(); }
+        function e() {
+            if(op===null||w)return;
+            let v=parseFloat(s), r=0;
+            if(op==='+') r=f+v; else if(op==='-') r=f-v; else if(op==='*') r=f*v; else if(op==='/') r=f/v;
+            s=String(parseFloat(r.toFixed(8))); op=null; w=true; d();
+        }
+    </script>
+</body>
+</html>

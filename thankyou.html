@@ -3,26 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ありがとうございます | 多機能ツールボックス</title>
-    <link rel="stylesheet" href="style.css"> 
+    <title>送信完了 | ToolBox</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body data-theme="light_green"> 
-    <script>
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) { location.replace('SP/thankyou.html'); }
-    </script>
-    <main>
-        <h1>送信完了しました。ありがとうございます。</h1>
-        <p>内容を確認し、順次対応いたします。</p>
-        <p><a href="index.html">トップページに戻る</a></p>
+<body>
+    <header><div class="header-container"><a href="index.html" class="logo-text">ToolBox</a></div></header>
+    <main class="container">
+        <div class="custom-form" style="padding: 50px 20px;">
+            <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
+            <h2 style="color: var(--accent);">送信が完了しました</h2>
+            <p style="color: var(--text-sub); margin-bottom: 30px;">
+                お問い合わせありがとうございます。<br>
+                篠ノ井乗務区にて内容を確認し、必要に応じて返信いたします。
+            </p>
+            <button onclick="location.href='index.html'" class="submit-btn">ホームに戻る</button>
+        </div>
     </main>
-    <footer>
-        <p>
-            <a href="privacy.html">プライバシーポリシー</a> | 
-            <a href="terms.html">利用規約</a>
-        </p>
-        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
-    </footer>
     <script src="script.js"></script>
 </body>
 </html>

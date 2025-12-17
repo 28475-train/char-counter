@@ -5,45 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>高機能文字数カウント | ToolBox</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* スマホ時のみ入力エリアの色を変更するレスポンシブ設定 */
-        @media (max-width: 600px) {
-            #counter-input {
-                background-color: #fff9db; /* スマホの時だけ薄い黄色に */
-                border-color: var(--accent);
-            }
-            .count-label {
-                font-size: 0.8rem;
-            }
-            #char-count {
-                font-size: 3.5rem !important;
-            }
-        }
-
-        /* カウントエリアのレイアウト */
-        .status-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .status-item {
-            background: rgba(0,0,0,0.03);
-            padding: 10px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        .count-val {
-            display: block;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--accent);
-        }
-        .count-label {
-            font-size: 0.7rem;
-            opacity: 0.6;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -74,76 +35,104 @@
                     <span class="count-label">行数</span>
                 </div>
             </div>
+
+            <div class="status-grid" style="grid-template-columns: 1fr 1fr; margin-top: -10px;">
+                <div class="status-item">
+                    <span id="no-space-count" class="count-val" style="font-size: 1.1rem;">0</span>
+                    <span class="count-label">空白抜き</span>
+                </div>
+                <div class="status-item">
+                    <span id="current-font-label" class="count-val" style="font-size: 1.1rem; color: var(--text-sub);">JP</span>
+                    <span class="count-label">判定フォント</span>
+                </div>
+            </div>
             
-            <div style="margin-bottom:15px; text-align:left;">
-                <label style="font-size:0.8rem; font-weight:bold;">テキストの色:</label>
-                <input type="color" id="text-color-picker" value="#334155" style="width:100%; height:40px; border-radius:8px; border:1px solid var(--border);">
+            <div style="margin: 15px 0; text-align: left;">
+                <label style="font-size: 0.8rem; font-weight: bold; opacity: 0.8;">テキストカラー:</label>
+                <input type="color" id="text-color-picker" value="#334155" style="width: 100%; height: 40px; border: none; border-radius: 10px; cursor: pointer; background: var(--card);">
             </div>
 
-            <textarea id="counter-input" rows="12" placeholder="入力してください... スマホで見ると色が変わります。"></textarea>
+            <textarea id="counter-input" rows="15" placeholder="ここに入力してください。
+日本語が含まれると「ゴシック体」、英語のみだと「等幅フォント」に自動で切り替わります。
+スマホで閲覧すると背景色が自動で変化します。"></textarea>
             
-            <div class="btn-group">
+            <div class="btn-group" style="margin-top: 10px;">
                 <button onclick="location.href='index.html'" class="menu-btn">戻る</button>
-                <button onclick="clearAll()" class="menu-btn" style="background:#64748b; color:white;">クリア</button>
+                <button onclick="clearCounter()" class="menu-btn" style="background: #64748b; color: white; border-color: #64748b;">クリア</button>
             </div>
 
-            <div id="member-dl" style="display:none; margin-top:20px;">
-                <button onclick="saveFile()" class="submit-btn">テキスト保存</button>
+            <div id="member-tools" style="display: none; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                <button onclick="downloadText()" class="submit-btn">テキストを保存する (.txt)</button>
             </div>
         </div>
     </main>
 
     <script src="script.js"></script>
     <script>
-        const input = document.getElementById('counter-input');
-        const charDisp = document.getElementById('char-count');
-        const byteDisp = document.getElementById('byte-count');
-        const lineDisp = document.getElementById('line-count');
-        const colorPicker = document.getElementById('text-color-picker');
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('counter-input');
+            const charD = document.getElementById('char-count');
+            const byteD = document.getElementById('byte-count');
+            const lineD = document.getElementById('line-count');
+            const noSpaceD = document.getElementById('no-space-count');
+            const fontL = document.getElementById('current-font-label');
+            const colorP = document.getElementById('text-color-picker');
 
-        input.addEventListener('input', () => {
-            const val = input.value;
-            
-            // 文字数
-            charDisp.innerText = val.length;
-            
-            // バイト数 (UTF-8計算)
-            const bytes = encodeURI(val).replace(/%[0-9A-F]{2}/g, '*').length;
-            byteDisp.innerText = bytes;
-            
-            // 行数
-            lineDisp.innerText = val ? val.split(/\r\n|\r|\n/).length : 0;
-            
-            // フォント切替（日本語判定）
-            input.style.fontFamily = /[ぁ-んァ-ヶー一-龠]/.test(val) ? "sans-serif" : "monospace";
+            // 入力時のリアルタイム処理
+            input.addEventListener('input', () => {
+                const val = input.value;
+
+                // 1. 各種カウント
+                charD.innerText = val.length;
+                noSpaceD.innerText = val.replace(/\s+/g, '').length;
+                byteD.innerText = encodeURI(val).replace(/%[0-9A-F]{2}/g, '*').length;
+                lineD.innerText = val ? val.split(/\n/).length : 0;
+
+                // 2. 言語判定とフォント切替
+                // 日本語（ひらがな、カタカナ、漢字）が含まれているかチェック
+                const hasJapanese = /[ぁ-んァ-ヶー一-龠]/.test(val);
+                
+                if (hasJapanese) {
+                    input.style.fontFamily = '"Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif';
+                    fontL.innerText = "日本語";
+                } else {
+                    input.style.fontFamily = '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace';
+                    fontL.innerText = "English";
+                }
+            });
+
+            // カラーピッカー連動
+            colorP.addEventListener('input', () => {
+                input.style.color = colorP.value;
+            });
+
+            // 会員判定
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('member-tools').style.display = 'block';
+            }
         });
 
-        colorPicker.addEventListener('input', () => {
-            input.style.color = colorPicker.value;
-        });
-
-        function clearAll() {
-            if(confirm("リセットしますか？")) {
+        function clearCounter() {
+            if (confirm("入力をすべて消去しますか？")) {
+                const input = document.getElementById('counter-input');
                 input.value = "";
-                charDisp.innerText = "0";
-                byteDisp.innerText = "0";
-                lineDisp.innerText = "0";
+                // 全数値を0にリセット
+                ['char-count', 'byte-count', 'line-count', 'no-space-count'].forEach(id => {
+                    document.getElementById(id).innerText = "0";
+                });
+                input.focus();
             }
         }
 
-        function saveFile() {
-            const blob = new Blob([input.value], {type: 'text/plain'});
+        function downloadText() {
+            const text = document.getElementById('counter-input').value;
+            if (!text) return alert("保存するテキストがありません");
+            const blob = new Blob([text], { type: 'text/plain' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'memo.txt';
+            a.download = 'toolbox_memo_' + new Date().getTime() + '.txt';
             a.click();
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('isLoggedIn') === 'true') {
-                document.getElementById('member-dl').style.display = 'block';
-            }
-        });
     </script>
 </body>
 </html>

@@ -1,59 +1,149 @@
 <!DOCTYPE html>
-<html lang="ja" data-ads="true">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>文字数カウント | 多機能ツールボックス</title>
-    <link rel="stylesheet" href="style.css"> 
-    <script src="ads.js"></script>
+    <title>高機能文字数カウント | ToolBox</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* スマホ時のみ入力エリアの色を変更するレスポンシブ設定 */
+        @media (max-width: 600px) {
+            #counter-input {
+                background-color: #fff9db; /* スマホの時だけ薄い黄色に */
+                border-color: var(--accent);
+            }
+            .count-label {
+                font-size: 0.8rem;
+            }
+            #char-count {
+                font-size: 3.5rem !important;
+            }
+        }
+
+        /* カウントエリアのレイアウト */
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            background: rgba(0,0,0,0.03);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .count-val {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+        .count-label {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+    </style>
 </head>
-<body data-theme="light_green"> 
-    <script>
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) { location.replace('SP/counter.html'); }
-    </script>
-    <div id="ad-area-top"></div>
+<body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">多機能ツールボックス (PC版)</a></li>
-                <li><a href="counter.html">📝 文字数カウント</a></li>
-                <li><a href="roulette.html">🎲 ルーレット</a></li>
-                <li><a href="settings.html">⚙ 設定</a></li>
-                <li><a href="help.html">ヘルプ</a></li>
-                <li><a href="about.html">制作者</a></li>
-            </ul>
-        </nav>
+        <div class="header-container">
+            <a href="index.html" class="logo-text">COUNTER</a>
+            <div id="status-area"></div>
+        </div>
     </header>
-    <main>
-        <h1>文字数カウントツール</h1>
-        <section>
-            <h2>📝 テキスト設定</h2>
-            <label for="font-size-selector">文字サイズ:</label>
-            <select id="font-size-selector">
-                <option value="14px">小 (14px)</option>
-                <option value="16px" selected>標準 (16px)</option>
-                <option value="18px">中 (18px)</option>
-                <option value="20px">大 (20px)</option>
-            </select>
-            <label for="font-color-selector" style="margin-left: 20px;">文字色:</label>
-            <input type="color" id="font-color-selector" value="#333333">
-        </section>
-        <textarea id="text-input" placeholder="ここに文字を入力してください"></textarea>
-        <section>
-            <h2>📊 結果と操作</h2>
-            <p>現在の文字数: <span id="char-count">0</span></p>
-            <button id="download-button">📄 テキストをダウンロード</button>
-        </section>
+
+    <main class="container">
+        <div class="btn-group">
+            <button class="menu-btn" onclick="location.href='index.html'">ホーム</button>
+            <button class="menu-btn" onclick="location.href='settings.html'">設定</button>
+        </div>
+
+        <div class="custom-form">
+            <div class="status-grid">
+                <div class="status-item">
+                    <span id="char-count" class="count-val">0</span>
+                    <span class="count-label">文字数</span>
+                </div>
+                <div class="status-item">
+                    <span id="byte-count" class="count-val">0</span>
+                    <span class="count-label">バイト(UTF-8)</span>
+                </div>
+                <div class="status-item">
+                    <span id="line-count" class="count-val">0</span>
+                    <span class="count-label">行数</span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom:15px; text-align:left;">
+                <label style="font-size:0.8rem; font-weight:bold;">テキストの色:</label>
+                <input type="color" id="text-color-picker" value="#334155" style="width:100%; height:40px; border-radius:8px; border:1px solid var(--border);">
+            </div>
+
+            <textarea id="counter-input" rows="12" placeholder="入力してください... スマホで見ると色が変わります。"></textarea>
+            
+            <div class="btn-group">
+                <button onclick="location.href='index.html'" class="menu-btn">戻る</button>
+                <button onclick="clearAll()" class="menu-btn" style="background:#64748b; color:white;">クリア</button>
+            </div>
+
+            <div id="member-dl" style="display:none; margin-top:20px;">
+                <button onclick="saveFile()" class="submit-btn">テキスト保存</button>
+            </div>
+        </div>
     </main>
-    <div id="ad-area-bottom"></div>
-    <footer>
-        <p>
-            <a href="privacy.html">プライバシーポリシー</a> | 
-            <a href="terms.html">利用規約</a>
-        </p>
-        <p>Copyright © 2025 篠ノ井乗務区制作. All Rights Reserved.</p>
-    </footer>
+
     <script src="script.js"></script>
+    <script>
+        const input = document.getElementById('counter-input');
+        const charDisp = document.getElementById('char-count');
+        const byteDisp = document.getElementById('byte-count');
+        const lineDisp = document.getElementById('line-count');
+        const colorPicker = document.getElementById('text-color-picker');
+
+        input.addEventListener('input', () => {
+            const val = input.value;
+            
+            // 文字数
+            charDisp.innerText = val.length;
+            
+            // バイト数 (UTF-8計算)
+            const bytes = encodeURI(val).replace(/%[0-9A-F]{2}/g, '*').length;
+            byteDisp.innerText = bytes;
+            
+            // 行数
+            lineDisp.innerText = val ? val.split(/\r\n|\r|\n/).length : 0;
+            
+            // フォント切替（日本語判定）
+            input.style.fontFamily = /[ぁ-んァ-ヶー一-龠]/.test(val) ? "sans-serif" : "monospace";
+        });
+
+        colorPicker.addEventListener('input', () => {
+            input.style.color = colorPicker.value;
+        });
+
+        function clearAll() {
+            if(confirm("リセットしますか？")) {
+                input.value = "";
+                charDisp.innerText = "0";
+                byteDisp.innerText = "0";
+                lineDisp.innerText = "0";
+            }
+        }
+
+        function saveFile() {
+            const blob = new Blob([input.value], {type: 'text/plain'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'memo.txt';
+            a.click();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('member-dl').style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>

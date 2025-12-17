@@ -57,7 +57,7 @@
             cursor: pointer; user-select: none; display: inline-block;
         }
 
-        /* --- 追加：メモプレビューセクション --- */
+        /* --- メモプレビューセクション --- */
         .memo-preview-section {
             background: var(--card); border-radius: 20px;
             padding: 25px; border: 1px solid var(--border);
@@ -67,7 +67,7 @@
         #preview-content {
             font-size: 0.9rem; line-height: 1.7; color: var(--text);
             white-space: pre-wrap; word-wrap: break-word;
-            margin: 15px 0;
+            margin: 15px 0; min-height: 1.5em;
         }
         .limit-tag {
             font-size: 0.65rem; color: #ff4444; font-weight: bold;
@@ -78,6 +78,23 @@
             background: #111; color: var(--accent); border: 1px solid var(--accent);
             border-radius: 12px; font-size: 0.8rem; font-weight: bold;
             text-decoration: none; text-align: center; margin-top: 15px;
+        }
+
+        /* --- 上に戻るボタン --- */
+        #page-top-btn {
+            position: fixed; right: 20px; bottom: 30px;
+            width: 50px; height: 50px; background-color: var(--accent);
+            color: white; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0; visibility: hidden; transition: 0.3s;
+            z-index: 1000; border: 2px solid white;
+        }
+        #page-top-btn.is-show { opacity: 1; visibility: visible; }
+        #page-top-btn::after {
+            content: ""; width: 10px; height: 10px;
+            border-top: 3px solid white; border-right: 3px solid white;
+            transform: rotate(-45deg); margin-top: 5px;
         }
 
         @media (hover: hover) {
@@ -98,8 +115,8 @@
                 ご利用にあたり、以下の内容に同意いただく必要があります：<br>
                 ・利用規約およびプライバシーポリシーの遵守<br>
                 ・提供ツールの結果による損害への免責事項<br>
-                ・ブラウザ保存機能（LocalStorage）の使用<br><br>
-                詳細はページ下部の「運営者情報」をご確認ください。
+                ・ブラウザ内保存（LocalStorage）の使用<br><br>
+                クラウド機能は廃止され、データはすべてお客様の端末内にのみ保存されます。
             </div>
             <button class="consent-btn" onclick="acceptConsent()">同意してシステムを開始</button>
         </div>
@@ -108,7 +125,7 @@
     <header>
         <div class="header-container">
             <a href="index.html" class="logo-text">ToolBox</a>
-            <div id="status-area"></div>
+            <div id="status-area" style="font-size: 0.7rem; color: #fff; opacity: 0.8;">LOCAL_STORAGE_MODE</div>
         </div>
     </header>
 
@@ -117,26 +134,28 @@
             <h2 id="info-trigger">お知らせ</h2>
             <div class="info-list">
                 <div class="info-item">
-                    <div class="info-date">2025/12/17</div>
-                    <div class="info-content"><span style="background:var(--accent);color:white;font-size:0.6rem;padding:2px 6px;border-radius:4px;margin-right:8px;">NEW</span> ルーレットの履歴保存機能を実装。</div>
+                    <div class="info-date">2025/12/18</div>
+                    <div class="info-content"><span style="background:var(--accent);color:white;font-size:0.6rem;padding:2px 6px;border-radius:4px;margin-right:8px;">UPD</span> クラウド連携を廃止し、完全ローカル保存に移行。</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-date">2025/12/10</div>
-                    <div class="info-content"> セキュリティ・プロトコル v2.0を適用しました。</div>
+                    <div class="info-date">2025/12/17</div>
+                    <div class="info-content">メモのプレビュー機能と、履歴付きルーレットを実装。</div>
                 </div>
             </div>
         </section>
 
         <section class="memo-preview-section">
-            <h2 style="font-size: 1rem; margin: 0; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">クラウドメモ（共有）</h2>
-            <div id="preview-content">LOADING_DATA...</div>
-            <div id="limit-msg" class="limit-tag">【制限】会員のみ100文字以降を閲覧可能です。</div>
+            <h2 style="font-size: 1rem; margin: 0; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">マイメモ・プレビュー</h2>
+            <div id="preview-content">LOADING_LOCAL_DATA...</div>
+            <div id="limit-msg" class="limit-tag">【制限】同意後に全表示・編集が可能です。</div>
             <a href="memo.html" class="memo-btn">詳細・編集（要認証） ></a>
         </section>
 
         <section style="margin-bottom: 50px;">
             <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">メインメニュー</h2>
-            <div id="tool-grid"></div>
+            <div id="tool-grid">
+                <a href="roulette.html" class="btn" style="display:block; text-decoration:none; margin-bottom:12px;">履歴付きルーレット</a>
+            </div>
         </section>
 
         <hr style="border: none; border-top: 2px solid var(--border); margin: 60px 0 40px;">
@@ -144,7 +163,7 @@
         <section class="custom-form" style="text-align: left; padding: 35px; border-radius: 32px;">
             <h3 style="color: var(--accent); font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">免責事項・プライバシー</h3>
             <p style="font-size: 0.8rem; color: var(--text-sub); margin-top: 10px; line-height: 1.6;">
-                本サービスで提供されるツールの結果により発生したいかなる損害についても、運営者は責任を負いません。データはすべてローカル環境で処理されます。
+                本サービスで提供されるツールの結果により発生したいかなる損害についても、運営者は責任を負いません。データはすべてお客様のブラウザ（LocalStorage）に保存され、サーバーへ送信されることはありません。
             </p>
             <div style="margin-top: 25px;">
                 <table style="width: 100%; font-size: 0.8rem; color: var(--text-sub);">
@@ -159,42 +178,37 @@
         </footer>
     </main>
 
-    <script src="script.js"></script>
+    <div id="page-top-btn" onclick="scrollToTop()"></div>
+
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxkgbAIzQLw2N__Vwt8NjNWJA9srFxb5wbPLNDW5Tg47p1VehTM8t2RQtsRWLha3K2P/exec";
         const CONSENT_KEY = 'shinorail_consent_v1';
+        const MEMO_KEY = 'shinorail_local_memo';
 
-        // メモプレビューの読み込み
-        async function fetchMemoPreview() {
-            const previewArea = document.getElementById('preview-content');
-            const limitMsg = document.getElementById('limit-msg');
+        // 初期化処理
+        function init() {
             const isLoggedIn = localStorage.getItem(CONSENT_KEY);
-
-            try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                let text = data.content || "メモはありません。";
-
-                if (!isLoggedIn && text.length > 100) {
-                    previewArea.innerText = text.substring(0, 100) + "...";
-                    limitMsg.style.display = "block";
-                } else {
-                    previewArea.innerText = text;
-                    limitMsg.style.display = "none";
-                }
-            } catch (e) {
-                previewArea.innerText = "データ取得エラー";
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            if (!localStorage.getItem(CONSENT_KEY)) {
+            
+            // 同意チェック
+            if (!isLoggedIn) {
                 document.getElementById('consent-overlay').style.display = 'flex';
                 document.body.classList.add('modal-open');
             }
-            fetchMemoPreview();
-        });
 
+            // ローカルメモのプレビュー表示
+            const previewArea = document.getElementById('preview-content');
+            const limitMsg = document.getElementById('limit-msg');
+            const savedMemo = localStorage.getItem(MEMO_KEY) || "メモはまだありません。";
+
+            if (!isLoggedIn && savedMemo.length > 100) {
+                previewArea.innerText = savedMemo.substring(0, 100) + "...";
+                limitMsg.style.display = "block";
+            } else {
+                previewArea.innerText = savedMemo;
+                limitMsg.style.display = "none";
+            }
+        }
+
+        // 同意ボタン
         function acceptConsent() {
             localStorage.setItem(CONSENT_KEY, 'true');
             const overlay = document.getElementById('consent-overlay');
@@ -203,18 +217,18 @@
             setTimeout(() => {
                 overlay.style.display = 'none';
                 document.body.classList.remove('modal-open');
-                location.reload(); // プレビュー制限を解除するためリロード
+                location.reload();
             }, 400);
         }
 
-        // 隠しトリガー
+        // 隠しトリガー（お知らせ3回クリック）
         let tapCount = 0;
         let tapTimer;
         const trigger = document.getElementById('info-trigger');
         if (trigger) {
             trigger.addEventListener('click', () => {
                 tapCount++;
-                trigger.style.transform = 'scale(1.15)';
+                trigger.style.transform = 'scale(1.1)';
                 setTimeout(() => { trigger.style.transform = 'scale(1)'; }, 100);
                 clearTimeout(tapTimer);
                 tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
@@ -223,6 +237,21 @@
                 }
             });
         }
+
+        // 上に戻るボタン
+        const topBtn = document.getElementById('page-top-btn');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                topBtn.classList.add('is-show');
+            } else {
+                topBtn.classList.remove('is-show');
+            }
+        });
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>

@@ -1,87 +1,113 @@
 <!DOCTYPE html>
 
-<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>管理投稿 | ToolBox</title> <link rel="stylesheet" href="style.css"> <style> .admin-card { background: var(--card); border-radius: 25px; padding: 30px; border: 1px solid var(--border); margin-bottom: 30px; } .input-label { display: block; font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; color: var(--accent); } </style> </head> <body> <script> // 管理者チェック：ログイン時にセットされるフラグを確認 if (sessionStorage.getItem('is_admin') !== 'true') { alert('このページは管理者専用です。ログインしてください。'); location.href = 'login.html'; } </script>
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>管理パネル | ToolBox</title> <link rel="stylesheet" href="style.css"> <style> .admin-section { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 30px; } .input-field { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--border); background: #1a1a1a; color: white; box-sizing: border-box; } .logo-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px; } .logo-item { background: #222; padding: 10px; border-radius: 15px; text-align: center; border: 1px solid var(--border); } .logo-item img { width: 100%; border-radius: 8px; margin-bottom: 5px; } button:disabled { opacity: 0.5; cursor: not-allowed; } .btn-admin { width:100%; padding:15px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; color:white; } </style> </head> <body> <script> if (sessionStorage.getItem('is_admin') !== 'true') { alert('管理者権限がありません。'); location.href = 'login.html'; } </script>
 
 <header>
     <div class="header-container">
-        <a href="index.html" class="logo-text">ToolBox Admin</a>
-        <div style="font-size: 0.7rem; color: #fff; opacity: 0.8;">RESTRICTED</div>
+        <span class="logo-text">Admin Dashboard</span>
     </div>
 </header>
 
 <main class="container">
-    <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">管理者専用：業務日誌投稿</h2>
+    <section class="admin-section">
+        <h3 style="color:var(--accent); margin-bottom:15px;">ブログ・お知らせ投稿</h3>
+        <input type="text" id="post-title" class="input-field" placeholder="タイトル">
+        <textarea id="post-content" class="input-field" style="height:100px;" placeholder="本文を入力"></textarea>
+        <button id="post-btn" onclick="publishPost()" class="btn-admin" style="background:var(--accent);">ブログを公開する</button>
+    </section>
 
-    <div class="admin-card">
-        <div style="margin-bottom: 25px;">
-            <label class="input-label">投稿タイトル</label>
-            <input type="text" id="post-title" class="input-field" placeholder="例：本日の点検記録">
-        </div>
+    <section class="admin-section">
+        <h3 style="color:#007bff; margin-bottom:15px;">メールマガジン一斉配信</h3>
+        <textarea id="news-content" class="input-field" style="height:100px;" placeholder="会員全員に届くメッセージ"></textarea>
+        <button id="news-btn" onclick="sendNewsletter()" class="btn-admin" style="background:#007bff;">全ユーザーへ配信</button>
+    </section>
 
-        <div style="margin-bottom: 25px;">
-            <label class="input-label">記事本文</label>
-            <textarea id="post-content" class="input-field" style="height: 200px; line-height: 1.6; padding: 15px;" placeholder="共有事項を入力してください"></textarea>
-        </div>
+    <section class="admin-section">
+        <h3 style="color:#28a745; margin-bottom:15px;">登録ロゴ一覧</h3>
+        <button onclick="loadLogos()" class="btn-admin" style="background:#444; margin-bottom:15px;">ロゴを読み込む</button>
+        <div id="logo-list" class="logo-gallery"></div>
+    </section>
 
-        <button id="submit-btn" onclick="sendToGAS()" style="width: 100%; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer;">
-            スプレッドシートへ公開する
-        </button>
-    </div>
-
-    <div style="text-align: center;">
-        <button onclick="logoutAdmin()" style="width:100%; padding:15px; background:#444; color:#fff; border:none; border-radius:15px; font-weight:bold; margin-bottom:15px;">ログアウト（管理者権限破棄）</button>
-        <a href="index.html" class="btn" style="display:block; text-decoration:none; background:#111; color:var(--accent); border:1px solid var(--accent);">ホームへ戻る</a>
+    <div style="padding: 20px 0;">
+        <button onclick="sessionStorage.clear(); location.href='index.html';" class="btn-admin" style="background:#c82333; margin-bottom:15px;">ログアウト</button>
+        <a href="index.html" style="display:block; text-align:center; color:var(--accent); text-decoration:none; font-weight:bold;">ホームへ戻る</a>
     </div>
 </main>
 
 <script>
-    const GAS_ENDPOINT = "ここにあなたのGASのURL";
+    const GAS_API = "[https://script.google.com/macros/s/AKfycbxn0i-8o43KNHBcEcAdpwJmeaEQoC6YSwCPR9zhIXFNIY64FimgSFbX3XKABbHX7I_LbQ/exec](https://script.google.com/macros/s/AKfycbxn0i-8o43KNHBcEcAdpwJmeaEQoC6YSwCPR9zhIXFNIY64FimgSFbX3XKABbHX7I_LbQ/exec)";
 
-    async function sendToGAS() {
+    // ブログ投稿（連打防止付）
+    async function publishPost() {
         const title = document.getElementById('post-title').value;
         const content = document.getElementById('post-content').value;
-        if (!title || !content) return alert("入力が不足しています。");
+        const btn = document.getElementById('post-btn');
 
-        const btn = document.getElementById('submit-btn');
+        if(!title || !content) return alert("内容を入力してください");
+
         btn.disabled = true;
         btn.innerText = "送信中...";
 
         try {
-            await fetch(GAS_ENDPOINT, {
-                method: "POST",
-                body: JSON.stringify({ title: title, content: content })
+            const res = await fetch(GAS_API, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'publish_post', title: title, content: content })
             });
-            alert("投稿完了しました。");
-            location.href = "blog.html";
-        } catch (error) {
-            alert("送信エラー。URLを確認してください。");
+            const data = await res.json();
+            alert(data.message);
+            document.getElementById('post-title').value = "";
+            document.getElementById('post-content').value = "";
+        } catch (e) {
+            alert("送信に失敗しました");
+        } finally {
             btn.disabled = false;
-            btn.innerText = "再試行";
+            btn.innerText = "ブログを公開する";
         }
     }
 
-    function logoutAdmin() {
-        sessionStorage.removeItem('is_admin');
-        alert('ログアウトしました。');
-        location.href = 'index.html';
+    // メルマガ配信（連打防止付）
+    async function sendNewsletter() {
+        const msg = document.getElementById('news-content').value;
+        const btn = document.getElementById('news-btn');
+
+        if(!msg) return alert("メッセージを入力してください");
+        if(!confirm("全会員へメールを送信しますか？")) return;
+
+        btn.disabled = true;
+        btn.innerText = "配信中...";
+
+        try {
+            const res = await fetch(GAS_API, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'send_newsletter', message: msg })
+            });
+            const data = await res.json();
+            alert(data.message);
+            document.getElementById('news-content').value = "";
+        } catch (e) {
+            alert("配信失敗");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "全ユーザーへ配信";
+        }
     }
-</script>
-</body> </html>
 
-2. login.html（管理者フラグ発行ページ）
-ここで正しいIDとパスワードを入れると、admin.htmlに入れるようになります。
-
-<!DOCTYPE html>
-
-<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>ログイン | ToolBox</title> <link rel="stylesheet" href="style.css"> </head> <body> <header> <div class="header-container"> <a href="index.html" class="logo-text">ToolBox Login</a> </div> </header> <main class="container"> <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">管理者認証</h2> <div style="background:var(--card); padding:30px; border-radius:25px; border:1px solid var(--border);"> <input type="text" id="user-id" class="input-field" placeholder="ユーザーID" style="margin-bottom:15px;"> <input type="password" id="user-pass" class="input-field" placeholder="パスワード" style="margin-bottom:20px;"> <button onclick="attemptLogin()" style="width:100%; padding:18px; background:var(--accent); color:white; border:none; border-radius:50px; font-weight:bold;">ログイン</button> </div> <a href="index.html" class="btn" style="display:block; text-decoration:none; text-align:center; margin-top:20px;">戻る</a> </main> <script> function attemptLogin() { const id = document.getElementById('user-id').value; const pass = document.getElementById('user-pass').value;
-
-        // 暫定の管理者情報（ここを自由に変えてください）
-        if (id === "admin" && pass === "shino123") {
-            sessionStorage.setItem('is_admin', 'true');
-            alert('認証成功。管理者メニューを開放します。');
-            location.href = 'admin.html';
-        } else {
-            alert('IDまたはパスワードが違います。');
+    // ロゴ取得
+    async function loadLogos() {
+        const list = document.getElementById('logo-list');
+        list.innerHTML = "読み込み中...";
+        try {
+            const res = await fetch(GAS_API + "?action=get_logos");
+            const logos = await res.json();
+            list.innerHTML = "";
+            logos.forEach(logo => {
+                const div = document.createElement('div');
+                div.className = 'logo-item';
+                div.innerHTML = `<img src="${logo.url}"><p style="font-size:0.6rem;">${logo.name}</p>`;
+                list.appendChild(div);
+            });
+        } catch (e) {
+            list.innerHTML = "取得失敗";
         }
     }
 </script>

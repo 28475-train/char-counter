@@ -1,45 +1,23 @@
 <!DOCTYPE html>
 
-<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>ToolBox | 篠ノ井乗務区 公式ツール集</title> <link rel="stylesheet" href="style.css"> <style> /* --- 同意ポップアップ --- */ #consent-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(10px); display: none; } .consent-card { background: var(--bg); width: 90%; max-width: 450px; padding: 35px; border-radius: 35px; text-align: center; border: 2px solid var(--accent); box-shadow: 0 25px 50px rgba(0,0,0,0.5); } .consent-text { font-size: 0.85rem; line-height: 1.8; color: var(--text-sub); margin-bottom: 25px; text-align: left; background: var(--card); padding: 20px; border-radius: 18px; max-height: 160px; overflow-y: auto; } .consent-btn { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: transform 0.2s, opacity 0.2s; } .consent-btn:active { transform: scale(0.95); } body.modal-open { overflow: hidden; }
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>ToolBox | 統合メニュー</title> <link rel="stylesheet" href="style.css"> <style> #consent-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(10px); display: none; } .consent-card { background: var(--bg); width: 90%; max-width: 450px; padding: 35px; border-radius: 35px; text-align: center; border: 2px solid var(--accent); } .consent-text { font-size: 0.85rem; line-height: 1.8; color: var(--text-sub); margin-bottom: 25px; text-align: left; background: var(--card); padding: 20px; border-radius: 18px; max-height: 160px; overflow-y: auto; } .consent-btn { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; } .info-container { text-align: left; margin-bottom: 40px; } .info-list { background: var(--card); border-radius: 20px; padding: 10px 20px; border: 1px solid var(--border); } .info-item { display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; } .info-item:last-child { border-bottom: none; } .info-date { font-weight: bold; color: var(--text-sub); width: 85px; flex-shrink: 0; }
 
-    /* --- お知らせセクション --- */
-    .info-container { text-align: left; margin-bottom: 40px; }
-    .info-list {
-        background: var(--card); border-radius: 20px;
-        padding: 10px 20px; border: 1px solid var(--border);
-    }
-    .info-item {
-        display: flex; align-items: flex-start; padding: 12px 0;
-        border-bottom: 1px solid var(--border); font-size: 0.85rem;
-    }
-    .info-item:last-child { border-bottom: none; }
-    .info-date { font-weight: bold; color: var(--text-sub); width: 85px; flex-shrink: 0; }
-    
-    #info-trigger {
+    #info-trigger-text {
         font-size: 1.2rem; margin-bottom: 15px; 
         border-left: 5px solid var(--accent); padding-left: 12px; 
-        font-weight: 900; transition: all 0.2s ease;
-        cursor: pointer; user-select: none; display: inline-block;
+        font-weight: 900; cursor: pointer; display: inline-block;
     }
 
-    /* --- メモプレビューセクション --- */
     .memo-preview-section {
         background: var(--card); border-radius: 20px;
         padding: 25px; border: 1px solid var(--border);
         margin-bottom: 40px; text-align: left;
-        position: relative;
     }
     #preview-content {
         font-size: 0.9rem; line-height: 1.7; color: var(--text);
-        white-space: pre-wrap; word-wrap: break-word;
-        margin: 15px 0; min-height: 1.5em;
-    }
-    .limit-tag {
-        font-size: 0.65rem; color: #ff4444; font-weight: bold;
-        display: none; margin-top: 10px;
+        white-space: pre-wrap; margin: 15px 0;
     }
 
-    /* --- メニューボタン共通 --- */
     .tool-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -63,22 +41,15 @@
     .menu-icon { font-size: 1.8rem; margin-bottom: 8px; }
     .menu-label { font-size: 0.8rem; font-weight: bold; }
 
-    /* --- 上に戻るボタン --- */
     #page-top-btn {
         position: fixed; right: 20px; bottom: 30px;
         width: 50px; height: 50px; background-color: var(--accent);
         color: white; border-radius: 50%; display: flex;
         align-items: center; justify-content: center;
-        cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        opacity: 0; visibility: hidden; transition: 0.3s;
+        cursor: pointer; opacity: 0; visibility: hidden; transition: 0.3s;
         z-index: 1000; border: 2px solid white;
     }
     #page-top-btn.is-show { opacity: 1; visibility: visible; }
-    #page-top-btn::after {
-        content: ""; width: 10px; height: 10px;
-        border-top: 3px solid white; border-right: 3px solid white;
-        transform: rotate(-45deg); margin-top: 5px;
-    }
 </style>
 </head> <body>
 
@@ -87,10 +58,6 @@
         <h2 style="color: var(--accent); margin-bottom: 20px;">SECURITY CHECK</h2>
         <div class="consent-text">
             当サイト「ToolBox」をご利用いただきありがとうございます。<br><br>
-            ご利用にあたり、以下の内容に同意いただく必要があります：<br>
-            ・利用規約およびプライバシーポリシーの遵守<br>
-            ・提供ツールの結果による損害への免責事項<br>
-            ・ブラウザ内保存（LocalStorage）の使用<br><br>
             データはすべてお客様の端末内にのみ保存されます。
         </div>
         <button class="consent-btn" onclick="acceptConsent()">同意してシステムを開始</button>
@@ -99,22 +66,18 @@
 
 <header>
     <div class="header-container">
-        <a href="javascript:void(0)" id="info-trigger" class="logo-text">ToolBox</a>
-        <div id="status-area" style="font-size: 0.7rem; color: #fff; opacity: 0.8;">ALL_TOOLS_OPEN</div>
+        <a href="javascript:void(0)" id="info-trigger-logo" class="logo-text">ToolBox</a>
+        <div id="status-area" style="font-size: 0.7rem; color: #fff; opacity: 0.8;">USER_MODE</div>
     </div>
 </header>
 
 <main class="container">
     <section class="info-container">
-        <h2 style="font-size: 1.2rem; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">お知らせ</h2>
+        <h2 id="info-trigger-text" style="font-size: 1.2rem; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">お知らせ</h2>
         <div class="info-list">
             <div class="info-item">
                 <div class="info-date">2025/12/21</div>
-                <div class="info-content"><span style="background:var(--accent);color:white;font-size:0.6rem;padding:2px 6px;border-radius:4px;margin-right:8px;">NEW</span> 写真補正の端末保存・復元機能を実装しました。</div>
-            </div>
-            <div class="info-item">
-                <div class="info-date">2025/12/20</div>
-                <div class="info-content">誰でも全ての機能へアクセスできるよう開放しました。</div>
+                <div class="info-content">隠し要素を追加。特定の場所を3回叩くと何かが起きます。</div>
             </div>
         </div>
     </section>
@@ -148,9 +111,9 @@
                 <span class="menu-icon">⚙️</span>
                 <span class="menu-label">管理投稿</span>
             </a>
-            <a href="secret.html" class="menu-btn-tile" style="border-color: #ffdd00;">
-                <span class="menu-icon">🔑</span>
-                <span class="menu-label">隠しページ</span>
+            <a href="login.html" class="menu-btn-tile" style="border-color: #007bff;">
+                <span class="menu-icon">👤</span>
+                <span class="menu-label">ログイン</span>
             </a>
         </div>
     </section>
@@ -180,7 +143,6 @@
             document.getElementById('consent-overlay').style.display = 'flex';
             document.body.classList.add('modal-open');
         }
-
         const previewArea = document.getElementById('preview-content');
         const savedMemo = localStorage.getItem(MEMO_KEY) || "保存されたメモはありません。";
         previewArea.innerText = savedMemo;
@@ -202,16 +164,27 @@
         document.body.classList.toggle('large-text', check);
     }
 
-    // 隠しトリガー：ロゴを3回クリックで計算機へ
-    let tapCount = 0;
-    let tapTimer;
-    const trigger = document.getElementById('info-trigger');
-    trigger.addEventListener('click', () => {
-        tapCount++;
-        clearTimeout(tapTimer);
-        tapTimer = setTimeout(() => { tapCount = 0; }, 2000);
-        if (tapCount === 3) {
+    // 隠しトリガー1：ロゴを3回クリックで「計算機（calc.html）」
+    let tapCountLogo = 0;
+    let tapTimerLogo;
+    document.getElementById('info-trigger-logo').addEventListener('click', () => {
+        tapCountLogo++;
+        clearTimeout(tapTimerLogo);
+        tapTimerLogo = setTimeout(() => { tapCountLogo = 0; }, 2000);
+        if (tapCountLogo === 3) {
             location.href = 'calc.html';
+        }
+    });
+
+    // 隠しトリガー2：お知らせの文字を3回クリックで「隠しページ（secret.html）」
+    let tapCountSecret = 0;
+    let tapTimerSecret;
+    document.getElementById('info-trigger-text').addEventListener('click', () => {
+        tapCountSecret++;
+        clearTimeout(tapTimerSecret);
+        tapTimerSecret = setTimeout(() => { tapCountSecret = 0; }, 2000);
+        if (tapCountSecret === 3) {
+            location.href = 'secret.html';
         }
     });
 

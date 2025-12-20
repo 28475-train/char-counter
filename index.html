@@ -1,21 +1,70 @@
 <!DOCTYPE html>
 
-<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>ToolBox | 統合メニュー</title> <link rel="stylesheet" href="style.css"> <style> #consent-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(10px); display: none; } .consent-card { background: var(--bg); width: 90%; max-width: 450px; padding: 35px; border-radius: 35px; text-align: center; border: 2px solid var(--accent); } .consent-text { font-size: 0.85rem; line-height: 1.8; color: var(--text-sub); margin-bottom: 25px; text-align: left; background: var(--card); padding: 20px; border-radius: 18px; max-height: 160px; overflow-y: auto; } .consent-btn { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; } .info-container { text-align: left; margin-bottom: 40px; } .info-list { background: var(--card); border-radius: 20px; padding: 10px 20px; border: 1px solid var(--border); } .info-item { display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; } .info-item:last-child { border-bottom: none; } .info-date { font-weight: bold; color: var(--text-sub); width: 85px; flex-shrink: 0; }
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>ToolBox | 統合プラットフォーム</title> <link rel="stylesheet" href="style.css"> <style> /* お知らせアニメーション */ @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } } .info-item { animation: fadeInUp 0.6s ease backwards; } .info-item:nth-child(1) { animation-delay: 0.2s; } .info-item:nth-child(2) { animation-delay: 0.4s; }
 
+    @keyframes pulseBadge {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.6; transform: scale(0.95); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    .new-badge {
+        background: var(--accent);
+        color: white;
+        font-size: 0.6rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-right: 8px;
+        display: inline-block;
+        animation: pulseBadge 2s infinite;
+    }
+
+    /* セキュリティポップアップ */
+    #consent-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 9999; backdrop-filter: blur(10px);
+        display: none;
+    }
+    .consent-card {
+        background: var(--bg);
+        width: 90%; max-width: 450px; padding: 40px 30px;
+        border-radius: 35px; text-align: center;
+        border: 2px solid var(--accent);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .consent-title { color: var(--accent); font-weight: 900; font-size: 1.4rem; margin-bottom: 20px; }
+    .consent-text {
+        font-size: 0.85rem; line-height: 1.8; color: var(--text-sub);
+        margin-bottom: 30px; text-align: left;
+        background: var(--card); padding: 20px; border-radius: 18px;
+    }
+    .consent-btn {
+        width: 100%; padding: 18px; background: var(--accent);
+        color: white; border: none; border-radius: 50px;
+        font-size: 1.1rem; font-weight: bold; cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .consent-btn:active { transform: scale(0.95); }
+
+    /* レイアウト追加分 */
+    .info-container { text-align: left; margin-bottom: 40px; }
+    .info-list {
+        background: var(--card); border-radius: 20px;
+        padding: 10px 20px; border: 1px solid var(--border);
+    }
+    .info-item {
+        display: flex; align-items: flex-start; padding: 15px 0;
+        border-bottom: 1px solid var(--border); font-size: 0.85rem;
+    }
+    .info-item:last-child { border-bottom: none; }
+    .info-date { font-weight: bold; color: var(--text-sub); width: 90px; flex-shrink: 0; }
+    
     #info-trigger-text {
         font-size: 1.2rem; margin-bottom: 15px; 
         border-left: 5px solid var(--accent); padding-left: 12px; 
         font-weight: 900; cursor: pointer; display: inline-block;
-    }
-
-    .memo-preview-section {
-        background: var(--card); border-radius: 20px;
-        padding: 25px; border: 1px solid var(--border);
-        margin-bottom: 40px; text-align: left;
-    }
-    #preview-content {
-        font-size: 0.9rem; line-height: 1.7; color: var(--text);
-        white-space: pre-wrap; margin: 15px 0;
     }
 
     .tool-grid {
@@ -25,29 +74,21 @@
         margin-bottom: 40px;
     }
     .menu-btn-tile {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px 10px;
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        text-decoration: none;
-        color: var(--text);
-        transition: all 0.2s;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 25px 10px; background: var(--card); border: 1px solid var(--border);
+        border-radius: 24px; text-decoration: none; color: var(--text); transition: all 0.2s;
     }
     .menu-btn-tile:active { transform: scale(0.95); background: var(--border); }
-    .menu-icon { font-size: 1.8rem; margin-bottom: 8px; }
-    .menu-label { font-size: 0.8rem; font-weight: bold; }
+    .menu-icon { font-size: 2rem; margin-bottom: 10px; }
+    .menu-label { font-size: 0.85rem; font-weight: bold; }
 
     #page-top-btn {
         position: fixed; right: 20px; bottom: 30px;
-        width: 50px; height: 50px; background-color: var(--accent);
+        width: 55px; height: 55px; background-color: var(--accent);
         color: white; border-radius: 50%; display: flex;
         align-items: center; justify-content: center;
         cursor: pointer; opacity: 0; visibility: hidden; transition: 0.3s;
-        z-index: 1000; border: 2px solid white;
+        z-index: 1000; border: 2px solid white; font-weight: bold;
     }
     #page-top-btn.is-show { opacity: 1; visibility: visible; }
 </style>
@@ -55,19 +96,20 @@
 
 <div id="consent-overlay">
     <div class="consent-card">
-        <h2 style="color: var(--accent); margin-bottom: 20px;">SECURITY CHECK</h2>
+        <div class="consent-title">SYSTEM ACCESS</div>
         <div class="consent-text">
-            当サイト「ToolBox」をご利用いただきありがとうございます。<br><br>
-            データはすべてお客様の端末内にのみ保存されます。
+            ToolBox v2.0へようこそ。<br>
+            本システムはGoogleスプレッドシートと同期し、業務情報の管理を行います。
+            入力されたデータは、適切な権限管理のもとで保持されます。
         </div>
-        <button class="consent-btn" onclick="acceptConsent()">同意してシステムを開始</button>
+        <button class="consent-btn" onclick="acceptConsent()">同意して接続</button>
     </div>
 </div>
 
 <header>
     <div class="header-container">
         <a href="javascript:void(0)" id="info-trigger-logo" class="logo-text">ToolBox</a>
-        <div id="status-area" style="font-size: 0.7rem; color: #fff; opacity: 0.8;">USER_MODE</div>
+        <div id="status-area" style="font-size: 0.7rem; color: #fff; opacity: 0.8; letter-spacing: 1px;">DATABASE_CONNECTED</div>
     </div>
 </header>
 
@@ -77,15 +119,18 @@
         <div class="info-list">
             <div class="info-item">
                 <div class="info-date">2025/12/21</div>
-                <div class="info-content">隠し要素を追加。特定の場所を3回叩くと何かが起きます。</div>
+                <div class="info-content">
+                    <span class="new-badge">UPDATE</span>
+                    スプレッドシート連携による自作認証システムを実装しました。
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-date">2025/12/21</div>
+                <div class="info-content">
+                    管理者専用ページにて、メルマガ管理とロゴ一覧の閲覧が可能になりました。
+                </div>
             </div>
         </div>
-    </section>
-
-    <section class="memo-preview-section">
-        <h2 style="font-size: 1rem; margin: 0; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">マイメモ・プレビュー</h2>
-        <div id="preview-content">読み込み中...</div>
-        <a href="memo.html" class="memo-btn" style="display: block; width: 100%; padding: 12px; background: #111; color: var(--accent); border: 1px solid var(--accent); border-radius: 12px; font-size: 0.8rem; font-weight: bold; text-decoration: none; text-align: center; margin-top: 15px;">詳細・編集画面へ ></a>
     </section>
 
     <section style="margin-bottom: 50px;">
@@ -107,47 +152,47 @@
                 <span class="menu-icon">📸</span>
                 <span class="menu-label">写真補正</span>
             </a>
-            <a href="admin.html" class="menu-btn-tile" style="border-color: #28a745;">
+            <a href="admin.html" class="menu-btn-tile" style="border-color: #28a745; background: rgba(40, 167, 69, 0.05);">
                 <span class="menu-icon">⚙️</span>
-                <span class="menu-label">管理投稿</span>
+                <span class="menu-label">管理パネル</span>
             </a>
-            <a href="login.html" class="menu-btn-tile" style="border-color: #007bff;">
+            <a href="login.html" class="menu-btn-tile" style="border-color: #007bff; background: rgba(0, 123, 255, 0.05);">
                 <span class="menu-icon">👤</span>
-                <span class="menu-label">ログイン</span>
+                <span class="menu-label">ログイン/登録</span>
+            </a>
+            <a href="contact.html" class="menu-btn-tile" style="grid-column: span 2; padding: 15px;">
+                <span class="menu-label">✉️ お問い合わせ・メルマガ登録</span>
             </a>
         </div>
     </section>
 
-    <section class="custom-form" style="text-align: left; padding: 35px; border-radius: 32px; background: var(--card); border: 1px solid var(--border);">
-        <h3 style="color: var(--accent); font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">文字設定</h3>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
-            <span style="font-size:0.9rem; font-weight:bold;">文字を大きく表示する</span>
-            <input type="checkbox" id="a11y-toggle" onchange="updateA11y()" style="width:25px; height:25px;">
+    <section class="custom-form" style="text-align: left; padding: 30px; border-radius: 32px; background: var(--card); border: 1px solid var(--border);">
+        <h3 style="color: var(--accent); font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; font-weight: 900;">SYSTEM SETTINGS</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+            <span style="font-size:0.9rem; font-weight:bold;">アクセシビリティ（文字拡大）</span>
+            <input type="checkbox" id="a11y-toggle" onchange="updateA11y()" style="width:28px; height:28px; cursor:pointer;">
         </div>
     </section>
 
-    <footer style="margin-top: 60px; text-align: center;">
-        <p style="font-size: 0.7rem; color: var(--text-sub);">&copy; 2025 篠ノ井乗務区 All Rights Reserved.</p>
+    <footer style="margin-top: 60px; text-align: center; padding-bottom: 40px;">
+        <p style="font-size: 0.7rem; color: var(--text-sub); letter-spacing: 1px;">&copy; 2025 SHINONOI TOOLBOX PROJECT</p>
     </footer>
 </main>
 
-<div id="page-top-btn" onclick="scrollToTop()"></div>
+<div id="page-top-btn" onclick="scrollToTop()">TOP</div>
 
 <script>
-    const CONSENT_KEY = 'shinorail_consent_v1';
-    const MEMO_KEY = 'shinorail_local_memo';
-
+    const CONSENT_KEY = 'toolbox_access_granted';
+    
     function init() {
-        const isLoggedIn = localStorage.getItem(CONSENT_KEY);
-        if (!isLoggedIn) {
+        // ポップアップ表示チェック
+        if (!localStorage.getItem(CONSENT_KEY)) {
             document.getElementById('consent-overlay').style.display = 'flex';
-            document.body.classList.add('modal-open');
+            document.body.style.overflow = 'hidden';
         }
-        const previewArea = document.getElementById('preview-content');
-        const savedMemo = localStorage.getItem(MEMO_KEY) || "保存されたメモはありません。";
-        previewArea.innerText = savedMemo;
 
-        if (localStorage.getItem('shinorail_a11y_mode') === 'true') {
+        // A11y設定の復元
+        if (localStorage.getItem('toolbox_a11y') === 'true') {
             document.getElementById('a11y-toggle').checked = true;
             document.body.classList.add('large-text');
         }
@@ -155,44 +200,45 @@
 
     function acceptConsent() {
         localStorage.setItem(CONSENT_KEY, 'true');
-        location.reload();
+        document.getElementById('consent-overlay').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('consent-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 300);
     }
 
     function updateA11y() {
-        const check = document.getElementById('a11y-toggle').checked;
-        localStorage.setItem('shinorail_a11y_mode', check);
-        document.body.classList.toggle('large-text', check);
+        const isChecked = document.getElementById('a11y-toggle').checked;
+        localStorage.setItem('toolbox_a11y', isChecked);
+        document.body.classList.toggle('large-text', isChecked);
     }
 
-    // 隠しトリガー1：ロゴを3回クリックで「計算機（calc.html）」
-    let tapCountLogo = 0;
-    let tapTimerLogo;
-    document.getElementById('info-trigger-logo').addEventListener('click', () => {
-        tapCountLogo++;
-        clearTimeout(tapTimerLogo);
-        tapTimerLogo = setTimeout(() => { tapCountLogo = 0; }, 2000);
-        if (tapCountLogo === 3) {
-            location.href = 'calc.html';
-        }
-    });
+    // 隠しトリガー1：ロゴ3回で計算機
+    let logoTaps = 0;
+    let logoTimer;
+    document.getElementById('info-trigger-logo').onclick = () => {
+        logoTaps++;
+        clearTimeout(logoTimer);
+        logoTimer = setTimeout(() => { logoTaps = 0; }, 1500);
+        if (logoTaps === 3) location.href = 'calc.html';
+    };
 
-    // 隠しトリガー2：お知らせの文字を3回クリックで「隠しページ（secret.html）」
-    let tapCountSecret = 0;
-    let tapTimerSecret;
-    document.getElementById('info-trigger-text').addEventListener('click', () => {
-        tapCountSecret++;
-        clearTimeout(tapTimerSecret);
-        tapTimerSecret = setTimeout(() => { tapCountSecret = 0; }, 2000);
-        if (tapCountSecret === 3) {
-            location.href = 'secret.html';
-        }
-    });
+    // 隠しトリガー2：お知らせ3回で隠しページ
+    let secretTaps = 0;
+    let secretTimer;
+    document.getElementById('info-trigger-text').onclick = () => {
+        secretTaps++;
+        clearTimeout(secretTimer);
+        secretTimer = setTimeout(() => { secretTaps = 0; }, 1500);
+        if (secretTaps === 3) location.href = 'secret.html';
+    };
 
+    // トップへ戻るボタン
     const topBtn = document.getElementById('page-top-btn');
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) topBtn.classList.add('is-show');
+    window.onscroll = () => {
+        if (window.pageYOffset > 400) topBtn.classList.add('is-show');
         else topBtn.classList.remove('is-show');
-    });
+    };
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
     window.onload = init;

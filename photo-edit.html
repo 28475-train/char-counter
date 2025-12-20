@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>写真補正 | ToolBox</title> <link rel="stylesheet" href="style.css"> <style> .edit-card { background: var(--card); border-radius: 25px; padding: 25px; border: 1px solid var(--border); margin-bottom: 30px; } .preview-area { width: 100%; min-height: 250px; background: #000; border-radius: 18px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin: 20px 0; border: 1px solid var(--border); } .control-group { margin-bottom: 20px; } .control-label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; font-weight: bold; } input[type="range"] { width: 100%; accent-color: var(--accent); cursor: pointer; } .file-input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; } .custom-file-label { display: block; font-size: 0.7rem; color: var(--text-sub); margin-bottom: 5px; font-weight: bold; } </style> </head> <body> <header> <div class="header-container"> <a href="index.html" class="logo-text">ToolBox Photo</a> <div style="font-size: 0.7rem; color: #fff; opacity: 0.8;">EDITOR_MODE</div> </div> </header>
+
+<main class="container">
+    <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">画像補正とプロジェクト管理</h2>
+
+    <div class="edit-card">
+        <div class="file-input-group">
+            <div>
+                <span class="custom-file-label">新規画像を開く</span>
+                <input type="file" id="load-image" accept="image/*" class="input-field" style="font-size: 0.7rem;" onchange="handleImage(event)">
+            </div>
+            <div>
+                <span class="custom-file-label" style="color: var(--accent);">保存データ(.txt)読込</span>
+                <input type="file" id="load-project" accept=".txt" class="input-field" style="font-size: 0.7rem;" onchange="handleProject(event)">
+            </div>
+        </div>
+
+        <div class="preview-area">
+            <img id="image-display" src="" style="display:none; max-width:100%; max-height:600px;">
+            <p id="placeholder-text" style="color: #666; font-size: 0.8rem;">画像またはプロジェクトを選択</p>
+        </div>
+
+        <div class="control-group">
+            <div class="control-label"><span>明るさ</span><span id="val-b">100%</span></div>
+            <input type="range" id="range-b" min="0" max="200" value="100" oninput="updateFilters()">
+        </div>
+        <div class="control-group">
+            <div class="control-label"><span>コントラスト</span><span id="val-c">100%</span></div>
+            <input type="range" id="range-c" min="0" max="200" value="100" oninput="updateFilters()">
+        </div>
+        <div class="control-group">
+            <div class="control-label"><span>彩度</span><span id="val-s">100%</span></div>
+            <input type="range" id="range-s" min="0" max="200" value="100" oninput="updateFilters()">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 30px;">
+            <button onclick="resetAll()" style="padding:15px; background:#444; color:#fff; border:none; border-radius:15px; font-weight:bold;">リセット</button>
+            <button onclick="saveToFile()" style="padding:15px; background:var(--accent); color:#fff; border:none; border-radius:15px; font-weight:bold;">端末へ保存(.txt)</button>
+        </div>
+    </div>
+
+    <a href="index.html" class="btn" style="display:block; text-decoration:none; text-align:center; background:#111; color:var(--accent); border:1px solid var(--accent);">ホームへ戻る</a>
+</main>
+
+<script>
+    let base64Store = "";
+
+    function handleImage(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            base64Store = event.target.result;
+            displayImage(base64Store);
+            resetAll();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function displayImage(src) {
+        const img = document.getElementById('image-display');
+        img.src = src;
+        img.style.display = 'block';
+        document.getElementById('placeholder-text').style.display = 'none';
+    }
+
+    function updateFilters() {
+        const b = document.getElementById('range-b').value;
+        const c = document.getElementById('range-c').value;
+        const s = document.getElementById('range-s').value;
+        document.getElementById('val-b').innerText = b + '%';
+        document.getElementById('val-c').innerText = c + '%';
+        document.getElementById('val-s').innerText = s + '%';
+        const img = document.getElementById('image-display');
+        img.style.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%)`;
+    }
+
+    function resetAll() {
+        document.getElementById('range-b').value = 100;
+        document.getElementById('range-c').value = 100;
+        document.getElementById('range-s').value = 100;
+        updateFilters();
+    }
+
+    function saveToFile() {
+        if (!base64Store) return alert('保存する画像がありません');
+        const projectData = {
+            img: base64Store,
+            b: document.getElementById('range-b').value,
+            c: document.getElementById('range-c').value,
+            s: document.getElementById('range-s').value
+        };
+        const blob = new Blob([JSON.stringify(projectData)], {type: "text/plain"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "shinorail_photo_" + Date.now() + ".txt";
+        a.click();
+    }
+
+    function handleProject(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const data = JSON.parse(event.target.result);
+            base64Store = data.img;
+            displayImage(base64Store);
+            document.getElementById('range-b').value = data.b;
+            document.getElementById('range-c').value = data.c;
+            document.getElementById('range-s').value = data.s;
+            updateFilters();
+        };
+        reader.readAsText(file);
+    }
+</script>
+</body> </html>

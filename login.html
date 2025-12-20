@@ -1,16 +1,87 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ログイン</title><link rel="stylesheet" href="style.css"></head>
-<body>
-    <header><div class="header-container"><a href="index.html" class="logo-text">LOGIN</a></div></header>
-    <main class="container">
-        <div class="custom-form">
-            <h2>ログイン</h2>
-            <input type="text" id="login-email" placeholder="メールアドレス">
-            <input type="password" id="login-pass" placeholder="パスワード">
-            <button onclick="checkAuth()" class="submit-btn">ログイン</button>
-            <button onclick="location.href='signup.html'" style="background:none; border:none; color:var(--text); margin-top:15px; width:100%; cursor:pointer;">新規会員登録はこちら</button>
+
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>認証 | ToolBox</title> <link rel="stylesheet" href="style.css"> <style> .auth-card { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid var(--border); } .tab-menu { display: flex; margin-bottom: 20px; background: #222; border-radius: 12px; padding: 5px; } .tab-item { flex: 1; text-align: center; padding: 10px; color: #888; cursor: pointer; border-radius: 8px; font-size: 0.85rem; } .tab-item.active { background: var(--accent); color: white; font-weight: bold; } .hidden { display: none; } .loading-text { color: var(--accent); font-size: 0.8rem; margin-top: 10px; display: none; text-align: center; } button:disabled { opacity: 0.5; cursor: not-allowed; } .input-field { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border); background: #1a1a1a; color: white; box-sizing: border-box; } </style> </head> <body> <header> <div class="header-container"> <a href="index.html" class="logo-text">ToolBox Auth</a> </div> </header>
+
+<main class="container">
+    <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">アカウント認証</h2>
+    
+    <div class="auth-card">
+        <div class="tab-menu">
+            <div id="t-l" class="tab-item active" onclick="setMode('l')">ログイン</div>
+            <div id="t-r" class="tab-item" onclick="setMode('r')">新規登録</div>
         </div>
-    </main><script src="script.js"></script>
-</body>
-</html>
+
+        <div id="auth-form">
+            <input type="email" id="email" class="input-field" placeholder="メールアドレス">
+            <input type="password" id="pass" class="input-field" placeholder="パスワード">
+            
+            <button id="main-btn" onclick="handleAuth()" style="width:100%; padding:18px; background:var(--accent); color:white; border:none; border-radius:50px; font-weight:bold; cursor:pointer;">
+                ログイン
+            </button>
+            <div id="loading-msg" class="loading-text">サーバーと通信中...</div>
+        </div>
+    </div>
+    <a href="index.html" class="btn" style="display:block; text-decoration:none; text-align:center; margin-top:20px; color: var(--accent);">ホームへ戻る</a>
+</main>
+
+<script>
+    const GAS_API = "[https://script.google.com/macros/s/AKfycbxn0i-8o43KNHBcEcAdpwJmeaEQoC6YSwCPR9zhIXFNIY64FimgSFbX3XKABbHX7I_LbQ/exec](https://script.google.com/macros/s/AKfycbxn0i-8o43KNHBcEcAdpwJmeaEQoC6YSwCPR9zhIXFNIY64FimgSFbX3XKABbHX7I_LbQ/exec)";
+    let currentMode = 'l';
+
+    function setMode(m) {
+        currentMode = m;
+        document.getElementById('t-l').className = m === 'l' ? 'tab-item active' : 'tab-item';
+        document.getElementById('t-r').className = m === 'r' ? 'tab-item active' : 'tab-item';
+        document.getElementById('main-btn').innerText = m === 'l' ? 'ログイン' : '新規登録を実行';
+        document.getElementById('main-btn').style.background = m === 'l' ? 'var(--accent)' : '#28a745';
+    }
+
+    async function handleAuth() {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
+        const btn = document.getElementById('main-btn');
+        const loadMsg = document.getElementById('loading-msg');
+
+        if (!email || !pass) {
+            alert("メールアドレスとパスワードを入力してください。");
+            return;
+        }
+
+        // 連打防止
+        btn.disabled = true;
+        btn.innerText = "送信中...";
+        loadMsg.style.display = "block";
+
+        try {
+            const response = await fetch(GAS_API, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: currentMode,
+                    email: email,
+                    pass: pass
+                })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                alert(data.message);
+                if (currentMode === 'l') {
+                    sessionStorage.setItem('is_admin', data.isAdmin ? 'true' : 'false');
+                    sessionStorage.setItem('user_email', email);
+                    location.href = data.isAdmin ? 'admin.html' : 'index.html';
+                } else {
+                    setMode('l');
+                }
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            alert("通信エラーが発生しました。");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = currentMode === 'l' ? 'ログイン' : '新規登録を実行';
+            loadMsg.style.display = "none";
+        }
+    }
+</script>
+</body> </html>

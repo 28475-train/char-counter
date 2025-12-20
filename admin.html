@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>管理投稿 | ToolBox</title> <link rel="stylesheet" href="style.css"> <style> .admin-card { background: var(--card); border-radius: 25px; padding: 30px; border: 1px solid var(--border); margin-bottom: 30px; } .input-label { display: block; font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; color: var(--accent); } </style> </head> <body> <script> // 管理者チェック：ログイン時にセットされるフラグを確認 if (sessionStorage.getItem('is_admin') !== 'true') { alert('このページは管理者専用です。ログインしてください。'); location.href = 'login.html'; } </script>
+
+<header>
+    <div class="header-container">
+        <a href="index.html" class="logo-text">ToolBox Admin</a>
+        <div style="font-size: 0.7rem; color: #fff; opacity: 0.8;">RESTRICTED</div>
+    </div>
+</header>
+
+<main class="container">
+    <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">管理者専用：業務日誌投稿</h2>
+
+    <div class="admin-card">
+        <div style="margin-bottom: 25px;">
+            <label class="input-label">投稿タイトル</label>
+            <input type="text" id="post-title" class="input-field" placeholder="例：本日の点検記録">
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <label class="input-label">記事本文</label>
+            <textarea id="post-content" class="input-field" style="height: 200px; line-height: 1.6; padding: 15px;" placeholder="共有事項を入力してください"></textarea>
+        </div>
+
+        <button id="submit-btn" onclick="sendToGAS()" style="width: 100%; padding: 18px; background: var(--accent); color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer;">
+            スプレッドシートへ公開する
+        </button>
+    </div>
+
+    <div style="text-align: center;">
+        <button onclick="logoutAdmin()" style="width:100%; padding:15px; background:#444; color:#fff; border:none; border-radius:15px; font-weight:bold; margin-bottom:15px;">ログアウト（管理者権限破棄）</button>
+        <a href="index.html" class="btn" style="display:block; text-decoration:none; background:#111; color:var(--accent); border:1px solid var(--accent);">ホームへ戻る</a>
+    </div>
+</main>
+
+<script>
+    const GAS_ENDPOINT = "ここにあなたのGASのURL";
+
+    async function sendToGAS() {
+        const title = document.getElementById('post-title').value;
+        const content = document.getElementById('post-content').value;
+        if (!title || !content) return alert("入力が不足しています。");
+
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true;
+        btn.innerText = "送信中...";
+
+        try {
+            await fetch(GAS_ENDPOINT, {
+                method: "POST",
+                body: JSON.stringify({ title: title, content: content })
+            });
+            alert("投稿完了しました。");
+            location.href = "blog.html";
+        } catch (error) {
+            alert("送信エラー。URLを確認してください。");
+            btn.disabled = false;
+            btn.innerText = "再試行";
+        }
+    }
+
+    function logoutAdmin() {
+        sessionStorage.removeItem('is_admin');
+        alert('ログアウトしました。');
+        location.href = 'index.html';
+    }
+</script>
+</body> </html>
+
+2. login.html（管理者フラグ発行ページ）
+ここで正しいIDとパスワードを入れると、admin.htmlに入れるようになります。
+
+<!DOCTYPE html>
+
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>ログイン | ToolBox</title> <link rel="stylesheet" href="style.css"> </head> <body> <header> <div class="header-container"> <a href="index.html" class="logo-text">ToolBox Login</a> </div> </header> <main class="container"> <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">管理者認証</h2> <div style="background:var(--card); padding:30px; border-radius:25px; border:1px solid var(--border);"> <input type="text" id="user-id" class="input-field" placeholder="ユーザーID" style="margin-bottom:15px;"> <input type="password" id="user-pass" class="input-field" placeholder="パスワード" style="margin-bottom:20px;"> <button onclick="attemptLogin()" style="width:100%; padding:18px; background:var(--accent); color:white; border:none; border-radius:50px; font-weight:bold;">ログイン</button> </div> <a href="index.html" class="btn" style="display:block; text-decoration:none; text-align:center; margin-top:20px;">戻る</a> </main> <script> function attemptLogin() { const id = document.getElementById('user-id').value; const pass = document.getElementById('user-pass').value;
+
+        // 暫定の管理者情報（ここを自由に変えてください）
+        if (id === "admin" && pass === "shino123") {
+            sessionStorage.setItem('is_admin', 'true');
+            alert('認証成功。管理者メニューを開放します。');
+            location.href = 'admin.html';
+        } else {
+            alert('IDまたはパスワードが違います。');
+        }
+    }
+</script>
+</body> </html>

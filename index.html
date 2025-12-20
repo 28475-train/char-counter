@@ -1,246 +1,313 @@
 <!DOCTYPE html>
-
-<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>ToolBox | 統合プラットフォーム</title> <link rel="stylesheet" href="style.css"> <style> /* お知らせアニメーション */ @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } } .info-item { animation: fadeInUp 0.6s ease backwards; } .info-item:nth-child(1) { animation-delay: 0.2s; } .info-item:nth-child(2) { animation-delay: 0.4s; }
-
-    @keyframes pulseBadge {
-        0% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.6; transform: scale(0.95); }
-        100% { opacity: 1; transform: scale(1); }
-    }
-    .new-badge {
-        background: var(--accent);
-        color: white;
-        font-size: 0.6rem;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-right: 8px;
-        display: inline-block;
-        animation: pulseBadge 2s infinite;
-    }
-
-    /* セキュリティポップアップ */
-    #consent-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        display: flex; align-items: center; justify-content: center;
-        z-index: 9999; backdrop-filter: blur(10px);
-        display: none;
-    }
-    .consent-card {
-        background: var(--bg);
-        width: 90%; max-width: 450px; padding: 40px 30px;
-        border-radius: 35px; text-align: center;
-        border: 2px solid var(--accent);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    }
-    .consent-title { color: var(--accent); font-weight: 900; font-size: 1.4rem; margin-bottom: 20px; }
-    .consent-text {
-        font-size: 0.85rem; line-height: 1.8; color: var(--text-sub);
-        margin-bottom: 30px; text-align: left;
-        background: var(--card); padding: 20px; border-radius: 18px;
-    }
-    .consent-btn {
-        width: 100%; padding: 18px; background: var(--accent);
-        color: white; border: none; border-radius: 50px;
-        font-size: 1.1rem; font-weight: bold; cursor: pointer;
-        transition: transform 0.2s;
-    }
-    .consent-btn:active { transform: scale(0.95); }
-
-    /* レイアウト追加分 */
-    .info-container { text-align: left; margin-bottom: 40px; }
-    .info-list {
-        background: var(--card); border-radius: 20px;
-        padding: 10px 20px; border: 1px solid var(--border);
-    }
-    .info-item {
-        display: flex; align-items: flex-start; padding: 15px 0;
-        border-bottom: 1px solid var(--border); font-size: 0.85rem;
-    }
-    .info-item:last-child { border-bottom: none; }
-    .info-date { font-weight: bold; color: var(--text-sub); width: 90px; flex-shrink: 0; }
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ToolBox | 統合プラットフォーム完全版</title>
     
-    #info-trigger-text {
-        font-size: 1.2rem; margin-bottom: 15px; 
-        border-left: 5px solid var(--accent); padding-left: 12px; 
-        font-weight: 900; cursor: pointer; display: inline-block;
-    }
-
-    .tool-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin-bottom: 40px;
-    }
-    .menu-btn-tile {
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        padding: 25px 10px; background: var(--card); border: 1px solid var(--border);
-        border-radius: 24px; text-decoration: none; color: var(--text); transition: all 0.2s;
-    }
-    .menu-btn-tile:active { transform: scale(0.95); background: var(--border); }
-    .menu-icon { font-size: 2rem; margin-bottom: 10px; }
-    .menu-label { font-size: 0.85rem; font-weight: bold; }
-
-    #page-top-btn {
-        position: fixed; right: 20px; bottom: 30px;
-        width: 55px; height: 55px; background-color: var(--accent);
-        color: white; border-radius: 50%; display: flex;
-        align-items: center; justify-content: center;
-        cursor: pointer; opacity: 0; visibility: hidden; transition: 0.3s;
-        z-index: 1000; border: 2px solid white; font-weight: bold;
-    }
-    #page-top-btn.is-show { opacity: 1; visibility: visible; }
-</style>
-</head> <body>
-
-<div id="consent-overlay">
-    <div class="consent-card">
-        <div class="consent-title">SYSTEM ACCESS</div>
-        <div class="consent-text">
-            ToolBox v2.0へようこそ。<br>
-            本システムはGoogleスプレッドシートと同期し、業務情報の管理を行います。
-            入力されたデータは、適切な権限管理のもとで保持されます。
-        </div>
-        <button class="consent-btn" onclick="acceptConsent()">同意して接続</button>
-    </div>
-</div>
-
-<header>
-    <div class="header-container">
-        <a href="javascript:void(0)" id="info-trigger-logo" class="logo-text">ToolBox</a>
-        <div id="status-area" style="font-size: 0.7rem; color: #fff; opacity: 0.8; letter-spacing: 1px;">DATABASE_CONNECTED</div>
-    </div>
-</header>
-
-<main class="container">
-    <section class="info-container">
-        <h2 id="info-trigger-text" style="font-size: 1.2rem; margin-bottom: 15px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">お知らせ</h2>
-        <div class="info-list">
-            <div class="info-item">
-                <div class="info-date">2025/12/21</div>
-                <div class="info-content">
-                    <span class="new-badge">UPDATE</span>
-                    スプレッドシート連携による自作認証システムを実装しました。
-                </div>
-            </div>
-            <div class="info-item">
-                <div class="info-date">2025/12/21</div>
-                <div class="info-content">
-                    管理者専用ページにて、メルマガ管理とロゴ一覧の閲覧が可能になりました。
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section style="margin-bottom: 50px;">
-        <h2 style="font-size: 1.2rem; margin-bottom: 20px; border-left: 5px solid var(--accent); padding-left: 12px; font-weight: 900;">ツールメニュー</h2>
-        <div class="tool-grid">
-            <a href="roulette.html" class="menu-btn-tile">
-                <span class="menu-icon">🎲</span>
-                <span class="menu-label">ルーレット</span>
-            </a>
-            <a href="blog.html" class="menu-btn-tile">
-                <span class="menu-icon">📝</span>
-                <span class="menu-label">業務日誌</span>
-            </a>
-            <a href="counter.html" class="menu-btn-tile">
-                <span class="menu-icon">🔢</span>
-                <span class="menu-label">カウンター</span>
-            </a>
-            <a href="photo-edit.html" class="menu-btn-tile">
-                <span class="menu-icon">📸</span>
-                <span class="menu-label">写真補正</span>
-            </a>
-            <a href="admin.html" class="menu-btn-tile" style="border-color: #28a745; background: rgba(40, 167, 69, 0.05);">
-                <span class="menu-icon">⚙️</span>
-                <span class="menu-label">管理パネル</span>
-            </a>
-            <a href="login.html" class="menu-btn-tile" style="border-color: #007bff; background: rgba(0, 123, 255, 0.05);">
-                <span class="menu-icon">👤</span>
-                <span class="menu-label">ログイン/登録</span>
-            </a>
-            <a href="contact.html" class="menu-btn-tile" style="grid-column: span 2; padding: 15px;">
-                <span class="menu-label">✉️ お問い合わせ・メルマガ登録</span>
-            </a>
-        </div>
-    </section>
-
-    <section class="custom-form" style="text-align: left; padding: 30px; border-radius: 32px; background: var(--card); border: 1px solid var(--border);">
-        <h3 style="color: var(--accent); font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; font-weight: 900;">SYSTEM SETTINGS</h3>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-            <span style="font-size:0.9rem; font-weight:bold;">アクセシビリティ（文字拡大）</span>
-            <input type="checkbox" id="a11y-toggle" onchange="updateA11y()" style="width:28px; height:28px; cursor:pointer;">
-        </div>
-    </section>
-
-    <footer style="margin-top: 60px; text-align: center; padding-bottom: 40px;">
-        <p style="font-size: 0.7rem; color: var(--text-sub); letter-spacing: 1px;">&copy; 2025 SHINONOI TOOLBOX PROJECT</p>
-    </footer>
-</main>
-
-<div id="page-top-btn" onclick="scrollToTop()">TOP</div>
-
-<script>
-    const CONSENT_KEY = 'toolbox_access_granted';
-    
-    function init() {
-        // ポップアップ表示チェック
-        if (!localStorage.getItem(CONSENT_KEY)) {
-            document.getElementById('consent-overlay').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card: #161616;
+            --text: #ffffff;
+            --text-sub: #a0a0a0;
+            --accent: #ff3b3b;
+            --border: #2a2a2a;
+            --success: #28a745;
+            --info: #007bff;
         }
 
-        // A11y設定の復元
-        if (localStorage.getItem('toolbox_a11y') === 'true') {
-            document.getElementById('a11y-toggle').checked = true;
-            document.body.classList.add('large-text');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-    }
 
-    function acceptConsent() {
-        localStorage.setItem(CONSENT_KEY, 'true');
-        document.getElementById('consent-overlay').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('consent-overlay').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }, 300);
-    }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    function updateA11y() {
-        const isChecked = document.getElementById('a11y-toggle').checked;
-        localStorage.setItem('toolbox_a11y', isChecked);
-        document.body.classList.toggle('large-text', isChecked);
-    }
+        body.large-text { font-size: 1.2rem; }
 
-    // 隠しトリガー1：ロゴ3回で計算機
-    let logoTaps = 0;
-    let logoTimer;
-    document.getElementById('info-trigger-logo').onclick = () => {
-        logoTaps++;
-        clearTimeout(logoTimer);
-        logoTimer = setTimeout(() => { logoTaps = 0; }, 1500);
-        if (logoTaps === 3) location.href = 'calc.html';
-    };
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    // 隠しトリガー2：お知らせ3回で隠しページ
-    let secretTaps = 0;
-    let secretTimer;
-    document.getElementById('info-trigger-text').onclick = () => {
-        secretTaps++;
-        clearTimeout(secretTimer);
-        secretTimer = setTimeout(() => { secretTaps = 0; }, 1500);
-        if (secretTaps === 3) location.href = 'secret.html';
-    };
+        header {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+        }
 
-    // トップへ戻るボタン
-    const topBtn = document.getElementById('page-top-btn');
-    window.onscroll = () => {
-        if (window.pageYOffset > 400) topBtn.classList.add('is-show');
-        else topBtn.classList.remove('is-show');
-    };
-    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    window.onload = init;
-</script>
-</body> </html>
+        .logo-text {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -1px;
+            cursor: pointer;
+        }
+
+        /* アニメーション設定 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes pulseBadge {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .new-badge {
+            background: var(--accent);
+            color: white;
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+            font-weight: bold;
+            animation: pulseBadge 2s infinite;
+        }
+
+        /* お知らせエリア */
+        .info-container { margin-bottom: 40px; }
+        .info-list {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .info-item:last-child { border-bottom: none; }
+        .info-date { font-size: 0.75rem; color: var(--text-sub); font-weight: bold; margin-bottom: 4px; }
+        .info-content { font-size: 0.9rem; font-weight: 500; }
+
+        /* ツールグリッド */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .menu-btn-tile {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 30px 15px;
+            border-radius: 28px;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .menu-btn-tile:active { transform: scale(0.92); background: var(--border); }
+        .menu-icon { font-size: 2.2rem; margin-bottom: 12px; }
+        .menu-label { color: var(--text); font-weight: 800; font-size: 0.85rem; }
+
+        /* ポップアップ/オーバーレイ */
+        #consent-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: flex; align-items: center;
+            justify-content: center; z-index: 9999; backdrop-filter: blur(15px);
+            display: none;
+        }
+        .consent-card {
+            background: var(--bg); width: 90%; max-width: 400px; padding: 40px 30px;
+            border-radius: 35px; border: 2px solid var(--accent); text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        /* フォーム部品 */
+        .btn {
+            width: 100%; padding: 18px; border-radius: 50px; border: none;
+            font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.3s;
+            display: inline-block; text-align: center;
+        }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-disabled { opacity: 0.5; cursor: not-allowed; }
+
+        #page-top-btn {
+            position: fixed; right: 20px; bottom: 30px;
+            width: 55px; height: 55px; background: var(--accent);
+            color: white; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center;
+            cursor: pointer; opacity: 0; visibility: hidden; transition: 0.3s;
+            z-index: 100; font-weight: bold; border: 2px solid white;
+        }
+        #page-top-btn.show { opacity: 1; visibility: visible; }
+    </style>
+</head>
+<body>
+
+    <div id="consent-overlay">
+        <div class="consent-card">
+            <h2 style="color:var(--accent); margin-bottom:15px; font-weight:900;">SECURITY CHECK</h2>
+            <p style="font-size:0.85rem; color:var(--text-sub); margin-bottom:30px; text-align:left; background:var(--card); padding:20px; border-radius:20px;">
+                当システム「ToolBox」の利用には同意が必要です。データはスプレッドシートにて一元管理されます。
+            </p>
+            <button class="btn btn-accent" onclick="acceptConsent()">同意してシステムを開始</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div id="logo-trigger" class="logo-text">ToolBox</div>
+            <div id="connection-status" style="font-size:0.6rem; color:var(--success); font-weight:bold; letter-spacing:1px;">● DATABASE_CONNECTED</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="info-container">
+            <h2 id="text-trigger" style="font-size:1.2rem; margin-bottom:20px; border-left:6px solid var(--accent); padding-left:15px; font-weight:900; cursor:pointer;">お知らせ</h2>
+            <div class="info-list">
+                <div class="info-item fade-in" style="animation-delay: 0.1s;">
+                    <div class="info-date">2025/12/21</div>
+                    <div class="info-content"><span class="new-badge">UPDATE</span> スプレッドシート同期認証システムの実装。</div>
+                </div>
+                <div class="info-item fade-in" style="animation-delay: 0.3s;">
+                    <div class="info-date">2025/12/21</div>
+                    <div class="info-content"><span class="new-badge">NEW</span> メルマガ配信・お問い合わせフォームの自作。</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 style="font-size:1.2rem; margin-bottom:20px; border-left:6px solid var(--info); padding-left:15px; font-weight:900;">ツールメニュー</h2>
+            <div class="tool-grid">
+                <a href="roulette.html" class="menu-btn-tile">
+                    <span class="menu-icon">🎲</span><span class="menu-label">ルーレット</span>
+                </a>
+                <a href="blog.html" class="menu-btn-tile">
+                    <span class="menu-icon">📝</span><span class="menu-label">業務日誌</span>
+                </a>
+                <a href="counter.html" class="menu-btn-tile">
+                    <span class="menu-icon">🔢</span><span class="menu-label">カウンター</span>
+                </a>
+                <a href="photo-edit.html" class="menu-btn-tile">
+                    <span class="menu-icon">📸</span><span class="menu-label">写真補正</span>
+                </a>
+                <a href="admin.html" class="menu-btn-tile" style="border-color:var(--success); background:rgba(40,167,69,0.05);">
+                    <span class="menu-icon">⚙️</span><span class="menu-label">管理パネル</span>
+                </a>
+                <a href="login.html" class="menu-btn-tile" style="border-color:var(--info); background:rgba(0,123,255,0.05);">
+                    <span class="menu-icon">👤</span><span class="menu-label">ログイン/登録</span>
+                </a>
+                <a href="contact.html" class="menu-btn-tile" style="grid-column: span 2; padding: 20px; border-style: dashed;">
+                    <span class="menu-label">✉️ お問い合わせ・メルマガ登録</span>
+                </a>
+            </div>
+        </section>
+
+        <section style="background:var(--card); padding:30px; border-radius:30px; border:1px solid var(--border); margin-bottom:60px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="font-weight:900; font-size:1rem;">アクセシビリティ</div>
+                    <div style="font-size:0.7rem; color:var(--text-sub);">文字を大きく表示します</div>
+                </div>
+                <input type="checkbox" id="a11y-toggle" onchange="updateA11y()" style="width:30px; height:30px; cursor:pointer;">
+            </div>
+        </section>
+
+        <footer style="text-align:center; padding-bottom:40px;">
+            <p style="font-size:0.7rem; color:var(--text-sub); letter-spacing:2px;">&copy; 2025 SHINONOI PROJECT / ToolBox</p>
+        </footer>
+    </main>
+
+    <div id="page-top-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})">▲</div>
+
+    <script>
+        const CONFIG = {
+            GAS_URL: "https://script.google.com/macros/s/AKfycbxn0i-8o43KNHBcEcAdpwJmeaEQoC6YSwCPR9zhIXFNIY64FimgSFbX3XKABbHX7I_LbQ/exec",
+            CONSENT_KEY: "toolbox_consent_v2",
+            A11Y_KEY: "toolbox_a11y_v2"
+        };
+
+        // 初期化処理
+        function init() {
+            // ポップアップチェック
+            if (!localStorage.getItem(CONFIG.CONSENT_KEY)) {
+                document.getElementById('consent-overlay').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            // 文字サイズ設定復元
+            if (localStorage.getItem(CONFIG.A11Y_KEY) === 'true') {
+                document.getElementById('a11y-toggle').checked = true;
+                document.body.classList.add('large-text');
+            }
+
+            // スクロール監視
+            window.addEventListener('scroll', () => {
+                const topBtn = document.getElementById('page-top-btn');
+                if (window.pageYOffset > 400) topBtn.classList.add('show');
+                else topBtn.classList.remove('show');
+            });
+
+            // 隠しトリガー設定
+            setupSecretTrigger('logo-trigger', 'calc.html');
+            setupSecretTrigger('text-trigger', 'secret.html');
+        }
+
+        // 同意ボタン
+        function acceptConsent() {
+            localStorage.setItem(CONFIG.CONSENT_KEY, 'true');
+            document.getElementById('consent-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('consent-overlay').style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+
+        // 文字サイズ変更
+        function updateA11y() {
+            const isChecked = document.getElementById('a11y-toggle').checked;
+            localStorage.setItem(CONFIG.A11Y_KEY, isChecked);
+            document.body.classList.toggle('large-text', isChecked);
+        }
+
+        // 3連タップ隠し機能
+        function setupSecretTrigger(elementId, targetUrl) {
+            let taps = 0;
+            let timer;
+            document.getElementById(elementId).addEventListener('click', () => {
+                taps++;
+                clearTimeout(timer);
+                timer = setTimeout(() => { taps = 0; }, 2000);
+                if (taps === 3) location.href = targetUrl;
+            });
+        }
+
+        // ページ読み込み時に実行
+        window.onload = init;
+    </script>
+</body>
+</html>
